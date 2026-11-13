@@ -1,0 +1,20 @@
+prof/gen_O2u/fw_g.elf  :
+section              size       addr
+.text               10488   16777344
+.rodata               124    1785856
+.eh_frame             248    1785980
+.bss                  156    1786228
+.riscv.attributes      65          0
+.comment               34          0
+.debug_line         28985          0
+.debug_line_str       860          0
+.debug_info          5968          0
+.debug_abbrev        1751          0
+.debug_aranges        256          0
+.debug_str           1974          0
+.debug_loclists      5396          0
+.debug_rnglists      1185          0
+.debug_frame          452          0
+Total               57942
+
+
