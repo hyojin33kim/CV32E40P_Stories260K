@@ -57,3 +57,12 @@ python3 prof/run_prof.py baseline/firmware.c baseline
 PROF_CFLAGS="-O2 -funroll-loops" python3 prof/run_prof.py baseline/firmware.c O2u
 bash prof/run_opt_variants.sh        # baseline / O2 / O3
 ```
+
+## expf bit-exact HW 가능성 (사실 + 판단)
+- 링크된 `expf`는 picolibc 1.8.6 `newlib/libm/math/sf_exp.c` (fdlibm, `__OBSOLETE_MATH_FLOAT` 경로).
+  근거: disassembly에 single-precision 연산만(fmul 11, fsub 13, fadd 6, fdiv 2, fcvt), `__math_oflowf/uflowf` 호출 — 소스와 일치. double/soft-float 호출 없음.
+- 범위별 IEEE single 연산 순서가 고정(range reduction `k=(int)(invln2*x+±0.5)` → 5차 다항식 → `(x*c)/(2-c)` → 지수 가산).
+  → **동일 연산 순서·RNE·RTZ 변환을 HW에서 재현하면 bit-exact 가능.**
+- 조건: (1) `k` 변환은 C cast(RTZ). (2) underflow 경로 `y*2^-100`이 subnormal을 생성 → HW FP 연산기가 subnormal 지원 필요
+  (fpnew는 지원. Xilinx Floating-Point IP는 subnormal flush로 기억 — 미확인, 사용 시 확인 필요). (3) 입력 2^32개 전수 비교로 검증 가능.
+- 비용 판단(추정): 1회당 FP 연산 약 32개 + fdiv 1개(경로당). softmax 입력은 항상 ≤0이라 overflow 경로 불필요.
