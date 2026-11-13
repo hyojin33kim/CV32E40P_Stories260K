@@ -1,7 +1,9 @@
 #!/bin/bash
 set -eu
 cd "$(dirname "$0")"
-TC=${TC:-/workspace/scratch/e3442beb1b3e/recovery/toolchain/usr}
+# Default: Ubuntu 24.04 apt gcc-riscv64-unknown-elf (13.2) + picolibc-riscv64-unknown-elf (1.8.6).
+# HOLD numbers were made with GCC 14.2 + picolibc prefix; override TC to use another prefix.
+TC=${TC:-/usr}
 CC=$TC/bin/riscv64-unknown-elf-gcc
 LIB=$TC/lib/picolibc/riscv64-unknown-elf
 SRC=${SRC:-firmware.c}
