@@ -29,7 +29,9 @@ fwtag = tag + ('_' + name if acc else '')
 if acc:
     cflags += ' -DUSE_ACC' + (' -DUSE_ACC_ATTN' if mode == 'attn' else '')
     tag += '_' + name + '_L%s_G%s' % (os.environ.get('SIM_ACC_LAT', '0'), os.environ.get('SIM_ACC_GNT_EVERY', '1'))
-O = G / f'out_{steps}_{tag}'; O.mkdir(exist_ok=True)
+OUTROOT = Path(os.environ.get('GEN_OUT', G))  # reproduce.sh points this at repro/gen
+OUTROOT.mkdir(parents=True, exist_ok=True)
+O = OUTROOT / f'out_{steps}_{tag}'; O.mkdir(exist_ok=True)
 model, tok = W / 'stories260K.bin', G / 'tok512.bin'
 V, L, S, KVD = 512, 5, 512, 32
 
@@ -44,9 +46,9 @@ prompt = np.fromfile(O / 'prompt.u32', dtype='<u4')
 assert steps >= np_, 'steps must cover the prompt'
 
 # firmware + image
-fw = f'gen/firmware_gen_{fwtag}'
+fw = OUTROOT / f'firmware_gen_{fwtag}'
 run('env', 'SRC=gen/firmware_gen.c', f'OUT={fw}', 'TC=/usr', f'CFLAGS_EXTRA={cflags}', W / 'build.sh', cwd=W)
-run('python3', W / 'image.py', W / f'{fw}.elf', O / 'image.bin')
+run('python3', W / 'image.py', f'{fw}.elf', O / 'image.bin')
 m = bytearray((O / 'image.bin').read_bytes())
 m[0x1ae000:0x1ae000 + 4 * np_] = prompt.tobytes()
 struct.pack_into('<II', m, 0x1afff0, np_, steps)
@@ -88,14 +90,14 @@ div = np.nonzero(free[gen_from:] != toks[gen_from:])[0]
 argmax_mm = np.nonzero(ra != ha)[0]
 
 # RISC-SW numerics must not depend on compiler flags: compare with the -Os run if present
-ref = G / f'out_{steps}_Os'
+ref = OUTROOT / f'out_{steps}_Os' if (OUTROOT / f'out_{steps}_Os' / 'steps.bin').exists() else G / f'out_{steps}_Os'
 if tag != 'Os' and (ref / 'steps.bin').exists() and (ref / 'dump.bin').exists():
     rd = (ref / 'dump.bin').read_bytes()
     bitexact_vs_Os = bool((O / 'steps.bin').read_bytes() == (ref / 'steps.bin').read_bytes()
                           and d[0x100000:0x1a0000] == rd[0x100000:0x1a0000] and d[0x1ae800:0x1aec00] == rd[0x1ae800:0x1aec00])
 else:
     bitexact_vs_Os = None
-text_bytes = int([l for l in run('/usr/bin/riscv64-unknown-elf-size', '-A', W / f'{fw}.elf').splitlines()
+text_bytes = int([l for l in run('/usr/bin/riscv64-unknown-elf-size', '-A', f'{fw}.elf').splitlines()
                   if l.startswith('.text')][0].split()[1])
 acc_line = [l for l in log.splitlines() if l.startswith('ACC ')]
 res = dict(

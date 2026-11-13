@@ -19,7 +19,7 @@ from pathlib import Path
 
 W = Path(__file__).resolve().parent.parent
 src, tag = sys.argv[1], sys.argv[2]
-O = W / 'prof' / tag; O.mkdir(parents=True, exist_ok=True)
+O = Path(os.environ.get('PROF_OUT', W / 'prof')) / tag; O.mkdir(parents=True, exist_ok=True)
 TC = '/usr/bin/riscv64-unknown-elf-'
 
 def sh(*a, **k):
@@ -35,7 +35,7 @@ if ACC: OPT += ' -DUSE_ACC'
 SIM = Path(os.environ['PROF_SIM']) if os.environ.get('PROF_SIM') else W / ('obj_soc/Vsoc_top' if ACC else 'obj_prof/Vcv32e40p_top')
 FWD = next(i for i, l in enumerate(src_text.splitlines(), 1) if l.startswith('float* forward('))
 for name, extra in (('fw_g', '-g ' + OPT), ('fw', OPT)):
-    sh('env', f'SRC={src}', f'OUT=prof/{tag}/{name}', f'CFLAGS_EXTRA={extra}', W / 'build.sh', cwd=W)
+    sh('env', f'SRC={src}', f'OUT={O / name}', f'CFLAGS_EXTRA={extra}', W / 'build.sh', cwd=W)
 txt = [subprocess.run([TC + 'objcopy', '-O', 'binary', '-j', '.text', O / f'{n}.elf', '/dev/stdout'],
                       capture_output=True, check=True).stdout for n in ('fw_g', 'fw')]
 assert txt[0] == txt[1], '-g changed code bytes'

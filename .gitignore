@@ -30,6 +30,8 @@ prof/*/prof_*.csv
 prof/*/*.o
 # scratch scripts (in-worktree so reads stay inside the working directory)
 .scratch/
+# reproduce.sh outputs
+repro/
 # Step ③ accelerator
 obj_soc/
 obj_soc_new/

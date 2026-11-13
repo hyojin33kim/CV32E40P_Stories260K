@@ -13,10 +13,11 @@ from pathlib import Path
 
 W = Path(__file__).resolve().parent.parent
 TAG = sys.argv[1]
-P = W / 'prof' / TAG
-O = W / 'acc' / 'sweep' / TAG; O.mkdir(parents=True, exist_ok=True)
+PROF = Path(os.environ.get('PROF_OUT', W / 'prof'))
+P = PROF / TAG
+O = Path(os.environ.get('SWEEP_OUT', W / 'acc' / 'sweep')) / TAG; O.mkdir(parents=True, exist_ok=True)
 SIM = os.environ.get('SWEEP_SIM', str(W / 'obj_soc/Vsoc_top'))
-base = json.load(open(W / 'prof' / 'gen_O2u' / 'summary.json'))
+base = json.load(open(PROF / 'gen_O2u' / 'summary.json'))
 LATS, GNTS = (0, 16, 64, 128), (1, 2, 4)
 
 def one(t, lat, gp):
