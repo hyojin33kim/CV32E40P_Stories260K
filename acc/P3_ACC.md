@@ -51,9 +51,13 @@ AV 186,320 (이론 184,640), QK 603,327 (HW ≈184K + CPU 나눗셈 ≈420K), so
 | 64 step FFN 가속 | 76,976,406 | 808,329 / 1,594,563 | 1.54× | True | 일치 | PASS |
 | 64 step FFN+QK/AV 가속 | 68,001,066 | 798,337 / 1,323,386 | **1.74×** | True | 일치 | PASS |
 | 512 step SW 기준선 | 2,383,853,770 | 1,454,872 / 7,860,540 | — | True | 일치 | PASS |
+| 512 step FFN 가속 (이력: J_STRIDE 이전 RTL, inline driver) | 2,048,327,882 | 809,763 / 7,194,991 | 1.16× | True | 일치 | PASS |
 | 512 step FFN+QK/AV 가속 | 1,501,576,690 | 798,337 / 5,070,325 | **1.59×** | True | 일치 | PASS |
 
 토큰당 평균(512 step): SW 4.66M → 가속 2.93M cycles.
+
+최종 빌드 확인: 최종 RTL로 다시 빌드한 `obj_soc`에서 8 step 실행의 step별 cycles가 위 64 step 실행과 동일, bit-exact 유지.
+가속기 미사용 시 SoC sim의 HOLD 회귀(ctx 1/128/512) dump byte 동일·cycles 동일.
 
 ## 가정 / 한계 (미검증 포함)
 - FPU 지연 0(조합) 가정 — CV32E40P 설정(FPU_ADDMUL_LAT=0)과 동일. FPGA 200 MHz 타이밍은 **미검증**(합성·배치배선 안 함).
