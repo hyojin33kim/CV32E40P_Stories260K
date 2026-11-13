@@ -1,0 +1,7 @@
+firmware.c:5:33:measured_exp	16	static
+firmware.c:6:33:measured_sqrt	0	static
+firmware.c:66:6:rmsnorm	32	static
+firmware.c:81:6:softmax	48	static
+firmware.c:101:6:matmul	0	static
+firmware.c:115:8:forward	144	static
+firmware.c:251:6:boot	16	static

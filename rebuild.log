@@ -1,0 +1,4 @@
+make: Entering directory '/workspace/scratch/4f3890b19629/resume/obj'
+g++  -I.  -MMD -I/workspace/scratch/4f3890b19629/resume/tools/usr/share/verilator/include -I/workspace/scratch/4f3890b19629/resume/tools/usr/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -Os  -c -o sim.o /workspace/scratch/4f3890b19629/resume/sim.cpp
+g++    sim.o verilated.o verilated_threads.o Vcv32e40p_top__ALL.a    -pthread -lpthread -latomic   -o Vcv32e40p_top
+make: Leaving directory '/workspace/scratch/4f3890b19629/resume/obj'

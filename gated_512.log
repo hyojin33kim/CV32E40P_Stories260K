@@ -1,0 +1,4 @@
+0 pc_fetch=4 id=0 mepc=0 cause=0
+5000000 pc_fetch=10001dc id=10001d2 mepc=0 cause=0
+10000000 pc_fetch=10005c0 id=10005b8 mepc=0 cause=0
+DONE cycles=13851300 min_stack_write=0x1fff20

@@ -1,0 +1,5 @@
+firmware.c:64:6:rmsnorm	0	static
+firmware.c:79:6:softmax	48	static
+firmware.c:99:6:matmul	0	static
+firmware.c:113:8:forward	144	static
+firmware.c:249:6:boot	16	static
