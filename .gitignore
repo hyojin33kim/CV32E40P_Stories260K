@@ -21,3 +21,10 @@ gen/out_*/*
 !gen/out_*/cycles.npy
 !gen/out_*/risc_toks.u32
 !gen/out_*/prompt.u32
+gen/run_*.txt
+# Step ② profiling: keep scripts, docs, tables, summaries, ELF; drop images/dumps/raw csv
+obj_prof/
+prof/*/image*.bin
+prof/*/dump_*.bin
+prof/*/prof_*.csv
+prof/*/*.o

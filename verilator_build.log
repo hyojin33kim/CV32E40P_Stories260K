@@ -1,7 +1,854 @@
-make: Entering directory '/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/obj'
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv:59:17: Ascending bit range vector: left < right of bit range: [0:4]
+                                                                                                                                                                                          : ... note: In instance 'cv32e40p_top.core_i.sleep_unit_i'
+   59 |   typedef logic [0:NUM_FP_FORMATS-1]       fmt_logic_t;     
+      |                 ^
+                   ... For warning description see https://verilator.org/warn/ASCRANGE?v=5.038
+                   ... Use "/* verilator lint_off ASCRANGE */" and lint_on around source to disable this message.
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv:105:17: Ascending bit range vector: left < right of bit range: [0:3]
+                                                                                                                                                                                           : ... note: In instance 'cv32e40p_top.core_i.sleep_unit_i'
+  105 |   typedef logic [0:NUM_INT_FORMATS-1] ifmt_logic_t;  
+      |                 ^
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv:60:17: Ascending bit range vector: left < right of bit range: [0:4]
+                                                                                                                                                                                          : ... note: In instance 'cv32e40p_top.core_i.sleep_unit_i'
+   60 |   typedef logic [0:NUM_FP_FORMATS-1][31:0] fmt_unsigned_t;  
+      |                 ^
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv:199:26: Ascending bit range vector: left < right of bit range: [0:3]
+                                                                                                                                                                                           : ... note: In instance 'cv32e40p_top.core_i.sleep_unit_i'
+  199 |   typedef fmt_unsigned_t [0:NUM_OPGROUPS-1] opgrp_fmt_unsigned_t;
+      |                          ^
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv:194:23: Ascending bit range vector: left < right of bit range: [0:4]
+                                                                                                                                                                                           : ... note: In instance 'cv32e40p_top.core_i.sleep_unit_i'
+  194 |   typedef unit_type_t [0:NUM_FP_FORMATS-1] fmt_unit_types_t;
+      |                       ^
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv:197:28: Ascending bit range vector: left < right of bit range: [0:3]
+                                                                                                                                                                                           : ... note: In instance 'cv32e40p_top.core_i.sleep_unit_i'
+  197 |   typedef fmt_unit_types_t [0:NUM_OPGROUPS-1] opgrp_fmt_unit_types_t;
+      |                            ^
+%Warning-WIDTHCONCAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_fp_wrapper.sv:79:11: Unsized numbers/parameters not allowed in concatenations.
+                                                                                                                                                                        : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i'
+   79 |           FPU_ADDMUL_LAT, C_LAT_FP64, C_LAT_FP16, C_LAT_FP8, C_LAT_FP16ALT
+      |           ^~~~~~~~~~~~~~
+                      ... For warning description see https://verilator.org/warn/WIDTHCONCAT?v=5.038
+                      ... Use "/* verilator lint_off WIDTHCONCAT */" and lint_on around source to disable this message.
+%Warning-WIDTHCONCAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_fp_wrapper.sv:79:27: Unsized numbers/parameters not allowed in concatenations.
+                                                                                                                                                                        : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i'
+   79 |           FPU_ADDMUL_LAT, C_LAT_FP64, C_LAT_FP16, C_LAT_FP8, C_LAT_FP16ALT
+      |                           ^~~~~~~~~~
+%Warning-WIDTHCONCAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_fp_wrapper.sv:79:39: Unsized numbers/parameters not allowed in concatenations.
+                                                                                                                                                                        : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i'
+   79 |           FPU_ADDMUL_LAT, C_LAT_FP64, C_LAT_FP16, C_LAT_FP8, C_LAT_FP16ALT
+      |                                       ^~~~~~~~~~
+%Warning-WIDTHCONCAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_fp_wrapper.sv:79:51: Unsized numbers/parameters not allowed in concatenations.
+                                                                                                                                                                        : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i'
+   79 |           FPU_ADDMUL_LAT, C_LAT_FP64, C_LAT_FP16, C_LAT_FP8, C_LAT_FP16ALT
+      |                                                   ^~~~~~~~~
+%Warning-WIDTHCONCAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_fp_wrapper.sv:82:18: Unsized numbers/parameters not allowed in concatenations.
+                                                                                                                                                                        : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i'
+   82 |       '{default: FPU_OTHERS_LAT},   
+      |                  ^~~~~~~~~~~~~~
+%Warning-WIDTHCONCAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_fp_wrapper.sv:82:9: Unsized numbers/parameters not allowed in concatenations.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i'
+   82 |       '{default: FPU_OTHERS_LAT},   
+      |         ^~~~~~~
+%Warning-WIDTHCONCAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_fp_wrapper.sv:83:18: Unsized numbers/parameters not allowed in concatenations.
+                                                                                                                                                                        : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i'
+   83 |       '{default: FPU_OTHERS_LAT}
+      |                  ^~~~~~~~~~~~~~
+%Warning-WIDTHCONCAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_fp_wrapper.sv:83:9: Unsized numbers/parameters not allowed in concatenations.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i'
+   83 |       '{default: FPU_OTHERS_LAT}
+      |         ^~~~~~~
+%Warning-WIDTHCONCAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_fp_wrapper.sv:79:62: Unsized numbers/parameters not allowed in concatenations.
+                                                                                                                                                                        : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i'
+   79 |           FPU_ADDMUL_LAT, C_LAT_FP64, C_LAT_FP16, C_LAT_FP8, C_LAT_FP16ALT
+      |                                                              ^~~~~~~~~~~~~
+%Warning-WIDTHCONCAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_fp_wrapper.sv:81:7: Unsized numbers/parameters not allowed in concatenations.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i'
+   81 |       '{default: C_LAT_DIVSQRT},   
+      |       ^~
+%Warning-WIDTHCONCAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_fp_wrapper.sv:82:7: Unsized numbers/parameters not allowed in concatenations.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i'
+   82 |       '{default: FPU_OTHERS_LAT},   
+      |       ^~
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv:50:28: Ascending bit range vector: left < right of bit range: [0:4]
+                                                                                                                                                                                          : ... note: In instance 'cv32e40p_top.core_i.sleep_unit_i'
+   50 |   localparam fp_encoding_t [0:NUM_FP_FORMATS-1] FP_ENCODINGS  = '{
+      |                            ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv:100:9: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's ENUMITEMREF 'INT8' generates 2 bits.
+                                                                                                                                                                                             : ... note: In instance 'cv32e40p_top.core_i.sleep_unit_i'
+  100 |         return INT8;
+      |         ^~~~~~
+                      ... For warning description see https://verilator.org/warn/WIDTHEXPAND?v=5.038
+                      ... Use "/* verilator lint_off WIDTHEXPAND */" and lint_on around source to disable this message.
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_fmt_slice.sv:234:23: Logical operator LOGAND expects 1 bit on the LHS, but LHS's VARREF 'TrueSIMDClass' generates 32 bits.
+                                                                                                                                                                                                           : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[2].i_opgroup_block.gen_parallel_slices[0].active_format.i_fmt_slice'
+  234 |     if (TrueSIMDClass && SIMD_WIDTH >= 10) begin : vectorial_true_class  
+      |                       ^~
+                     ... For warning description see https://verilator.org/warn/WIDTHTRUNC?v=5.038
+                     ... Use "/* verilator lint_off WIDTHTRUNC */" and lint_on around source to disable this message.
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_fmt_slice.sv:271:23: Logical operator LOGAND expects 1 bit on the LHS, but LHS's VARREF 'TrueSIMDClass' generates 32 bits.
+                                                                                                                                                                                                           : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[2].i_opgroup_block.gen_parallel_slices[0].active_format.i_fmt_slice'
+  271 |   if (!(TrueSIMDClass && SIMD_WIDTH >= 10)) begin
+      |                       ^~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_rounding.sv:65:38: Operator ADD expects 32 bits on the RHS, but RHS's VARREF 'round_up' generates 1 bits.
+                                                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi.i_fpnew_rounding'
+   65 |   assign abs_rounded_o = abs_value_i + round_up;
+      |                                      ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_rounding.sv:65:38: Operator ADD expects 31 bits on the RHS, but RHS's VARREF 'round_up' generates 1 bits.
+                                                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi.i_fpnew_rounding'
+   65 |   assign abs_rounded_o = abs_value_i + round_up;
+      |                                      ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/vendor/opene906/E906_RTL_FACTORY/gen_rtl/fpu/rtl/pa_fpu_frbus.v:78:27: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's REPLICATE generates 31 bits.
+                                                                                                                                                                                                                                            : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[1].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane..lane_instance.genblk1.i_fpnew_divsqrt_multi_th.x_pa_fpu_frbus'
+   78 |       frbus_wb_data[31:0] = {31{1'b0}};
+      |                           ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:219:32: Operator ASSIGNW expects 32 bits on the Assign RHS, but Assign RHS's REPLICATE generates 24 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  219 |       assign fmt_mantissa[fmt] = {info[fmt].is_normal, operands_q[MAN_BITS-1:0]};  
+      |                                ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:221:42: Operator ASSIGNW expects 9 bits on the Assign RHS, but Assign RHS's SIGNED generates 32 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  221 |       assign fmt_shift_compensation[fmt] = signed'(INT_MAN_WIDTH - 1 - MAN_BITS);
+      |                                          ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:263:24: Operator ASSIGNW expects 9 bits on the Assign RHS, but Assign RHS's SIGNED generates 32 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  263 |   assign src_bias      = signed'(fpnew_pkg::bias(src_fmt_q));
+      |                        ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:265:24: Operator ASSIGNW expects 9 bits on the Assign RHS, but Assign RHS's SIGNED generates 2 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  265 |   assign src_subnormal = signed'({1'b0, info[src_fmt_q].is_subnormal});
+      |                        ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:296:69: Operator SUB expects 9 bits on the RHS, but RHS's VARREF 'renorm_shamt_sgn' generates 6 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  296 |   assign fp_input_exp  = signed'(src_exp + src_subnormal - src_bias -
+      |                                                                     ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:298:52: Operator SUB expects 32 bits on the RHS, but RHS's VARREF 'renorm_shamt_sgn' generates 6 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  298 |   assign int_input_exp = signed'(INT_MAN_WIDTH - 1 - renorm_shamt_sgn);
+      |                                                    ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:298:24: Operator ASSIGNW expects 9 bits on the Assign RHS, but Assign RHS's SIGNED generates 32 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  298 |   assign int_input_exp = signed'(INT_MAN_WIDTH - 1 - renorm_shamt_sgn);
+      |                        ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:305:38: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'input_exp' generates 9 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  305 |   assign destination_exp = input_exp + signed'(fpnew_pkg::bias(dst_fmt_q));
+      |                                      ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:305:26: Operator ASSIGNW expects 9 bits on the Assign RHS, but Assign RHS's ADD generates 32 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  305 |   assign destination_exp = input_exp + signed'(fpnew_pkg::bias(dst_fmt_q));
+      |                          ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:434:21: Operator ASSIGN expects 6 bits on the Assign RHS, but Assign RHS's SUB generates 32 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  434 |     denorm_shamt    = SUPER_MAN_BITS - fpnew_pkg::man_bits(dst_fmt_q2);  
+      |                     ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:439:34: Operator SHIFTL expects 65 bits on the LHS, but LHS's VARREF 'input_mant_q' generates 32 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  439 |     preshift_mant = input_mant_q << (INT_MAN_WIDTH + 1);
+      |                                  ^~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:444:50: Operator SUB expects 32 bits on the RHS, but RHS's VARREF 'input_exp_q' generates 9 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  444 |       denorm_shamt = unsigned'(MAX_INT_WIDTH - 1 - input_exp_q);
+      |                                                  ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:444:20: Operator ASSIGN expects 6 bits on the Assign RHS, but Assign RHS's UNSIGNED generates 32 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  444 |       denorm_shamt = unsigned'(MAX_INT_WIDTH - 1 - input_exp_q);
+      |                    ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:455:25: Operator ASSIGN expects 6 bits on the Assign RHS, but Assign RHS's ADD generates 32 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  455 |         denorm_shamt    = MAX_INT_WIDTH + 1;  
+      |                         ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:446:72: Operator ADD expects 32 bits on the RHS, but RHS's VARREF 'op_mod_q2' generates 1 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  446 |       if ((input_exp_q >= signed'(fpnew_pkg::int_width(int_fmt_q2) - 1 + op_mod_q2))     
+      |                                                                        ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:446:24: Operator GTES expects 32 bits on the LHS, but LHS's VARREF 'input_exp_q' generates 9 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  446 |       if ((input_exp_q >= signed'(fpnew_pkg::int_width(int_fmt_q2) - 1 + op_mod_q2))     
+      |                        ^~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:449:32: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'input_exp_q' generates 9 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  449 |                && (input_exp_q == signed'(fpnew_pkg::int_width(int_fmt_q2) - 1))
+      |                                ^~
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:463:25: Operator ASSIGN expects 9 bits on the Assign RHS, but Assign RHS's UNSIGNED generates 32 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  463 |         final_exp       = unsigned'(2**fpnew_pkg::exp_bits(dst_fmt_q2)-2);  
+      |                         ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:470:50: Operator ADD expects 32 or 9 bits on the LHS, but LHS's VARREF 'denorm_shamt' generates 6 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  470 |         denorm_shamt    = unsigned'(denorm_shamt + 1 - destination_exp_q);  
+      |                                                  ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:470:25: Operator ASSIGN expects 6 bits on the Assign RHS, but Assign RHS's UNSIGNED generates 32 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  470 |         denorm_shamt    = unsigned'(denorm_shamt + 1 - destination_exp_q);  
+      |                         ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:475:50: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'denorm_shamt' generates 6 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  475 |         denorm_shamt    = unsigned'(denorm_shamt + 2 + fpnew_pkg::man_bits(dst_fmt_q2));  
+      |                                                  ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:475:25: Operator ASSIGN expects 6 bits on the Assign RHS, but Assign RHS's UNSIGNED generates 32 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  475 |         denorm_shamt    = unsigned'(denorm_shamt + 2 + fpnew_pkg::man_bits(dst_fmt_q2));  
+      |                         ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:473:38: Operator LTS expects 32 bits on the LHS, but LHS's VARREF 'destination_exp_q' generates 9 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  473 |       end else if (destination_exp_q < -signed'(fpnew_pkg::man_bits(dst_fmt_q2))) begin
+      |                                      ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:468:38: Operator GTES expects 32 bits on the LHS, but LHS's VARREF 'destination_exp_q' generates 9 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  468 |                    destination_exp_q >= -signed'(fpnew_pkg::man_bits(dst_fmt_q2))) begin
+      |                                      ^~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:461:30: Operator GTES expects 32 bits on the LHS, but LHS's VARREF 'destination_exp_q' generates 9 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  461 |       if ((destination_exp_q >= signed'(2**fpnew_pkg::exp_bits(dst_fmt_q2))-1) ||
+      |                              ^~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:527:32: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's REPLICATE generates 31 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  527 |         fmt_pre_round_abs[fmt] = {final_exp[EXP_BITS-1:0], final_mant[MAN_BITS-1:0]};  
+      |                                ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:609:67: Operator ADD expects 32 bits on the RHS, but RHS's VARREF 'op_mod_q2' generates 1 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  609 |           ifmt_of_after_round[ifmt] = ~rounded_int_res[INT_WIDTH-2+op_mod_q2];
+      |                                                                   ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:607:67: Operator ADD expects 32 bits on the RHS, but RHS's VARREF 'op_mod_q2' generates 1 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  607 |         if (!rounded_sign && input_exp_q == signed'(INT_WIDTH - 2 + op_mod_q2)) begin
+      |                                                                   ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:607:42: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'input_exp_q' generates 9 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  607 |         if (!rounded_sign && input_exp_q == signed'(INT_WIDTH - 2 + op_mod_q2)) begin
+      |                                          ^~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:644:38: Operator SHIFTL expects 32 bits on the LHS, but LHS's VARREF 'input_sign_q' generates 1 bits.
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane....lane_instance.i_fpnew_cast_multi'
+  644 |                       ? input_sign_q << FP_WIDTH-1  
+      |                                      ^~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:205:32: Operator PATMEMBER expects 8 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  205 |       default: sgnj_result = '{default: fpnew_pkg::DONT_CARE};  
+      |                                ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:205:32: Operator PATMEMBER expects 23 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  205 |       default: sgnj_result = '{default: fpnew_pkg::DONT_CARE};  
+      |                                ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:241:36: Operator PATMEMBER expects 8 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  241 |         default: minmax_result = '{default: fpnew_pkg::DONT_CARE};  
+      |                                    ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:241:36: Operator PATMEMBER expects 23 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  241 |         default: minmax_result = '{default: fpnew_pkg::DONT_CARE};  
+      |                                    ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:270:48: Operator OR expects 32 bits on the LHS, but LHS's VARREF 'operand_a_smaller' generates 1 bits.
+                                                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[2].i_opgroup_block.gen_parallel_slices[0].active_format.i_fmt_slice.gen_num_lanes[0].active_lane...lane_instance.i_noncomp'
+  270 |           else cmp_result = (operand_a_smaller | operands_equal) ^ inp_pipe_op_mod_q[NUM_INP_REGS];
+      |                                                ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:270:48: Operator OR expects 32 bits on the RHS, but RHS's VARREF 'operands_equal' generates 1 bits.
+                                                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[2].i_opgroup_block.gen_parallel_slices[0].active_format.i_fmt_slice.gen_num_lanes[0].active_lane...lane_instance.i_noncomp'
+  270 |           else cmp_result = (operand_a_smaller | operands_equal) ^ inp_pipe_op_mod_q[NUM_INP_REGS];
+      |                                                ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:270:66: Operator XOR expects 32 bits on the RHS, but RHS's SEL generates 1 bits.
+                                                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[2].i_opgroup_block.gen_parallel_slices[0].active_format.i_fmt_slice.gen_num_lanes[0].active_lane...lane_instance.i_noncomp'
+  270 |           else cmp_result = (operand_a_smaller | operands_equal) ^ inp_pipe_op_mod_q[NUM_INP_REGS];
+      |                                                                  ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:274:48: Operator AND expects 32 bits on the LHS, but LHS's VARREF 'operand_a_smaller' generates 1 bits.
+                                                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[2].i_opgroup_block.gen_parallel_slices[0].active_format.i_fmt_slice.gen_num_lanes[0].active_lane...lane_instance.i_noncomp'
+  274 |           else cmp_result = (operand_a_smaller & ~operands_equal) ^ inp_pipe_op_mod_q[NUM_INP_REGS];
+      |                                                ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:274:50: Operator NOT expects 32 bits on the LHS, but LHS's VARREF 'operands_equal' generates 1 bits.
+                                                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[2].i_opgroup_block.gen_parallel_slices[0].active_format.i_fmt_slice.gen_num_lanes[0].active_lane...lane_instance.i_noncomp'
+  274 |           else cmp_result = (operand_a_smaller & ~operands_equal) ^ inp_pipe_op_mod_q[NUM_INP_REGS];
+      |                                                  ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:274:67: Operator XOR expects 32 bits on the RHS, but RHS's SEL generates 1 bits.
+                                                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[2].i_opgroup_block.gen_parallel_slices[0].active_format.i_fmt_slice.gen_num_lanes[0].active_lane...lane_instance.i_noncomp'
+  274 |           else cmp_result = (operand_a_smaller & ~operands_equal) ^ inp_pipe_op_mod_q[NUM_INP_REGS];
+      |                                                                   ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:277:43: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's SEL generates 1 bits.
+                                                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[2].i_opgroup_block.gen_parallel_slices[0].active_format.i_fmt_slice.gen_num_lanes[0].active_lane...lane_instance.i_noncomp'
+  277 |           if (any_operand_nan) cmp_result = inp_pipe_op_mod_q[NUM_INP_REGS];  
+      |                                           ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:278:44: Operator XOR expects 32 bits on the LHS, but LHS's VARREF 'operands_equal' generates 1 bits.
+                                                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[2].i_opgroup_block.gen_parallel_slices[0].active_format.i_fmt_slice.gen_num_lanes[0].active_lane...lane_instance.i_noncomp'
+  278 |           else cmp_result = operands_equal ^ inp_pipe_op_mod_q[NUM_INP_REGS];
+      |                                            ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:278:44: Operator XOR expects 32 bits on the RHS, but RHS's SEL generates 1 bits.
+                                                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[2].i_opgroup_block.gen_parallel_slices[0].active_format.i_fmt_slice.gen_num_lanes[0].active_lane...lane_instance.i_noncomp'
+  278 |           else cmp_result = operands_equal ^ inp_pipe_op_mod_q[NUM_INP_REGS];
+      |                                            ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:280:33: Operator PATMEMBER expects 8 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  280 |         default: cmp_result = '{default: fpnew_pkg::DONT_CARE};  
+      |                                 ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:280:33: Operator PATMEMBER expects 23 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  280 |         default: cmp_result = '{default: fpnew_pkg::DONT_CARE};  
+      |                                 ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:341:29: Operator PATMEMBER expects 8 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  341 |         result_d        = '{default: fpnew_pkg::DONT_CARE};  
+      |                             ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:341:29: Operator PATMEMBER expects 23 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  341 |         result_d        = '{default: fpnew_pkg::DONT_CARE};  
+      |                             ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:346:29: Operator PATMEMBER expects 8 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  346 |         result_d        = '{default: fpnew_pkg::DONT_CARE};  
+      |                             ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv:346:29: Operator PATMEMBER expects 23 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  346 |         result_d        = '{default: fpnew_pkg::DONT_CARE};  
+      |                             ^~~~~~~
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_divsqrt_th_32.sv:431:23: Ascending bit range vector: left < right of bit range: [0:1]
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[1].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane..lane_instance.genblk1.i_fpnew_divsqrt_multi_th'
+  431 |   logic               [0:NUM_OUT_REGS][WIDTH-1:0] out_pipe_result_q;
+      |                       ^
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_divsqrt_th_32.sv:432:23: Ascending bit range vector: left < right of bit range: [0:1]
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[1].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane..lane_instance.genblk1.i_fpnew_divsqrt_multi_th'
+  432 |   fpnew_pkg::status_t [0:NUM_OUT_REGS]            out_pipe_status_q;
+      |                       ^
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_divsqrt_th_32.sv:433:23: Ascending bit range vector: left < right of bit range: [0:1]
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[1].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane..lane_instance.genblk1.i_fpnew_divsqrt_multi_th'
+  433 |   TagType             [0:NUM_OUT_REGS]            out_pipe_tag_q;
+      |                       ^
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_divsqrt_th_32.sv:434:23: Ascending bit range vector: left < right of bit range: [0:1]
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[1].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane..lane_instance.genblk1.i_fpnew_divsqrt_multi_th'
+  434 |   AuxType             [0:NUM_OUT_REGS]            out_pipe_aux_q;
+      |                       ^
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_divsqrt_th_32.sv:435:23: Ascending bit range vector: left < right of bit range: [0:1]
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[1].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane..lane_instance.genblk1.i_fpnew_divsqrt_multi_th'
+  435 |   logic               [0:NUM_OUT_REGS]            out_pipe_mask_q;
+      |                       ^
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_divsqrt_th_32.sv:436:23: Ascending bit range vector: left < right of bit range: [0:1]
+                                                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[1].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane..lane_instance.genblk1.i_fpnew_divsqrt_multi_th'
+  436 |   logic               [0:NUM_OUT_REGS]            out_pipe_valid_q;
+      |                       ^
+%Warning-ASCRANGE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_divsqrt_th_32.sv:438:9: Ascending bit range vector: left < right of bit range: [0:1]
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[1].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane..lane_instance.genblk1.i_fpnew_divsqrt_multi_th'
+  438 |   logic [0:NUM_OUT_REGS] out_pipe_ready;
+      |         ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:205:38: Operator ASSIGNW expects 8 bits on the Assign RHS, but Assign RHS's SIGNED generates 9 bits.
+                                                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  205 |         assign fmt_exponent[fmt][op] = signed'({1'b0, operands_q[op][MAN_BITS+:EXP_BITS]});
+      |                                      ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:206:38: Operator ASSIGNW expects 23 bits on the Assign RHS, but Assign RHS's SHIFTL generates 24 bits.
+                                                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  206 |         assign fmt_mantissa[fmt][op] = {info_q[fmt][op].is_normal, operands_q[op][MAN_BITS-1:0]} <<
+      |                                      ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:210:46: Operator PATMEMBER expects 8 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  210 |       assign info_q[fmt]                 = '{default: fpnew_pkg::DONT_CARE};  
+      |                                              ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:211:42: Operator ASSIGNW expects 3 bits on the Assign RHS, but Assign RHS's VARREF 'DONT_CARE' generates 1 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  211 |       assign fmt_sign[fmt]               = fpnew_pkg::DONT_CARE;              
+      |                                          ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:212:46: Operator PATMEMBER expects 8 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  212 |       assign fmt_exponent[fmt]           = '{default: fpnew_pkg::DONT_CARE};  
+      |                                              ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:213:46: Operator PATMEMBER expects 23 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  213 |       assign fmt_mantissa[fmt]           = '{default: fpnew_pkg::DONT_CARE};  
+      |                                              ^~~~~~~
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:249:35: Operator PATMEMBER expects 8 bits on the Pattern value, but Pattern value's FUNCREF 'bias' generates 32 bits.
+                                                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  249 |         operand_a = '{sign: 1'b0, exponent: fpnew_pkg::bias(src_fmt_q), mantissa: '0};
+      |                                   ^~~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:260:24: Operator PATMEMBER expects 8 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  260 |         operand_a  = '{default: fpnew_pkg::DONT_CARE};
+      |                        ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:260:24: Operator PATMEMBER expects 23 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  260 |         operand_a  = '{default: fpnew_pkg::DONT_CARE};
+      |                        ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:261:24: Operator PATMEMBER expects 8 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  261 |         operand_b  = '{default: fpnew_pkg::DONT_CARE};
+      |                        ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:261:24: Operator PATMEMBER expects 23 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  261 |         operand_b  = '{default: fpnew_pkg::DONT_CARE};
+      |                        ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:262:24: Operator PATMEMBER expects 8 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  262 |         operand_c  = '{default: fpnew_pkg::DONT_CARE};
+      |                        ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:262:24: Operator PATMEMBER expects 23 bits on the Pattern value, but Pattern value's VARREF 'DONT_CARE' generates 1 bits.
+  262 |         operand_c  = '{default: fpnew_pkg::DONT_CARE};
+      |                        ^~~~~~~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:372:21: Operator ASSIGNW expects 10 bits on the Assign RHS, but Assign RHS's SIGNED generates 9 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  372 |   assign exponent_a = signed'({1'b0, operand_a.exponent});
+      |                     ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:373:21: Operator ASSIGNW expects 10 bits on the Assign RHS, but Assign RHS's SIGNED generates 9 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  373 |   assign exponent_b = signed'({1'b0, operand_b.exponent});
+      |                     ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:374:21: Operator ASSIGNW expects 10 bits on the Assign RHS, but Assign RHS's SIGNED generates 9 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  374 |   assign exponent_c = signed'({1'b0, operand_c.exponent});
+      |                     ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:378:47: Operator ADD expects 10 bits on the RHS, but RHS's SIGNED generates 2 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  378 |   assign exponent_addend = signed'(exponent_c + $signed({1'b0, ~info_c.is_normal}));  
+      |                                               ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:382:50: Operator ADD expects 32 bits on the LHS, but LHS's VARREF 'exponent_a' generates 10 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  382 |                             : signed'(exponent_a + info_a.is_subnormal
+      |                                                  ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:382:50: Operator ADD expects 32 bits on the RHS, but RHS's SEL generates 1 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  382 |                             : signed'(exponent_a + info_a.is_subnormal
+      |                                                  ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:383:39: Operator ADD expects 32 bits on the RHS, but RHS's VARREF 'exponent_b' generates 10 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  383 |                                       + exponent_b + info_b.is_subnormal
+      |                                       ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:383:52: Operator ADD expects 32 bits on the RHS, but RHS's SEL generates 1 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  383 |                                       + exponent_b + info_b.is_subnormal
+      |                                                    ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:380:27: Operator ASSIGNW expects 10 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  380 |   assign exponent_product = (info_a.is_zero || info_b.is_zero)  
+      |                           ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:397:20: Operator ASSIGN expects 7 bits on the Assign RHS, but Assign RHS's ADD generates 32 bits.
+                                                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  397 |       addend_shamt = 3 * PRECISION_BITS + 4;
+      |                    ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:400:60: Operator SUB expects 32 bits on the RHS, but RHS's VARREF 'exponent_difference' generates 10 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  400 |       addend_shamt = unsigned'(signed'(PRECISION_BITS) + 3 - exponent_difference);
+      |                                                            ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:400:20: Operator ASSIGN expects 7 bits on the Assign RHS, but Assign RHS's UNSIGNED generates 32 bits.
+                                                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  400 |       addend_shamt = unsigned'(signed'(PRECISION_BITS) + 3 - exponent_difference);
+      |                    ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:399:34: Operator LTES expects 32 bits on the LHS, but LHS's VARREF 'exponent_difference' generates 10 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  399 |     else if (exponent_difference <= signed'(PRECISION_BITS + 2))
+      |                                  ^~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:396:29: Operator LTES expects 32 bits on the LHS, but LHS's VARREF 'exponent_difference' generates 10 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  396 |     if (exponent_difference <= signed'(-2 * PRECISION_BITS - 1))
+      |                             ^~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:424:36: Operator SHIFTL expects 76 bits on the LHS, but LHS's VARREF 'product' generates 48 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  424 |   assign product_shifted = product << 2;  
+      |                                    ^~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:444:19: Operator SHIFTL expects 100 bits on the LHS, but LHS's VARREF 'mantissa_c' generates 24 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  444 |       (mantissa_c << (3 * PRECISION_BITS + 4)) >> addend_shamt;
+      |                   ^~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:461:53: Operator ADD expects 77 bits on the RHS, but RHS's VARREF 'inject_carry_in' generates 1 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  461 |   assign sum_raw = product_shifted + addend_shifted + inject_carry_in;
+      |                                                     ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:465:21: Operator ASSIGNW expects 76 bits on the Assign RHS, but Assign RHS's COND generates 77 bits.
+                                                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  465 |   assign sum        = (effective_subtraction && ~sum_carry) ? -sum_raw : sum_raw;
+      |                     ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:615:50: Operator ADD expects 32 bits on the RHS, but RHS's VARREF 'leading_zero_count' generates 6 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  615 |         norm_shamt          = PRECISION_BITS + 2 + leading_zero_count;
+      |                                                  ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:615:29: Operator ASSIGN expects 7 bits on the Assign RHS, but Assign RHS's ADD generates 32 bits.
+                                                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  615 |         norm_shamt          = PRECISION_BITS + 2 + leading_zero_count;
+      |                             ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:616:50: Operator SUB expects 32 or 10 bits on the RHS, but RHS's VARREF 'leading_zero_count_sgn' generates 7 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  616 |         normalized_exponent = exponent_product_q - leading_zero_count_sgn + 1;  
+      |                                                  ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:620:68: Operator ADD expects 32 bits on the RHS, but RHS's VARREF 'exponent_product_q' generates 10 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  620 |         norm_shamt          = unsigned'(signed'(PRECISION_BITS + 2 + exponent_product_q));
+      |                                                                    ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:620:29: Operator ASSIGN expects 7 bits on the Assign RHS, but Assign RHS's UNSIGNED generates 32 bits.
+                                                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  620 |         norm_shamt          = unsigned'(signed'(PRECISION_BITS + 2 + exponent_product_q));
+      |                             ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:613:31: Operator SUB expects 32 or 10 bits on the RHS, but RHS's VARREF 'leading_zero_count_sgn' generates 7 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  613 |       if ((exponent_product_q - leading_zero_count_sgn + 1 >= 0) && !lzc_zeroes) begin
+      |                               ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:631:36: Operator SHIFTL expects 77 bits on the LHS, but LHS's VARREF 'sum_q' generates 76 bits.
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  631 |   assign sum_shifted       = sum_q << norm_shamt;
+      |                                    ^~
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:637:39: Operator ASSIGN expects 76 bits on the Assign RHS, but Assign RHS's VARREF 'sum_shifted' generates 77 bits.
+                                                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  637 |     {final_mantissa, sum_sticky_bits} = sum_shifted;
+      |                                       ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:642:41: Operator ASSIGN expects 76 bits on the Assign RHS, but Assign RHS's SHIFTR generates 77 bits.
+                                                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  642 |       {final_mantissa, sum_sticky_bits} = sum_shifted >> 1;
+      |                                         ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:649:41: Operator ASSIGN expects 76 bits on the Assign RHS, but Assign RHS's SHIFTL generates 77 bits.
+                                                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi'
+  649 |       {final_mantissa, sum_sticky_bits} = sum_shifted << 1;
+      |                                         ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_multifmt_slice.sv:125:56: Operator AND expects 2 bits on the LHS, but LHS's EQ generates 1 bits.
+                                                                                                                                                                                                                 : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice'
+  125 |   assign dst_vec_op     = (OpGroup == fpnew_pkg::CONV) & {(op_i == fpnew_pkg::CPKCD), op_mod_i};
+      |                                                        ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_multifmt_slice.sv:131:38: Operator COND expects 3 bits on the Conditional True, but Conditional True's VARREF 'int_fmt_i' generates 2 bits.
+                                                                                                                                                                                                                 : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice'
+  131 |   assign dst_fmt    = dst_fmt_is_int ? int_fmt_i : dst_fmt_i;
+      |                                      ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_fmt_slice.sv:266:31: Operator ASSIGNW expects 32 bits on the Assign RHS, but Assign RHS's SIGNED generates 33 bits.
+                                                                                                                                                                                                           : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[2].i_opgroup_block.gen_parallel_slices[0].active_format.i_fmt_slice'
+  266 |   assign slice_regular_result = $signed({extension_bit_o, slice_result});
+      |                               ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_fmt_slice.sv:279:48: Operator COND expects 32 bits on the Conditional False, but Conditional False's SEL generates 10 bits.
+                                                                                                                                                                                                            : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[2].i_opgroup_block.gen_parallel_slices[0].active_format.i_fmt_slice'
+  279 |   assign slice_class_result = result_is_vector ? slice_vec_class_result : lane_class_mask[0];
+      |                                                ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_fifo.sv:128:49: Operator COND expects 2 bits on the Conditional True, but Conditional True's CONST '1'h1' generates 1 bits.
+                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.core_i.if_stage_i.prefetch_buffer_i.fifo_i'
+  128 |           status_cnt_q    <= (status_cnt_q > 0) ? 1'b1 : '0;
+      |                                                 ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_prefetch_controller.sv:114:26: Operator NEQ expects 3 bits on the LHS, but LHS's VARREF 'cnt_q' generates 2 bits.
+                                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.core_i.if_stage_i.prefetch_buffer_i.prefetch_controller_i'
+  114 |   assign busy_o = (cnt_q != 3'b000) || trans_valid_o;
+      |                          ^~
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_ff_one.sv:48:27: Operator ASSIGNW expects 5 bits on the Assign RHS, but Assign RHS's UNSIGNED generates 32 bits.
+                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.alu_i.ff_one_i'
+   48 |       assign index_lut[j] = $unsigned(j);
+      |                           ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:422:35: Operator ASSIGN expects 2 bits on the Assign RHS, but Assign RHS's CONST '1'h1' generates 1 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+  422 |             data_sign_extension_o = 1'b1;
+      |                                   ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:893:79: Operator COND expects 32 bits on the Conditional False, but Conditional False's CONST '2'h3' generates 2 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+  893 |                     cv32e40p_fpu_pkg::FP16    : apu_lat_o = (C_LAT_FP16<2)    ? C_LAT_FP16+1    : 2'h3;
+      |                                                                               ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:893:59: Operator ASSIGN expects 2 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+  893 |                     cv32e40p_fpu_pkg::FP16    : apu_lat_o = (C_LAT_FP16<2)    ? C_LAT_FP16+1    : 2'h3;
+      |                                                           ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:894:79: Operator COND expects 32 bits on the Conditional False, but Conditional False's CONST '2'h3' generates 2 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+  894 |                     cv32e40p_fpu_pkg::FP16ALT : apu_lat_o = (C_LAT_FP16ALT<2) ? C_LAT_FP16ALT+1 : 2'h3;
+      |                                                                               ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:894:59: Operator ASSIGN expects 2 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+  894 |                     cv32e40p_fpu_pkg::FP16ALT : apu_lat_o = (C_LAT_FP16ALT<2) ? C_LAT_FP16ALT+1 : 2'h3;
+      |                                                           ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:895:79: Operator COND expects 32 bits on the Conditional False, but Conditional False's CONST '2'h3' generates 2 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+  895 |                     cv32e40p_fpu_pkg::FP8     : apu_lat_o = (C_LAT_FP8<2)     ? C_LAT_FP8+1     : 2'h3;
+      |                                                                               ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:895:59: Operator ASSIGN expects 2 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                     : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+  895 |                     cv32e40p_fpu_pkg::FP8     : apu_lat_o = (C_LAT_FP8<2)     ? C_LAT_FP8+1     : 2'h3;
+      |                                                           ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1135:15: Logical operator IF expects 1 bit on the If, but If's SEL generates 2 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1135 |               if (instr_rdata_i[24:23]) illegal_insn_o = 1'b1;
+      |               ^~
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1239:15: Logical operator IF expects 1 bit on the If, but If's SEL generates 4 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1239 |               if (instr_rdata_i[24:21]) illegal_insn_o = 1'b1;    
+      |               ^~
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1249:15: Logical operator IF expects 1 bit on the If, but If's SEL generates 4 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1249 |               if (instr_rdata_i[24:21]) illegal_insn_o = 1'b1;    
+      |               ^~
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1281:15: Logical operator IF expects 1 bit on the If, but If's SEL generates 5 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1281 |               if (instr_rdata_i[24:20]) illegal_insn_o = 1'b1;
+      |               ^~
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1349:75: Operator COND expects 32 bits on the Conditional False, but Conditional False's CONST '2'h3' generates 2 bits.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1349 |                 cv32e40p_fpu_pkg::FP64    : apu_lat_o = (C_LAT_FP64<2)    ? C_LAT_FP64+1    : 2'h3;
+      |                                                                           ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1349:55: Operator ASSIGN expects 2 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1349 |                 cv32e40p_fpu_pkg::FP64    : apu_lat_o = (C_LAT_FP64<2)    ? C_LAT_FP64+1    : 2'h3;
+      |                                                       ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1350:75: Operator COND expects 32 bits on the Conditional False, but Conditional False's CONST '2'h3' generates 2 bits.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1350 |                 cv32e40p_fpu_pkg::FP16    : apu_lat_o = (C_LAT_FP16<2)    ? C_LAT_FP16+1    : 2'h3;
+      |                                                                           ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1350:55: Operator ASSIGN expects 2 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1350 |                 cv32e40p_fpu_pkg::FP16    : apu_lat_o = (C_LAT_FP16<2)    ? C_LAT_FP16+1    : 2'h3;
+      |                                                       ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1351:75: Operator COND expects 32 bits on the Conditional False, but Conditional False's CONST '2'h3' generates 2 bits.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1351 |                 cv32e40p_fpu_pkg::FP16ALT : apu_lat_o = (C_LAT_FP16ALT<2) ? C_LAT_FP16ALT+1 : 2'h3;
+      |                                                                           ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1351:55: Operator ASSIGN expects 2 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1351 |                 cv32e40p_fpu_pkg::FP16ALT : apu_lat_o = (C_LAT_FP16ALT<2) ? C_LAT_FP16ALT+1 : 2'h3;
+      |                                                       ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1352:75: Operator COND expects 32 bits on the Conditional False, but Conditional False's CONST '2'h3' generates 2 bits.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1352 |                 cv32e40p_fpu_pkg::FP8     : apu_lat_o = (C_LAT_FP8<2)     ? C_LAT_FP8+1     : 2'h3;
+      |                                                                           ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1352:55: Operator ASSIGN expects 2 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1352 |                 cv32e40p_fpu_pkg::FP8     : apu_lat_o = (C_LAT_FP8<2)     ? C_LAT_FP8+1     : 2'h3;
+      |                                                       ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1479:71: Operator COND expects 32 bits on the Conditional False, but Conditional False's CONST '2'h3' generates 2 bits.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1479 |             cv32e40p_fpu_pkg::FP64    : apu_lat_o = (C_LAT_FP64<2)    ? C_LAT_FP64+1    : 2'h3;
+      |                                                                       ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1479:51: Operator ASSIGN expects 2 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1479 |             cv32e40p_fpu_pkg::FP64    : apu_lat_o = (C_LAT_FP64<2)    ? C_LAT_FP64+1    : 2'h3;
+      |                                                   ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1480:71: Operator COND expects 32 bits on the Conditional False, but Conditional False's CONST '2'h3' generates 2 bits.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1480 |             cv32e40p_fpu_pkg::FP16    : apu_lat_o = (C_LAT_FP16<2)    ? C_LAT_FP16+1    : 2'h3;
+      |                                                                       ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1480:51: Operator ASSIGN expects 2 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1480 |             cv32e40p_fpu_pkg::FP16    : apu_lat_o = (C_LAT_FP16<2)    ? C_LAT_FP16+1    : 2'h3;
+      |                                                   ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1481:71: Operator COND expects 32 bits on the Conditional False, but Conditional False's CONST '2'h3' generates 2 bits.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1481 |             cv32e40p_fpu_pkg::FP16ALT : apu_lat_o = (C_LAT_FP16ALT<2) ? C_LAT_FP16ALT+1 : 2'h3;
+      |                                                                       ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1481:51: Operator ASSIGN expects 2 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1481 |             cv32e40p_fpu_pkg::FP16ALT : apu_lat_o = (C_LAT_FP16ALT<2) ? C_LAT_FP16ALT+1 : 2'h3;
+      |                                                   ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1482:71: Operator COND expects 32 bits on the Conditional False, but Conditional False's CONST '2'h3' generates 2 bits.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1482 |             cv32e40p_fpu_pkg::FP8     : apu_lat_o = (C_LAT_FP8<2)     ? C_LAT_FP8+1     : 2'h3;
+      |                                                                       ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_decoder.sv:1482:51: Operator ASSIGN expects 2 bits on the Assign RHS, but Assign RHS's COND generates 32 bits.
+                                                                                                                                                                      : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.decoder_i'
+ 1482 |             cv32e40p_fpu_pkg::FP8     : apu_lat_o = (C_LAT_FP8<2)     ? C_LAT_FP8+1     : 2'h3;
+      |                                                   ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu.sv:213:32: Operator COND expects 32 bits on the Conditional True, but Conditional True's VARREF 'div_shift' generates 6 bits.
+                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.alu_i'
+  213 |   assign shift_amt = div_valid ? div_shift : operand_b_i;
+      |                                ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu.sv:261:24: Operator ASSIGNW expects 16 bits on the Assign RHS, but Assign RHS's UNSIGNED generates 2 bits.
+                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.alu_i'
+  261 |   assign clpx_shift_ex = $unsigned(clpx_shift_i);
+      |                        ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu.sv:275:35: Operator ASSIGN expects 16 bits on the Assign RHS, but Assign RHS's SHIFTRS generates 17 bits.
+                                                                                                                                                                 : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.alu_i'
+  275 |         shift_right_result[31:16] = $signed(
+      |                                   ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu.sv:278:34: Operator ASSIGN expects 16 bits on the Assign RHS, but Assign RHS's SHIFTRS generates 17 bits.
+                                                                                                                                                                 : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.alu_i'
+  278 |         shift_right_result[15:0] = $signed(
+      |                                  ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu.sv:284:35: Operator ASSIGN expects 8 bits on the Assign RHS, but Assign RHS's SHIFTRS generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.alu_i'
+  284 |         shift_right_result[31:24] = $signed(
+      |                                   ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu.sv:287:35: Operator ASSIGN expects 8 bits on the Assign RHS, but Assign RHS's SHIFTRS generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.alu_i'
+  287 |         shift_right_result[23:16] = $signed(
+      |                                   ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu.sv:290:34: Operator ASSIGN expects 8 bits on the Assign RHS, but Assign RHS's SHIFTRS generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.alu_i'
+  290 |         shift_right_result[15:8] = $signed(
+      |                                  ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu.sv:293:33: Operator ASSIGN expects 8 bits on the Assign RHS, but Assign RHS's SHIFTRS generates 9 bits.
+                                                                                                                                                                 : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.alu_i'
+  293 |         shift_right_result[7:0] = $signed(
+      |                                 ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu.sv:300:28: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's SHIFTR generates 64 bits.
+                                                                                                                                                                 : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.alu_i'
+  300 |         shift_right_result = shift_op_a_32 >> shift_amt_int[4:0];
+      |                            ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_int_controller.sv:122:58: Operator ASSIGN expects 5 bits on the Assign RHS, but Assign RHS's VARREF 'CSR_MEIX_BIT' generates 32 bits.
+                                                                                                                                                                            : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.int_controller_i'
+  122 |     else if (irq_local_qual[CSR_MEIX_BIT]) irq_id_ctrl_o = CSR_MEIX_BIT;   
+      |                                                          ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_int_controller.sv:123:58: Operator ASSIGN expects 5 bits on the Assign RHS, but Assign RHS's VARREF 'CSR_MSIX_BIT' generates 32 bits.
+                                                                                                                                                                            : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.int_controller_i'
+  123 |     else if (irq_local_qual[CSR_MSIX_BIT]) irq_id_ctrl_o = CSR_MSIX_BIT;   
+      |                                                          ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_int_controller.sv:124:58: Operator ASSIGN expects 5 bits on the Assign RHS, but Assign RHS's VARREF 'CSR_MTIX_BIT' generates 32 bits.
+                                                                                                                                                                            : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.int_controller_i'
+  124 |     else if (irq_local_qual[CSR_MTIX_BIT]) irq_id_ctrl_o = CSR_MTIX_BIT;   
+      |                                                          ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_int_controller.sv:147:24: Operator ASSIGN expects 5 bits on the Assign RHS, but Assign RHS's VARREF 'CSR_MTIX_BIT' generates 32 bits.
+                                                                                                                                                                            : ... note: In instance 'cv32e40p_top.core_i.id_stage_i.int_controller_i'
+  147 |     else irq_id_ctrl_o = CSR_MTIX_BIT;   
+      |                        ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:108:37: Operator COND expects 33 bits on the Conditional False, but Conditional False's SIGNED generates 32 bits.
+                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.mult_i'
+  108 |   assign short_op_c = mulh_active_o ? $signed({mulh_carry_q, op_c_i}) : $signed(op_c_i);
+      |                                     ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:111:63: Operator ADD expects 34 bits on the RHS, but RHS's SIGNED generates 32 bits.
+                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.mult_i'
+  111 |   assign short_mac = $signed(short_op_c) + $signed(short_mul) + $signed(short_round);
+      |                                                               ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:273:5: Operator ADD expects 32 bits on the LHS, but LHS's SIGNED generates 18 bits.
+                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.mult_i'
+  273 |   ) + $signed(
+      |     ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:273:5: Operator ADD expects 32 bits on the RHS, but RHS's SIGNED generates 18 bits.
+                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.mult_i'
+  273 |   ) + $signed(
+      |     ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:275:5: Operator ADD expects 32 bits on the RHS, but RHS's SIGNED generates 18 bits.
+                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.mult_i'
+  275 |   ) + $signed(
+      |     ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:277:5: Operator ADD expects 32 bits on the RHS, but RHS's SIGNED generates 18 bits.
+                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.mult_i'
+  277 |   ) + $signed(
+      |     ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:302:29: Operator ASSIGNW expects 32 bits on the Assign RHS, but Assign RHS's SIGNED generates 17 bits.
+                                                                                                                                                                   : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.mult_i'
+  302 |   assign dot_short_op_b_ext = $signed(dot_short_op_b[1]);
+      |                             ^
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:312:28: Operator ASSIGNW expects 16 bits on the Assign RHS, but Assign RHS's SHIFTRS generates 17 bits.
+                                                                                                                                                                  : ... note: In instance 'cv32e40p_top.core_i.ex_stage_i.mult_i'
+  312 |   assign clpx_shift_result = $signed(dot_short_result[31:15]) >>> clpx_shift_i;
+      |                            ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_cs_registers.sv:521:34: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's VARREF 'tinfo_types' generates 16 bits.
+                                                                                                                                                                           : ... note: In instance 'cv32e40p_top.core_i.cs_registers_i'
+  521 |         CSR_TINFO: csr_rdata_int = tinfo_types;
+      |                                  ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:661:35: Operator ASSIGN expects 32 bits on the Assign RHS, but Assign RHS's UNSIGNED generates 5 bits.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.core_i.id_stage_i'
+  661 |       OP_B_BMASK:       operand_b = $unsigned(operand_b_fw_id[4:0]);
+      |                                   ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:806:37: Operator COND expects 15 bits on the Conditional True, but Conditional True's REPLICATE generates 11 bits.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.core_i.id_stage_i'
+  806 |       assign apu_flags = (FPU == 1) ? {fpu_int_fmt, fpu_src_fmt, fpu_dst_fmt, fp_rnd_mode} : '0;
+      |                                     ^
+%Warning-WIDTHEXPAND: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:1484:30: Operator ASSIGNDLY expects 6 bits on the Assign RHS, but Assign RHS's CONST '5'h0' generates 5 bits.
+                                                                                                                                                                        : ... note: In instance 'cv32e40p_top.core_i.id_stage_i'
+ 1484 |       atop_ex_o              <= 5'b0;
+      |                              ^~
+%Warning-WIDTHTRUNC: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_fp_wrapper.sv:57:63: Operator ASSIGNW expects 11 bits on the Assign RHS, but Assign RHS's VARREF 'apu_flags_i' generates 15 bits.
+                                                                                                                                                                       : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i'
+   57 |   assign {fpu_int_fmt, fpu_src_fmt, fpu_dst_fmt, fp_rnd_mode} = apu_flags_i;
+      |                                                               ^
+%Warning-UNSIGNED: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_common_cells/src/rr_arb_tree.sv:208:37: Comparison is constant due to unsigned arithmetic
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.i_arbiter'
+  208 |           assign upper_mask[i] = (i >  rr_q) ? req_d[i] : 1'b0;
+      |                                     ^
+                   ... For warning description see https://verilator.org/warn/UNSIGNED?v=5.038
+                   ... Use "/* verilator lint_off UNSIGNED */" and lint_on around source to disable this message.
+%Warning-UNSIGNED: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_common_cells/src/rr_arb_tree.sv:209:37: Comparison is constant due to unsigned arithmetic
+                                                                                                                                                                                                    : ... note: In instance 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.i_arbiter'
+  209 |           assign lower_mask[i] = (i <= rr_q) ? req_d[i] : 1'b0;
+      |                                     ^~
+%Warning-CASEINCOMPLETE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_aligner.sv:102:5: Case values incompletely covered (example pattern 0x4)
+  102 |     case (state)
+      |     ^~~~
+                         ... For warning description see https://verilator.org/warn/CASEINCOMPLETE?v=5.038
+                         ... Use "/* verilator lint_off CASEINCOMPLETE */" and lint_on around source to disable this message.
+%Warning-CASEINCOMPLETE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu.sv:139:7: Case values incompletely covered (example pattern 0x0)
+  139 |       case (vector_mode_i)
+      |       ^~~~
+%Warning-CASEINCOMPLETE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu.sv:153:7: Case values incompletely covered (example pattern 0x0)
+  153 |       case (vector_mode_i)
+      |       ^~~~
+%Warning-CASEINCOMPLETE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu.sv:752:5: Case values incompletely covered (example pattern 0x0)
+  752 |     case (operator_i)
+      |     ^~~~
+%Warning-CASEINCOMPLETE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:140:5: Case values incompletely covered (example pattern 0x5)
+  140 |     case (mulh_CS)
+      |     ^~~~
+%Warning-CASEINCOMPLETE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_load_store_unit.sv:332:7: Case values incompletely covered (example pattern 0x2)
+  332 |       case (data_type_ex_i)
+      |       ^~~~
+%Warning-CASEINCOMPLETE: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_cs_registers.sv:920:7: Case values incompletely covered (example pattern 0x0)
+  920 |       case (csr_addr_i)
+      |       ^~~~
+%Warning-COMBDLY: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/../bhv/cv32e40p_sim_clock_gate.sv:25:31: Non-blocking assignment '<=' in combinational logic process
+                                                                                                                                                                               : ... This will be executed as a blocking assignment '='!
+   25 |     if (clk_i == 1'b0) clk_en <= en_i | scan_cg_en_i;
+      |                               ^~
+                  ... For warning description see https://verilator.org/warn/COMBDLY?v=5.038
+                  ... Use "/* verilator lint_off COMBDLY */" and lint_on around source to disable this message.
+                  *** See https://verilator.org/warn/COMBDLY?v=5.038 before disabling this,
+                  else you may end up with different sim results.
+%Warning-UNOPTFLAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:293:16: Signal unoptimizable: Circular combinational logic: 'cv32e40p_top.core_i.id_stage_i.ctrl_transfer_insn_in_id'
+  293 |   logic [ 1:0] ctrl_transfer_insn_in_id;
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~
+                    ... For warning description see https://verilator.org/warn/UNOPTFLAT?v=5.038
+                    ... Use "/* verilator lint_off UNOPTFLAT */" and lint_on around source to disable this message.
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:293:16:      Example path: cv32e40p_top.core_i.id_stage_i.ctrl_transfer_insn_in_id
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_controller.sv:256:3:      Example path: ALWAYS
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:151:16:      Example path: cv32e40p_top.core_i.is_decoding
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_controller.sv:1338:3:      Example path: ALWAYS
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:298:16:      Example path: cv32e40p_top.core_i.id_stage_i.load_stall
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:1679:21:      Example path: ASSIGNW
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:275:23:      Example path: cv32e40p_top.core_i.id_ready
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_controller.sv:256:3:      Example path: ALWAYS
+%Warning-UNOPTFLAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:279:23: Signal unoptimizable: Circular combinational logic: 'cv32e40p_top.core_i.ex_valid'
+  279 |   logic               ex_valid;
+      |                       ^~~~~~~~
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:279:23:      Example path: cv32e40p_top.core_i.ex_valid
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_controller.sv:256:3:      Example path: ALWAYS
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:151:16:      Example path: cv32e40p_top.core_i.is_decoding
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_controller.sv:1338:3:      Example path: ALWAYS
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:298:16:      Example path: cv32e40p_top.core_i.id_stage_i.load_stall
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:1679:21:      Example path: ASSIGNW
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:275:23:      Example path: cv32e40p_top.core_i.id_ready
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_controller.sv:256:3:      Example path: ALWAYS
+%Warning-UNOPTFLAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:275:23: Signal unoptimizable: Circular combinational logic: 'cv32e40p_top.core_i.id_ready'
+  275 |   logic               id_ready;
+      |                       ^~~~~~~~
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:275:23:      Example path: cv32e40p_top.core_i.id_ready
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_controller.sv:256:3:      Example path: ALWAYS
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:151:16:      Example path: cv32e40p_top.core_i.is_decoding
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_controller.sv:1338:3:      Example path: ALWAYS
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:298:16:      Example path: cv32e40p_top.core_i.id_stage_i.load_stall
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:1679:21:      Example path: ASSIGNW
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:275:23:      Example path: cv32e40p_top.core_i.id_ready
+%Warning-UNOPTFLAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:297:16: Signal unoptimizable: Circular combinational logic: 'cv32e40p_top.core_i.id_stage_i.jr_stall'
+  297 |   logic        jr_stall;
+      |                ^~~~~~~~
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:297:16:      Example path: cv32e40p_top.core_i.id_stage_i.jr_stall
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_controller.sv:256:3:      Example path: ALWAYS
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:151:16:      Example path: cv32e40p_top.core_i.is_decoding
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_controller.sv:1338:3:      Example path: ALWAYS
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:298:16:      Example path: cv32e40p_top.core_i.id_stage_i.load_stall
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_id_stage.sv:1679:21:      Example path: ASSIGNW
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:275:23:      Example path: cv32e40p_top.core_i.id_ready
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_controller.sv:256:3:      Example path: ALWAYS
+%Warning-UNOPTFLAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:276:23: Signal unoptimizable: Circular combinational logic: 'cv32e40p_top.core_i.ex_ready'
+  276 |   logic               ex_ready;
+      |                       ^~~~~~~~
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:276:23:      Example path: cv32e40p_top.core_i.ex_ready
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu_div.sv:123:3:      Example path: ALWAYS
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_alu.sv:882:16:      Example path: cv32e40p_top.core_i.ex_stage_i.alu_i.div_ready
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_ex_stage.sv:474:21:      Example path: ASSIGNW
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_core.sv:276:23:      Example path: cv32e40p_top.core_i.ex_ready
+%Warning-UNOPTFLAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:774:25: Signal unoptimizable: Circular combinational logic: 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi.regular_status'
+  774 |   fpnew_pkg::status_t   regular_status;
+      |                         ^~~~~~~~~~~~~~
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:774:25:      Example path: cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi.regular_status
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:782:70:      Example path: ASSIGNW
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv:774:25:      Example path: cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[0].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi.regular_status
+%Warning-UNOPTFLAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:716:43: Signal unoptimizable: Circular combinational logic: 'cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_cast_multi.fp_regular_status'
+  716 |   fpnew_pkg::status_t int_regular_status, fp_regular_status;
+      |                                           ^~~~~~~~~~~~~~~~~
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:716:43:      Example path: cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_cast_multi.fp_regular_status
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:725:46:      Example path: ASSIGNW
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv:716:43:      Example path: cv32e40p_top.fpu_gen.fp_wrapper_i.i_fpnew_bulk.gen_operation_groups[3].i_opgroup_block.gen_merged_slice.i_multifmt_slice.gen_num_lanes[0].active_lane.lane_instance.i_fpnew_cast_multi.fp_regular_status
+%Warning-UNOPTFLAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:71:16: Signal unoptimizable: Circular combinational logic: 'cv32e40p_top.core_i.ex_stage_i.mult_i.short_op_a'
+   71 |   logic [16:0] short_op_a;
+      |                ^~~~~~~~~~
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:71:16:      Example path: cv32e40p_top.core_i.ex_stage_i.mult_i.short_op_a
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:102:46:      Example path: ASSIGNW
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:71:16:      Example path: cv32e40p_top.core_i.ex_stage_i.mult_i.short_op_a
+%Warning-UNOPTFLAT: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:72:16: Signal unoptimizable: Circular combinational logic: 'cv32e40p_top.core_i.ex_stage_i.mult_i.short_op_b'
+   72 |   logic [16:0] short_op_b;
+      |                ^~~~~~~~~~
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:72:16:      Example path: cv32e40p_top.core_i.ex_stage_i.mult_i.short_op_b
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:103:46:      Example path: ASSIGNW
+                    /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/cv32e40p-master/rtl/cv32e40p_mult.sv:72:16:      Example path: cv32e40p_top.core_i.ex_stage_i.mult_i.short_op_b
+make: Entering directory '/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/obj_prof'
 ccache g++  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -Os  -c -o sim.o /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/sim.cpp
+ccache g++ -Os  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -c -o verilated.o /usr/local/share/verilator/include/verilated.cpp
+ccache g++ -Os  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -c -o verilated_threads.o /usr/local/share/verilator/include/verilated_threads.cpp
+ccache g++ -Os  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -x c++-header Vcv32e40p_top__pch.h -o Vcv32e40p_top__pch.h.fast.gch
+ccache g++   -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -x c++-header Vcv32e40p_top__pch.h -o Vcv32e40p_top__pch.h.slow.gch
+echo "" > Vcv32e40p_top__ALL.verilator_deplist.tmp
+ccache g++ -Os  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -include Vcv32e40p_top__pch.h.fast -c -o Vcv32e40p_top.o Vcv32e40p_top.cpp
+ccache g++ -Os  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -include Vcv32e40p_top__pch.h.fast -c -o Vcv32e40p_top___024root__DepSet_h531f6204__0.o Vcv32e40p_top___024root__DepSet_h531f6204__0.cpp
+ccache g++ -Os  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -include Vcv32e40p_top__pch.h.fast -c -o Vcv32e40p_top___024root__DepSet_h531f6204__1.o Vcv32e40p_top___024root__DepSet_h531f6204__1.cpp
+ccache g++ -Os  -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -include Vcv32e40p_top__pch.h.fast -c -o Vcv32e40p_top___024root__DepSet_ha7fd2ee2__0.o Vcv32e40p_top___024root__DepSet_ha7fd2ee2__0.cpp
+ccache g++   -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -include Vcv32e40p_top__pch.h.slow -c -o Vcv32e40p_top__ConstPool_0.o Vcv32e40p_top__ConstPool_0.cpp
+ccache g++   -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -include Vcv32e40p_top__pch.h.slow -c -o Vcv32e40p_top___024root__Slow.o Vcv32e40p_top___024root__Slow.cpp
+ccache g++   -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -include Vcv32e40p_top__pch.h.slow -c -o Vcv32e40p_top___024root__DepSet_h531f6204__0__Slow.o Vcv32e40p_top___024root__DepSet_h531f6204__0__Slow.cpp
+ccache g++   -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -include Vcv32e40p_top__pch.h.slow -c -o Vcv32e40p_top___024root__DepSet_h531f6204__1__Slow.o Vcv32e40p_top___024root__DepSet_h531f6204__1__Slow.cpp
+ccache g++   -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -include Vcv32e40p_top__pch.h.slow -c -o Vcv32e40p_top___024root__DepSet_ha7fd2ee2__0__Slow.o Vcv32e40p_top___024root__DepSet_ha7fd2ee2__0__Slow.cpp
+ccache g++   -I.  -MMD -I/usr/local/share/verilator/include -I/usr/local/share/verilator/include/vltstd -DVM_COVERAGE=0 -DVM_SC=0 -DVM_TIMING=0 -DVM_TRACE=0 -DVM_TRACE_FST=0 -DVM_TRACE_VCD=0 -DVM_TRACE_SAIF=0 -faligned-new -fcf-protection=none -Wno-bool-operation -Wno-shadow -Wno-sign-compare -Wno-subobject-linkage -Wno-tautological-compare -Wno-uninitialized -Wno-unused-but-set-parameter -Wno-unused-but-set-variable -Wno-unused-parameter -Wno-unused-variable      -include Vcv32e40p_top__pch.h.slow -c -o Vcv32e40p_top__Syms.o Vcv32e40p_top__Syms.cpp
 g++    sim.o verilated.o verilated_threads.o Vcv32e40p_top__ALL.a    -pthread -lpthread -latomic   -o Vcv32e40p_top
-make: Leaving directory '/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/obj'
+rm Vcv32e40p_top__ALL.verilator_deplist.tmp
+make: Leaving directory '/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/obj_prof'
 - V e r i l a t i o n   R e p o r t: Verilator 5.038 2025-07-08 rev v5.038
-- Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
-- Verilator: Walltime 0.989 s (elab=0.000, cvt=0.000, bld=0.985); cpu 0.004 s on 4 threads; alloced 19.629 MB
+- Verilator: Built from 45.069 MB sources in 62 modules, into 5.041 MB in 10 C++ files needing 0.007 MB
+- Verilator: Walltime 1.927 s (elab=0.127, cvt=0.415, bld=1.236); cpu 0.758 s on 4 threads; alloced 82.016 MB
