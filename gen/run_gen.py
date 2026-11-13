@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
 """Step ①: continuous generation on CV32E40P RTL vs host llama2.c golden.
 
-usage: gen/run_gen.py <steps> [prompt text]   (writes gen/out_<steps>/)
+usage: [GEN_CFLAGS=...] gen/run_gen.py <steps> [prompt text]   (writes gen/out_<steps>_<tag>/)
+GEN_CFLAGS defaults to the step-② SW baseline "-O2 -funroll-loops" (tag O2u);
+GEN_CFLAGS="" reproduces the HOLD -Os build (tag Os).
 Pass criteria (agreed 2026-11-13, host<->RISC is tolerance-based):
   per step: logits rel L2 < 1e-5, RISC token == argmax(RISC logits),
             host argmax == RISC argmax (mismatch allowed only on near-tie, reported)
   per pos : KV rel L2 < 1e-5; KV prefix untouched by later steps (checked by layout)
 """
-import json, struct, subprocess, sys, time
+import json, os, struct, subprocess, sys, time
 from pathlib import Path
 import numpy as np
 
 W = Path(__file__).resolve().parent.parent
 G = W / 'gen'
 steps = int(sys.argv[1]); text = sys.argv[2] if len(sys.argv) > 2 else 'Once upon a time'
-O = G / f'out_{steps}'; O.mkdir(exist_ok=True)
+cflags = os.environ.get('GEN_CFLAGS', '-O2 -funroll-loops')
+tag = {'-O2 -funroll-loops': 'O2u', '': 'Os'}.get(cflags, cflags.replace(' ', '').replace('-', '_'))
+O = G / f'out_{steps}_{tag}'; O.mkdir(exist_ok=True)
 model, tok = W / 'stories260K.bin', G / 'tok512.bin'
 V, L, S, KVD = 512, 5, 512, 32
 
@@ -22,15 +26,16 @@ def run(*a, **k):
     return subprocess.run([str(x) for x in a], check=True, capture_output=True, text=True, **k).stdout
 
 # host tool
-run('cc', '-O2', '-ffp-contract=off', '-w', G / 'host_gen.c', '-lm', '-o', G / 'host_gen')
-hg = G / 'host_gen'
+hg = O / 'host_gen'  # per-run copy so concurrent runs don't race on the binary
+run('cc', '-O2', '-ffp-contract=off', '-w', G / 'host_gen.c', '-lm', '-o', hg)
 np_ = int(run(hg, 'encode', model, tok, text, O / 'prompt.u32'))
 prompt = np.fromfile(O / 'prompt.u32', dtype='<u4')
 assert steps >= np_, 'steps must cover the prompt'
 
 # firmware + image
-run('env', 'SRC=gen/firmware_gen.c', 'OUT=gen/firmware_gen', 'TC=/usr', W / 'build.sh', cwd=W)
-run('python3', W / 'image.py', G / 'firmware_gen.elf', O / 'image.bin')
+fw = f'gen/firmware_gen_{tag}'
+run('env', 'SRC=gen/firmware_gen.c', f'OUT={fw}', 'TC=/usr', f'CFLAGS_EXTRA={cflags}', W / 'build.sh', cwd=W)
+run('python3', W / 'image.py', W / f'{fw}.elf', O / 'image.bin')
 m = bytearray((O / 'image.bin').read_bytes())
 m[0x1ae000:0x1ae000 + 4 * np_] = prompt.tobytes()
 struct.pack_into('<II', m, 0x1afff0, np_, steps)
@@ -70,7 +75,18 @@ gen_from = np_ - 1
 div = np.nonzero(free[gen_from:] != toks[gen_from:])[0]
 argmax_mm = np.nonzero(ra != ha)[0]
 
+# RISC-SW numerics must not depend on compiler flags: compare with the -Os run if present
+ref = G / f'out_{steps}_Os'
+if tag != 'Os' and (ref / 'steps.bin').exists() and (ref / 'dump.bin').exists():
+    rd = (ref / 'dump.bin').read_bytes()
+    bitexact_vs_Os = bool((O / 'steps.bin').read_bytes() == (ref / 'steps.bin').read_bytes()
+                          and d[0x100000:0x1a0000] == rd[0x100000:0x1a0000] and d[0x1ae800:0x1aec00] == rd[0x1ae800:0x1aec00])
+else:
+    bitexact_vs_Os = None
+text_bytes = int([l for l in run('/usr/bin/riscv64-unknown-elf-size', '-A', W / f'{fw}.elf').splitlines()
+                  if l.startswith('.text')][0].split()[1])
 res = dict(
+    cflags=cflags, text_bytes=text_bytes, logits_kv_tokens_bitexact_vs_Os=bitexact_vs_Os,
     steps=steps, prompt=text, n_prompt=np_, sim_wall_s=round(wall, 1),
     cycles_total=int(cyc.sum()), cycles_first=int(cyc[0]), cycles_last=int(cyc[-1]),
     logits_rel_L2_max=float(rel.max()), logits_bitexact_steps=logit_bitexact,
@@ -81,7 +97,8 @@ res = dict(
     host_free_run_first_divergence=(int(div[0] + gen_from) if len(div) else None),
 )
 res['pass'] = bool(rel.max() < 1e-5 and kv_rel.max() < 1e-5 and res['risc_token_is_own_argmax'] and untouched
-                   and all(x['host_margin'] < 1e-4 for x in res['argmax_mismatch_steps']))
+                   and all(x['host_margin'] < 1e-4 for x in res['argmax_mismatch_steps'])
+                   and bitexact_vs_Os is not False)
 np.save(O / 'cycles.npy', cyc)
 (O / 'result.json').write_text(json.dumps(res, indent=2))
 print(json.dumps(res, indent=2))
