@@ -1,0 +1,19 @@
+{
+  "steps": 8,
+  "prompt": "Once upon a time",
+  "n_prompt": 5,
+  "sim_wall_s": 44.6,
+  "cycles_total": 25549701,
+  "cycles_first": 3119978,
+  "cycles_last": 3267150,
+  "logits_rel_L2_max": 8.019179063012416e-07,
+  "logits_bitexact_steps": 0,
+  "risc_token_is_own_argmax": true,
+  "argmax_mismatch_steps": [],
+  "min_host_top2_margin": 1.6173028945922852,
+  "kv_rel_L2_max": 1.8143846602924896e-07,
+  "kv_bitexact_positions": 0,
+  "kv_beyond_steps_zero": true,
+  "host_free_run_first_divergence": null,
+  "pass": true
+}

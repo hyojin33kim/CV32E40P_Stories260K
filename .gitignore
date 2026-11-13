@@ -12,3 +12,12 @@ g0/*
 !g0/run_tc.sh
 !g0/results_local_tc.json
 !g0/G0_REPRO.md
+# Step ① generation: keep sources, ELF/size, per-run result.json/sim.log/cycles; drop large binaries
+gen/host_gen
+gen/firmware_gen.o
+gen/out_*/*
+!gen/out_*/result.json
+!gen/out_*/sim.log
+!gen/out_*/cycles.npy
+!gen/out_*/risc_toks.u32
+!gen/out_*/prompt.u32
