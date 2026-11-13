@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """Step ②: zero-overhead per-region profile of one forward() at context 1/128/512.
 
-usage: prof/run_prof.py <firmware.c> <tag>   -> prof/<tag>/{prof_<t>.csv, summary.json, table.md}
+usage: [PROF_CFLAGS=..] [PROF_ACC=1 SIM_ACC_LAT=.. SIM_ACC_GNT_EVERY=..] prof/run_prof.py <firmware.c> <tag>
+       -> prof/<tag>/{prof_<t>.csv, summary.json, table.md}
+<firmware.c>: baseline/firmware.c (HOLD single-step boot) or gen/firmware_gen.c (run with
+n_steps=1 at pos0=t-1, token 1). PROF_ACC=1 (gen firmware only) builds with -DUSE_ACC and
+runs obj_soc/Vsoc_top; accelerator memory reads are taken from the sim's ACC line.
 The firmware is built with -g (code bytes identical to the non -g build; checked
 here) and run on the CSR-free sim profiler (SIM_PROF). Each cycle is charged to the
 forward()/boot() source line that is the current call site, so callee cycles
-(matmul, expf, ...) land on the calling line. Regions below are line ranges of
-baseline/firmware.c forward(); a different firmware.c must keep forward() lines.
+(matmul, expf, ...) land on the calling line. Regions are line offsets from the
+`float* forward(` line (forward() body must match baseline/firmware.c).
 """
 import csv, json, os, struct, subprocess, sys
 from collections import defaultdict
@@ -22,6 +26,13 @@ def sh(*a, **k):
 
 # build (-g and plain) and require identical code bytes
 OPT = os.environ.get('PROF_CFLAGS', '')  # e.g. "-O2" (appended after build.sh's -Os)
+ACC = os.environ.get('PROF_ACC') == '1'
+src_text = (W / src).read_text()
+GEN = 'pos0=ctrl[2]' in src_text
+assert GEN or not ACC, 'PROF_ACC needs gen/firmware_gen.c'
+if ACC: OPT += ' -DUSE_ACC'
+SIM = W / ('obj_soc/Vsoc_top' if ACC else 'obj_prof/Vcv32e40p_top')
+FWD = next(i for i, l in enumerate(src_text.splitlines(), 1) if l.startswith('float* forward('))
 for name, extra in (('fw_g', '-g ' + OPT), ('fw', OPT)):
     sh('env', f'SRC={src}', f'OUT=prof/{tag}/{name}', f'CFLAGS_EXTRA={extra}', W / 'build.sh', cwd=W)
 txt = [subprocess.run([TC + 'objcopy', '-O', 'binary', '-j', '.text', O / f'{n}.elf', '/dev/stdout'],
@@ -41,7 +52,7 @@ def leaf(pc):
             return 'save/restore' if n.startswith('__riscv_') else n
     return 'other'
 
-REGIONS = [  # (first line, last line, region) in forward()
+REGIONS = [  # (first line, last line, region) in baseline/firmware.c, forward() at line 113
     (113, 128, 'setup+embed'), (131, 131, 'layer loop'), (134, 134, 'rmsnorm'),
     (137, 139, 'misc'), (142, 144, 'W_qkv'), (147, 160, 'RoPE'),
     (165, 165, 'attn head loop'), (167, 182, 'attn QK'), (185, 185, 'softmax'),
@@ -49,6 +60,7 @@ REGIONS = [  # (first line, last line, region) in forward()
     (215, 216, 'FFN W1/W3'), (219, 226, 'SwiGLU'), (229, 229, 'FFN W2'), (232, 235, 'residual'),
     (238, 238, 'rmsnorm'), (241, 243, 'LM head'),
 ]
+REGIONS = [(a - 113 + FWD, b - 113 + FWD, r) for a, b, r in REGIONS]
 
 image = O / 'image.bin'
 sh('python3', W / 'image.py', O / 'fw.elf', image)
@@ -60,14 +72,19 @@ for t in (1, 128, 512):
         for j in range(2):
             m[0x100000 + l * 0x20000 + j * 0x10000:0x110000 + l * 0x20000 + j * 0x10000] = \
                 kv[j * 327680 + l * 65536:j * 327680 + (l + 1) * 65536]
-    struct.pack_into('I', m, 0x1afff0, t - 1)
+    if GEN:  # single step at pos t-1, token 1 (same case as HOLD)
+        struct.pack_into('<I', m, 0x1ae000, 1)
+        struct.pack_into('<III', m, 0x1afff0, 1, 1, t - 1)
+    else:
+        struct.pack_into('I', m, 0x1afff0, t - 1)
     img = O / f'image_{t}.bin'; img.write_bytes(m)
     env = dict(os.environ, SIM_PROF=str(O / f'prof_{t}.csv'),
                SIM_PROF_SITES='%x-%x,%x-%x' % (*fn['forward'], *fn['boot']))
-    subprocess.run([str(W / 'obj_prof/Vcv32e40p_top'), str(img), str(O / f'dump_{t}.bin')],
-                   env=env, check=True, capture_output=True)
+    so = subprocess.run([str(SIM), str(img), str(O / f'dump_{t}.bin')],
+                        env=env, check=True, capture_output=True, text=True).stdout
+    acc_line = next((l for l in so.splitlines() if l.startswith('ACC ')), None)
     dump = (O / f'dump_{t}.bin').read_bytes(); hold = (W / f'base_{t}.bin').read_bytes()
-    fw_cycles = struct.unpack_from('I', dump, 0x1aff00)[0]
+    fw_cycles = struct.unpack_from('I', dump, 0x1ad000 + 4 * (t - 1) if GEN else 0x1aff00)[0]
     bitexact = dump[0x1a4a00:0x1a5200] == hold[0x1a4a00:0x1a5200] and dump[0x100000:0x1a0000] == hold[0x100000:0x1a0000]
     rows = list(csv.DictReader(open(O / f'prof_{t}.csv')))
     sites = sorted({int(r['site'], 16) for r in rows} - {0})
@@ -95,7 +112,7 @@ for t in (1, 128, 512):
             if k not in ('site', 'pc'): reg[g][k] += int(v)
         lf[g][leaf(int(r['pc'], 16))] += int(r['cycles'])
     fwd = sum(v['cycles'] for g, v in reg.items() if g not in ('reset', 'boot/argmax'))
-    summary[t] = dict(fw_measured_cycles=fw_cycles, logits_kv_bitexact_vs_hold=bitexact, profiled_forward_cycles=fwd,
+    summary[t] = dict(acc=acc_line, fw_measured_cycles=fw_cycles, logits_kv_bitexact_vs_hold=bitexact, profiled_forward_cycles=fwd,
                       regions={g: dict(v) for g, v in reg.items()}, leaf_cycles={g: dict(v) for g, v in lf.items()})
 
 tb = int([l for l in sh(TC + 'size', '-A', O / 'fw.elf').splitlines() if l.startswith('.text')][0].split()[1])

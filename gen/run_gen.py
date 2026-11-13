@@ -4,6 +4,9 @@
 usage: [GEN_CFLAGS=...] gen/run_gen.py <steps> [prompt text]   (writes gen/out_<steps>_<tag>/)
 GEN_CFLAGS defaults to the step-② SW baseline "-O2 -funroll-loops" (tag O2u);
 GEN_CFLAGS="" reproduces the HOLD -Os build (tag Os).
+GEN_ACC=1 builds with -DUSE_ACC (FFN GEMV on acc/gemv_acc.sv) and runs obj_soc/Vsoc_top;
+SIM_ACC_LAT / SIM_ACC_GNT_EVERY set the accelerator memory latency / grant period
+(tag <flags>_acc_L<lat>_G<period>). Results must stay bit-exact vs the -Os run.
 Pass criteria (agreed 2026-11-13, host<->RISC is tolerance-based):
   per step: logits rel L2 < 1e-5, RISC token == argmax(RISC logits),
             host argmax == RISC argmax (mismatch allowed only on near-tie, reported)
@@ -18,6 +21,11 @@ G = W / 'gen'
 steps = int(sys.argv[1]); text = sys.argv[2] if len(sys.argv) > 2 else 'Once upon a time'
 cflags = os.environ.get('GEN_CFLAGS', '-O2 -funroll-loops')
 tag = {'-O2 -funroll-loops': 'O2u', '': 'Os'}.get(cflags, cflags.replace(' ', '').replace('-', '_'))
+acc = os.environ.get('GEN_ACC') == '1'
+fwtag = tag + ('_acc' if acc else '')
+if acc:
+    cflags += ' -DUSE_ACC'
+    tag += '_acc_L%s_G%s' % (os.environ.get('SIM_ACC_LAT', '0'), os.environ.get('SIM_ACC_GNT_EVERY', '1'))
 O = G / f'out_{steps}_{tag}'; O.mkdir(exist_ok=True)
 model, tok = W / 'stories260K.bin', G / 'tok512.bin'
 V, L, S, KVD = 512, 5, 512, 32
@@ -33,7 +41,7 @@ prompt = np.fromfile(O / 'prompt.u32', dtype='<u4')
 assert steps >= np_, 'steps must cover the prompt'
 
 # firmware + image
-fw = f'gen/firmware_gen_{tag}'
+fw = f'gen/firmware_gen_{fwtag}'
 run('env', 'SRC=gen/firmware_gen.c', f'OUT={fw}', 'TC=/usr', f'CFLAGS_EXTRA={cflags}', W / 'build.sh', cwd=W)
 run('python3', W / 'image.py', W / f'{fw}.elf', O / 'image.bin')
 m = bytearray((O / 'image.bin').read_bytes())
@@ -43,7 +51,7 @@ struct.pack_into('<II', m, 0x1afff0, np_, steps)
 
 # RTL sim
 t0 = time.time()
-log = run(W / 'obj/Vcv32e40p_top', O / 'image.bin', O / 'dump.bin', str(10**11), O / 'steps.bin')
+log = run(W / ('obj_soc/Vsoc_top' if acc else 'obj/Vcv32e40p_top'), O / 'image.bin', O / 'dump.bin', str(10**11), O / 'steps.bin')
 wall = time.time() - t0
 (O / 'sim.log').write_text(log)
 d = (O / 'dump.bin').read_bytes()
@@ -85,7 +93,9 @@ else:
     bitexact_vs_Os = None
 text_bytes = int([l for l in run('/usr/bin/riscv64-unknown-elf-size', '-A', W / f'{fw}.elf').splitlines()
                   if l.startswith('.text')][0].split()[1])
+acc_line = [l for l in log.splitlines() if l.startswith('ACC ')]
 res = dict(
+    acc=acc_line[0] if acc_line else None,
     cflags=cflags, text_bytes=text_bytes, logits_kv_tokens_bitexact_vs_Os=bitexact_vs_Os,
     steps=steps, prompt=text, n_prompt=np_, sim_wall_s=round(wall, 1),
     cycles_total=int(cyc.sum()), cycles_first=int(cyc[0]), cycles_last=int(cyc[-1]),

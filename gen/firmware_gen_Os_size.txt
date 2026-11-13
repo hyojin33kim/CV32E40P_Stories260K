@@ -1,6 +1,6 @@
-gen/firmware_gen.elf  :
+gen/firmware_gen_Os.elf  :
 section              size       addr
-.text                2824   16777344
+.text                2852   16777344
 .rodata               124    1785856
 .eh_frame             248    1785980
 .bss                  156    1786228
@@ -15,6 +15,6 @@ section              size       addr
 .debug_loclists       820          0
 .debug_rnglists       106          0
 .debug_frame          116          0
-Total               11357
+Total               11385
 
 

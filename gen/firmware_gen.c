@@ -2,6 +2,19 @@
 #include <math.h>
 static inline unsigned cyc(void){unsigned v;__asm__ volatile("csrr %0, mcycle":"=r"(v)::"memory");return v;}
 volatile unsigned ec,sc,en,sn;
+#ifdef USE_ACC
+// Step ③ phase 1: FFN W1/W3/W2 GEMV on gemv_acc (acc/gemv_acc.sv), bit-exact with matmul().
+static void acc_matmul(float* xout, float* x, float* w, int n, int d) {
+    volatile unsigned *r = (volatile unsigned*)0x30000000;
+    r[2] = (unsigned)x; r[3] = (unsigned)w; r[4] = (unsigned)xout;
+    r[5] = n; r[6] = d; r[7] = n * 4;
+    r[0] = 1;
+    while (r[1] & 1) ;
+}
+#define FFN_MATMUL acc_matmul
+#else
+#define FFN_MATMUL matmul
+#endif
 #include <string.h>
 typedef struct {
     int dim; // transformer dimension
@@ -212,8 +225,8 @@ float* forward(Transformer* transformer, int token, int pos) {
 
         // Now for FFN in PyTorch we have: self.w2(F.silu(self.w1(x)) * self.w3(x))
         // first calculate self.w1(x) and self.w3(x)
-        matmul(s->hb, s->xb, w->w1 + l*dim*hidden_dim, dim, hidden_dim);
-        matmul(s->hb2, s->xb, w->w3 + l*dim*hidden_dim, dim, hidden_dim);
+        FFN_MATMUL(s->hb, s->xb, w->w1 + l*dim*hidden_dim, dim, hidden_dim);
+        FFN_MATMUL(s->hb2, s->xb, w->w3 + l*dim*hidden_dim, dim, hidden_dim);
 
         // SwiGLU non-linearity
         for (int i = 0; i < hidden_dim; i++) {
@@ -226,7 +239,7 @@ float* forward(Transformer* transformer, int token, int pos) {
         }
 
         // final matmul to get the output of the ffn
-        matmul(s->xb, s->hb, w->w2 + l*dim*hidden_dim, hidden_dim, dim);
+        FFN_MATMUL(s->xb, s->hb, w->w2 + l*dim*hidden_dim, hidden_dim, dim);
 
         // residual connection
         for (int i = 0; i < dim; i++) {
@@ -263,15 +276,15 @@ void boot(void) {
  s->key_cache=(float*)0x100000;s->value_cache=(float*)0x110000;
  // Autoregressive generation (llama2.c generate(), greedy, no BOS stop so the
  // whole KV cache can be exercised). Control block written by the host image:
- //   0x1afff0 n_prompt, 0x1afff4 n_steps, 0x1ae000 prompt tokens (u32)
+ //   0x1afff0 n_prompt, 0x1afff4 n_steps, 0x1afff8 first pos, 0x1ae000 prompt tokens (u32)
  // Outputs: 0x1ae800 argmax per pos (u32), 0x1ad000 forward cycles per pos.
  // MMIO 0x20000004 <- pos after each step; the sim dumps logits there.
  volatile unsigned *ctrl=(unsigned*)0x1afff0;
- unsigned np=ctrl[0], steps=ctrl[1];
+ unsigned np=ctrl[0], steps=ctrl[1], pos0=ctrl[2]; // pos0: first pos (0 = normal generation; >0 = single-step profiling with host-injected KV)
  const unsigned *prompt=(const unsigned*)0x1ae000;
  volatile unsigned *toks=(unsigned*)0x1ae800, *cycles=(unsigned*)0x1ad000;
  unsigned token=prompt[0]; unsigned long long total=0;
- for(unsigned pos=0;pos<steps;pos++){
+ for(unsigned pos=pos0;pos<pos0+steps;pos++){
   unsigned start=cyc();
   float *r=forward(&tr,token,pos);
   unsigned elapsed=cyc()-start; unsigned best=0;

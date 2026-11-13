@@ -28,3 +28,7 @@ prof/*/image*.bin
 prof/*/dump_*.bin
 prof/*/prof_*.csv
 prof/*/*.o
+# Step ③ accelerator
+obj_soc/
+acc/build/
+acc/sweep/dump_*.bin
