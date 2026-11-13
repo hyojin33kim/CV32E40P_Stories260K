@@ -1,7 +1,7 @@
 #!/bin/bash
 # Build the Verilator simulator.
 #   default            : cv32e40p_top (FPU=1)          -> obj/Vcv32e40p_top
-#   TOP=soc_top        : CPU + gemv_acc (acc/*.sv)      -> obj_soc/Vsoc_top
+#   TOP=soc_top        : CPU + gemv_acc + vfu (acc/*.sv) -> obj_soc/Vsoc_top
 #   MDIR=<dir>         : output directory override
 #   LOG=<file>         : Verilator log (default verilator_build[_soc].log)
 set -eu
@@ -10,7 +10,7 @@ export DESIGN_RTL_DIR="$PWD/cv32e40p-master/rtl"
 VERILATOR=${VERILATOR:-verilator}
 TOP=${TOP:-cv32e40p_top}
 if [ "$TOP" = soc_top ]; then
-  EXTRA=(-CFLAGS -DSOC "$PWD/acc/gemv_acc.sv" "$PWD/acc/soc_top.sv")
+  EXTRA=(-CFLAGS -DSOC "$PWD/acc/gemv_acc.sv" "$PWD/acc/vfu.sv" "$PWD/acc/soc_top.sv")
   MDIR=${MDIR:-obj_soc}; LOG=${LOG:-verilator_build_soc.log}
 else
   EXTRA=(-GFPU=1)

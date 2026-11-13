@@ -17,6 +17,18 @@ static __attribute__((noinline)) void acc_gemv(float* y, float* x, float* w, int
 static void acc_matmul(float* xout, float* x, float* w, int n, int d) {
     acc_gemv(xout, x, w, n, d, n * 4, 4);
 }
+#ifdef USE_ACC_VFU
+// Step ④-b: vector function unit (acc/vfu.sv), bit-exact with softmax(), the SwiGLU
+// loop and the /sqrt(head_size) loop (picolibc expf). cmd: 1 softmax(a,n),
+// 2 a[i]=(a[i]*(1/(1+expf(-a[i]))))*b[i], 3 a[i]/=s, 4 a[i]=expf(a[i])
+static __attribute__((noinline)) void acc_vfu(unsigned cmd, float* a, float* b, int n, float s) {
+    volatile unsigned *r = (volatile unsigned*)0x30000040;
+    union { float f; unsigned u; } c = { s };
+    r[2] = (unsigned)a; r[3] = (unsigned)b; r[4] = n; r[5] = c.u;
+    r[0] = cmd;
+    while (r[1] & 1) ;
+}
+#endif
 #define FFN_MATMUL acc_matmul
 #else
 #define FFN_MATMUL matmul
@@ -191,6 +203,8 @@ float* forward(Transformer* transformer, int token, int pos) {
             // on the CPU after the full dot product, exactly as below
             acc_gemv(att, q, s->key_cache + loff + (h / kv_mul) * head_size, head_size, pos + 1,
                      kv_dim * 4, 4);
+            // (the VFU divs command is not used here: the divider latency dominates and
+            //  the CPU loop measured 6% faster at ctx512, see acc/P4B_VFU.md)
             for (int t = 0; t <= pos; t++) att[t] /= 0x1.6a09e6p+1f;
 #else
             // iterate over all timesteps, including the current one
@@ -209,7 +223,11 @@ float* forward(Transformer* transformer, int token, int pos) {
 #endif
 
             // softmax the scores to get attention weights, from 0..pos inclusively
+#ifdef USE_ACC_VFU
+            acc_vfu(1, att, 0, pos + 1, 0);
+#else
             softmax(att, pos + 1);
+#endif
 
             // weighted sum of the values, store back into xb
             float* xb = s->xb + h * head_size;
@@ -250,6 +268,9 @@ float* forward(Transformer* transformer, int token, int pos) {
         FFN_MATMUL(s->hb2, s->xb, w->w3 + l*dim*hidden_dim, dim, hidden_dim);
 
         // SwiGLU non-linearity
+#ifdef USE_ACC_VFU
+        acc_vfu(2, s->hb, s->hb2, hidden_dim, 0);
+#else
         for (int i = 0; i < hidden_dim; i++) {
             float val = s->hb[i];
             // silu(x)=x*σ(x), where σ(x) is the logistic sigmoid
@@ -258,6 +279,7 @@ float* forward(Transformer* transformer, int token, int pos) {
             val *= s->hb2[i];
             s->hb[i] = val;
         }
+#endif
 
         // final matmul to get the output of the ffn
         FFN_MATMUL(s->xb, s->hb, w->w2 + l*dim*hidden_dim, hidden_dim, dim);

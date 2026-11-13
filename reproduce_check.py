@@ -15,11 +15,14 @@ TOL = 1e-4
 rows, bad = [], 0
 MODE = sys.argv[1] if len(sys.argv) > 1 else 'quick'
 EXPECT = ['prof/O2u', 'prof/gen_O2u', 'prof/acc_ffn_L0_G1', 'prof/acc_ffn_attn_L0_G1',
-          'gen/out_8_Os', 'gen/out_8_O2u_accattn_L0_G1']
+          'prof/acc_all_L0_G1', 'gen/out_8_Os', 'gen/out_8_O2u_accattn_L0_G1',
+          'gen/out_8_O2u_accall_L0_G1']
 if MODE in ('standard', 'full'):
-    EXPECT += ['gen/out_64_Os', 'gen/out_64_O2u', 'gen/out_64_O2u_acc_L0_G1', 'gen/out_64_O2u_accattn_L0_G1']
+    EXPECT += ['gen/out_64_Os', 'gen/out_64_O2u', 'gen/out_64_O2u_acc_L0_G1', 'gen/out_64_O2u_accattn_L0_G1',
+               'gen/out_64_O2u_accall_L0_G1']
 if MODE == 'full':
-    EXPECT += ['gen/out_512_Os', 'gen/out_512_O2u', 'gen/out_512_O2u_accattn_L0_G1']
+    EXPECT += ['gen/out_512_Os', 'gen/out_512_O2u', 'gen/out_512_O2u_accattn_L0_G1',
+               'gen/out_512_O2u_accall_L0_G1']
 for e in EXPECT:  # a failed background run leaves no result file
     if not ((R / e / 'summary.json').exists() or (R / e / 'result.json').exists()):
         rows.append((e, 'missing (run failed? see repro/*.txt)', False)); bad += 1
@@ -55,6 +58,13 @@ for f in sorted((R / 'gen').glob('out_*/result.json')):
     else:
         note += ' (no committed reference)'
     rows.append((f'gen/{name}', note, ok)); bad += not ok
+
+vt = R / 'vfu' / 'results.json'  # VFU unit test: every element bit-identical
+if not vt.exists():
+    rows.append(('vfu unit test', 'missing (see repro/vfu_test.txt)', False)); bad += 1
+else:
+    v = json.load(open(vt)); n = sum(x['n'] for x in v); m = sum(x['mismatches'] for x in v)
+    rows.append(('vfu unit test', f'{n:,} elements, {m} mismatches', m == 0)); bad += m != 0
 
 w = max(len(r[0]) for r in rows) if rows else 0
 for name, note, ok in rows:

@@ -1,8 +1,10 @@
-// CV32E40P (FPU=1) + gemv_acc. Same external CPU ports as cv32e40p_top as used by
-// sim.cpp, plus the accelerator's memory master (acc_*), served by the simulator.
-// CPU data accesses to 0x3000_0000..0x3000_003F go to the accelerator registers
-// (granted immediately, read data returned next cycle); everything else is passed
-// to the external data port unchanged.
+// CV32E40P (FPU=1) + gemv_acc + vfu. Same external CPU ports as cv32e40p_top as used
+// by sim.cpp, plus one accelerator memory master (acc_*), served by the simulator.
+// CPU data accesses to 0x3000_0000..0x3000_003F go to the gemv_acc registers and
+// 0x3000_0040..0x3000_007F to the vfu registers (granted immediately, read data
+// returned next cycle); everything else is passed to the external data port unchanged.
+// gemv_acc and vfu share the memory master; the CPU waits for each command, so at
+// most one engine is busy (the busy vfu owns the port, otherwise gemv_acc).
 module soc_top (
     input logic clk_i,
     input logic rst_ni,
@@ -39,8 +41,10 @@ module soc_top (
 
   logic        c_req, c_gnt, c_rvalid, c_we;
   logic [ 3:0] c_be;
-  logic [31:0] c_addr, c_wdata, c_rdata, s_rdata;
-  logic        is_mmio, mmio_rvalid_q;
+  logic [31:0] c_addr, c_wdata, c_rdata, s_rdata, g_rdata, v_rdata;
+  logic        is_mmio, mmio_rvalid_q, mmio_vfu_q, is_vfu, vfu_busy;
+  logic        g_req, g_we, v_req, v_we;
+  logic [31:0] g_addr, g_wdata, v_addr, v_wdata;
 
   cv32e40p_top #(.FPU(1)) cpu_i (
       .clk_i, .rst_ni, .pulp_clock_en_i, .scan_cg_en_i,
@@ -54,7 +58,8 @@ module soc_top (
       .fetch_enable_i, .core_sleep_o()
   );
 
-  assign is_mmio      = (c_addr & 32'hFFFF_FFC0) == ACC_BASE;
+  assign is_mmio      = (c_addr & 32'hFFFF_FF80) == ACC_BASE;
+  assign is_vfu       = c_addr[6];
   assign data_req_o   = c_req && !is_mmio;
   assign data_we_o    = c_we;
   assign data_be_o    = c_be;
@@ -65,14 +70,32 @@ module soc_top (
   assign c_rdata      = mmio_rvalid_q ? s_rdata : data_rdata_i;
 
   always_ff @(posedge clk_i or negedge rst_ni)
-    if (!rst_ni) mmio_rvalid_q <= 1'b0;
-    else mmio_rvalid_q <= c_req && is_mmio;
+    if (!rst_ni) {mmio_rvalid_q, mmio_vfu_q} <= '0;
+    else begin
+      mmio_rvalid_q <= c_req && is_mmio;
+      mmio_vfu_q    <= is_vfu;
+    end
+  assign s_rdata = mmio_vfu_q ? v_rdata : g_rdata;
+
+  assign acc_req_o   = vfu_busy ? v_req : g_req;
+  assign acc_we_o    = vfu_busy ? v_we : g_we;
+  assign acc_addr_o  = vfu_busy ? v_addr : g_addr;
+  assign acc_wdata_o = vfu_busy ? v_wdata : g_wdata;
 
   gemv_acc acc_i (
       .clk_i, .rst_ni,
-      .s_req_i(c_req && is_mmio), .s_we_i(c_we), .s_addr_i(c_addr[5:0]),
-      .s_wdata_i(c_wdata), .s_rdata_o(s_rdata),
-      .m_req_o(acc_req_o), .m_we_o(acc_we_o), .m_addr_o(acc_addr_o), .m_wdata_o(acc_wdata_o),
-      .m_gnt_i(acc_gnt_i), .m_rvalid_i(acc_rvalid_i), .m_rdata_i(acc_rdata_i)
+      .s_req_i(c_req && is_mmio && !is_vfu), .s_we_i(c_we), .s_addr_i(c_addr[5:0]),
+      .s_wdata_i(c_wdata), .s_rdata_o(g_rdata),
+      .m_req_o(g_req), .m_we_o(g_we), .m_addr_o(g_addr), .m_wdata_o(g_wdata),
+      .m_gnt_i(acc_gnt_i && !vfu_busy), .m_rvalid_i(acc_rvalid_i && !vfu_busy), .m_rdata_i(acc_rdata_i)
+  );
+
+  vfu vfu_i (
+      .clk_i, .rst_ni,
+      .s_req_i(c_req && is_mmio && is_vfu), .s_we_i(c_we), .s_addr_i(c_addr[5:0]),
+      .s_wdata_i(c_wdata), .s_rdata_o(v_rdata),
+      .m_req_o(v_req), .m_we_o(v_we), .m_addr_o(v_addr), .m_wdata_o(v_wdata),
+      .m_gnt_i(acc_gnt_i && vfu_busy), .m_rvalid_i(acc_rvalid_i && vfu_busy), .m_rdata_i(acc_rdata_i),
+      .busy_o(vfu_busy)
   );
 endmodule

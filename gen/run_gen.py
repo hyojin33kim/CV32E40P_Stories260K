@@ -5,7 +5,8 @@ usage: [GEN_CFLAGS=...] gen/run_gen.py <steps> [prompt text]   (writes gen/out_<
 GEN_CFLAGS defaults to the step-② SW baseline "-O2 -funroll-loops" (tag O2u);
 GEN_CFLAGS="" reproduces the HOLD -Os build (tag Os).
 GEN_ACC=1 builds with -DUSE_ACC (FFN GEMV on acc/gemv_acc.sv), GEN_ACC=attn adds
--DUSE_ACC_ATTN (attention QK/AV too); both run obj_soc/Vsoc_top;
+-DUSE_ACC_ATTN (attention QK/AV too), GEN_ACC=all adds -DUSE_ACC_VFU (softmax and
+SwiGLU on acc/vfu.sv); all run obj_soc/Vsoc_top;
 SIM_ACC_LAT / SIM_ACC_GNT_EVERY set the accelerator memory latency / grant period
 (tag <flags>_acc_L<lat>_G<period>). Results must stay bit-exact vs the -Os run.
 Pass criteria (agreed 2026-11-13, host<->RISC is tolerance-based):
@@ -23,11 +24,11 @@ steps = int(sys.argv[1]); text = sys.argv[2] if len(sys.argv) > 2 else 'Once upo
 cflags = os.environ.get('GEN_CFLAGS', '-O2 -funroll-loops')
 tag = {'-O2 -funroll-loops': 'O2u', '': 'Os'}.get(cflags, cflags.replace(' ', '').replace('-', '_'))
 mode = os.environ.get('GEN_ACC', '')
-acc = mode in ('1', 'attn')
-name = {'1': 'acc', 'attn': 'accattn'}.get(mode, '')
+acc = mode in ('1', 'attn', 'all')
+name = {'1': 'acc', 'attn': 'accattn', 'all': 'accall'}.get(mode, '')
 fwtag = tag + ('_' + name if acc else '')
 if acc:
-    cflags += ' -DUSE_ACC' + (' -DUSE_ACC_ATTN' if mode == 'attn' else '')
+    cflags += ' -DUSE_ACC' + {'1': '', 'attn': ' -DUSE_ACC_ATTN', 'all': ' -DUSE_ACC_ATTN -DUSE_ACC_VFU'}[mode]
     tag += '_' + name + '_L%s_G%s' % (os.environ.get('SIM_ACC_LAT', '0'), os.environ.get('SIM_ACC_GNT_EVERY', '1'))
 OUTROOT = Path(os.environ.get('GEN_OUT', G))  # reproduce.sh points this at repro/gen
 OUTROOT.mkdir(parents=True, exist_ok=True)

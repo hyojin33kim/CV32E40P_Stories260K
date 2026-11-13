@@ -1,0 +1,194 @@
+[
+ {
+  "ctx": 1,
+  "lat": 0,
+  "gnt_every": 1,
+  "cycles": 728297,
+  "bitexact": true,
+  "speedup": 1.9976342069238238
+ },
+ {
+  "ctx": 1,
+  "lat": 0,
+  "gnt_every": 2,
+  "cycles": 900621,
+  "bitexact": true,
+  "speedup": 1.615408701329416
+ },
+ {
+  "ctx": 1,
+  "lat": 0,
+  "gnt_every": 4,
+  "cycles": 1245823,
+  "bitexact": true,
+  "speedup": 1.167799117531142
+ },
+ {
+  "ctx": 1,
+  "lat": 16,
+  "gnt_every": 1,
+  "cycles": 732408,
+  "bitexact": true,
+  "speedup": 1.9864215027689485
+ },
+ {
+  "ctx": 1,
+  "lat": 16,
+  "gnt_every": 2,
+  "cycles": 904738,
+  "bitexact": true,
+  "speedup": 1.6080578023693046
+ },
+ {
+  "ctx": 1,
+  "lat": 16,
+  "gnt_every": 4,
+  "cycles": 1249903,
+  "bitexact": true,
+  "speedup": 1.163987125400931
+ },
+ {
+  "ctx": 1,
+  "lat": 64,
+  "gnt_every": 1,
+  "cycles": 743213,
+  "bitexact": true,
+  "speedup": 1.9575424541820448
+ },
+ {
+  "ctx": 1,
+  "lat": 64,
+  "gnt_every": 2,
+  "cycles": 916103,
+  "bitexact": true,
+  "speedup": 1.5881085423800598
+ },
+ {
+  "ctx": 1,
+  "lat": 64,
+  "gnt_every": 4,
+  "cycles": 1260827,
+  "bitexact": true,
+  "speedup": 1.1539021610419193
+ },
+ {
+  "ctx": 1,
+  "lat": 128,
+  "gnt_every": 1,
+  "cycles": 758578,
+  "bitexact": true,
+  "speedup": 1.9178924250373726
+ },
+ {
+  "ctx": 1,
+  "lat": 128,
+  "gnt_every": 2,
+  "cycles": 931004,
+  "bitexact": true,
+  "speedup": 1.562690385863004
+ },
+ {
+  "ctx": 1,
+  "lat": 128,
+  "gnt_every": 4,
+  "cycles": 1276113,
+  "bitexact": true,
+  "speedup": 1.140080071278954
+ },
+ {
+  "ctx": 512,
+  "lat": 0,
+  "gnt_every": 1,
+  "cycles": 2925226,
+  "bitexact": true,
+  "speedup": 2.685110825625097
+ },
+ {
+  "ctx": 512,
+  "lat": 0,
+  "gnt_every": 2,
+  "cycles": 3506372,
+  "bitexact": true,
+  "speedup": 2.2400806303495466
+ },
+ {
+  "ctx": 512,
+  "lat": 0,
+  "gnt_every": 4,
+  "cycles": 4669242,
+  "bitexact": true,
+  "speedup": 1.682190813840876
+ },
+ {
+  "ctx": 512,
+  "lat": 16,
+  "gnt_every": 1,
+  "cycles": 2929205,
+  "bitexact": true,
+  "speedup": 2.6814634004789695
+ },
+ {
+  "ctx": 512,
+  "lat": 16,
+  "gnt_every": 2,
+  "cycles": 3510429,
+  "bitexact": true,
+  "speedup": 2.2374917709487927
+ },
+ {
+  "ctx": 512,
+  "lat": 16,
+  "gnt_every": 4,
+  "cycles": 4673013,
+  "bitexact": true,
+  "speedup": 1.6808333295884261
+ },
+ {
+  "ctx": 512,
+  "lat": 64,
+  "gnt_every": 1,
+  "cycles": 2940010,
+  "bitexact": true,
+  "speedup": 2.671608599970748
+ },
+ {
+  "ctx": 512,
+  "lat": 64,
+  "gnt_every": 2,
+  "cycles": 3521800,
+  "bitexact": true,
+  "speedup": 2.2302674768584247
+ },
+ {
+  "ctx": 512,
+  "lat": 64,
+  "gnt_every": 4,
+  "cycles": 4684185,
+  "bitexact": true,
+  "speedup": 1.676824463593987
+ },
+ {
+  "ctx": 512,
+  "lat": 128,
+  "gnt_every": 1,
+  "cycles": 2955609,
+  "bitexact": true,
+  "speedup": 2.657508486406693
+ },
+ {
+  "ctx": 512,
+  "lat": 128,
+  "gnt_every": 2,
+  "cycles": 3536737,
+  "bitexact": true,
+  "speedup": 2.2208481999085596
+ },
+ {
+  "ctx": 512,
+  "lat": 128,
+  "gnt_every": 4,
+  "cycles": 4699277,
+  "bitexact": true,
+  "speedup": 1.6714392448029771
+ }
+]

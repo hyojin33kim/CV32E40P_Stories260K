@@ -2,10 +2,12 @@
 # Reproduce the project's results from a clean checkout and compare them with the
 # committed values. Nothing tracked by git is overwritten: all outputs go to repro/.
 #
-#   ./reproduce.sh            quick    (~5 min)  build, HOLD regression, reference C,
-#                                                 single-step profiles, 8-step E2E
-#   ./reproduce.sh standard   (~20 min) quick + 64-step E2E (-Os, SW baseline, FFN, FFN+QK/AV)
-#   ./reproduce.sh full       (hours)   standard + 512-step E2E + memory sweep
+#   ./reproduce.sh            quick    (~6 min)  build, HOLD regression, reference C,
+#                                                 single-step profiles, VFU unit test (16K),
+#                                                 8-step E2E
+#   ./reproduce.sh standard   (~25 min) quick + VFU unit test (262K) + 64-step E2E
+#                                       (-Os, SW baseline, FFN, FFN+QK/AV, +VFU)
+#   ./reproduce.sh full       (hours)   standard + VFU unit test (1M) + 512-step E2E + sweeps
 #
 # Requires (Ubuntu 24.04): gcc-riscv64-unknown-elf picolibc-riscv64-unknown-elf
 # verilator (5.038 used) python3-numpy gcc. Override the RISC-V prefix with TC=<prefix>.
@@ -15,7 +17,7 @@ MODE=${1:-quick}
 case "$MODE" in quick|standard|full) ;; *) echo "usage: $0 [quick|standard|full]"; exit 2;; esac
 R=$PWD/repro
 rm -rf "$R"; mkdir -p "$R/hold" "$R/ref"
-export GEN_OUT=$R/gen PROF_OUT=$R/prof SWEEP_OUT=$R/sweep
+export GEN_OUT=$R/gen PROF_OUT=$R/prof SWEEP_OUT=$R/sweep TEST_OUT=$R/vfu
 F="-O2 -funroll-loops"
 step() { echo; echo "=== $*"; }
 
@@ -54,16 +56,23 @@ for f in ref_1 ref_128 ref_512 kv_1 kv_128 kv_512 after_kv_1 after_kv_128 after_
   cmp -s "$R/ref/$f.bin" "$f.bin" && echo "OK   $f.bin" || { echo "FAIL $f.bin"; exit 1; }
 done
 
-step "single-step profiles (SW baseline, gen SW baseline, FFN accel, FFN+QK/AV accel)"
+step "single-step profiles (SW baseline, gen SW baseline, FFN, FFN+QK/AV, FFN+QK/AV+VFU)"
 PROF_CFLAGS="$F" python3 prof/run_prof.py baseline/firmware.c O2u > "$R/prof_O2u.txt" 2>&1 &
 PROF_CFLAGS="$F" python3 prof/run_prof.py gen/firmware_gen.c gen_O2u > "$R/prof_gen_O2u.txt" 2>&1 &
 PROF_CFLAGS="$F" PROF_ACC=1 python3 prof/run_prof.py gen/firmware_gen.c acc_ffn_L0_G1 > "$R/prof_acc_ffn.txt" 2>&1 &
 PROF_CFLAGS="$F -DUSE_ACC_ATTN" PROF_ACC=1 python3 prof/run_prof.py gen/firmware_gen.c acc_ffn_attn_L0_G1 > "$R/prof_acc_attn.txt" 2>&1 &
+PROF_CFLAGS="$F -DUSE_ACC_ATTN -DUSE_ACC_VFU" PROF_ACC=1 python3 prof/run_prof.py gen/firmware_gen.c acc_all_L0_G1 > "$R/prof_acc_all.txt" 2>&1 &
 wait
 
-step "E2E generation, 8 steps (-Os reference first, then FFN+QK/AV accel)"
+step "VFU unit test (expf / softmax / SiLU / divide vs RISC-V software, bitwise)"
+case "$MODE" in quick) VS=1; VN=4096;; standard) VS=1; VN=65536;; full) VS=4; VN=65536;; esac
+python3 vfu/run_test.py $VS $VN > "$R/vfu_test.txt" 2>&1 || true
+tail -1 "$R/vfu_test.txt"
+
+step "E2E generation, 8 steps (-Os reference first, then FFN+QK/AV and FFN+QK/AV+VFU)"
 GEN_CFLAGS="" python3 gen/run_gen.py 8 > "$R/gen_8_Os.txt" 2>&1
 GEN_ACC=attn python3 gen/run_gen.py 8 > "$R/gen_8_accattn.txt" 2>&1
+GEN_ACC=all python3 gen/run_gen.py 8 > "$R/gen_8_accall.txt" 2>&1
 
 if [ "$MODE" != quick ]; then
   step "E2E generation, 64 steps"
@@ -71,6 +80,7 @@ if [ "$MODE" != quick ]; then
   python3 gen/run_gen.py 64 > "$R/gen_64_O2u.txt" 2>&1 &
   GEN_ACC=1 python3 gen/run_gen.py 64 > "$R/gen_64_acc.txt" 2>&1 &
   GEN_ACC=attn python3 gen/run_gen.py 64 > "$R/gen_64_accattn.txt" 2>&1 &
+  GEN_ACC=all python3 gen/run_gen.py 64 > "$R/gen_64_accall.txt" 2>&1 &
   wait
 fi
 
@@ -79,7 +89,9 @@ if [ "$MODE" = full ]; then
   GEN_CFLAGS="" python3 gen/run_gen.py 512 > "$R/gen_512_Os.txt" 2>&1
   python3 gen/run_gen.py 512 > "$R/gen_512_O2u.txt" 2>&1 &
   GEN_ACC=attn python3 gen/run_gen.py 512 > "$R/gen_512_accattn.txt" 2>&1 &
-  python3 acc/sweep_mem.py acc_ffn_attn_L0_G1 4 > "$R/sweep.txt" 2>&1 &
+  GEN_ACC=all python3 gen/run_gen.py 512 > "$R/gen_512_accall.txt" 2>&1 &
+  python3 acc/sweep_mem.py acc_ffn_attn_L0_G1 2 > "$R/sweep.txt" 2>&1 &
+  python3 acc/sweep_mem.py acc_all_L0_G1 2 > "$R/sweep_all.txt" 2>&1 &
   wait
 fi
 
