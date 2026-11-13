@@ -24,7 +24,7 @@ CTRL             0x001b4000         0x0004c000         rw
 
 Linker script and memory map
 
-LOAD /tmp/ccVF9W29.o
+LOAD /tmp/ccXJpKyc.o
 LOAD prof/O2u/fw_g.o
 LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libm.a
 LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a
@@ -32,10 +32,10 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
 
 .text           0x01000080     0x2878
  *(.text.start)
- .text.start    0x01000080       0x38 /tmp/ccVF9W29.o
+ .text.start    0x01000080       0x38 /tmp/ccXJpKyc.o
                 0x01000080                _start
  *(.text*)
- .text          0x010000b8        0x0 /tmp/ccVF9W29.o
+ .text          0x010000b8        0x0 /tmp/ccXJpKyc.o
  .text          0x010000b8     0x24e0 prof/O2u/fw_g.o
                 0x010000b8                rmsnorm
                 0x010003a6                softmax
@@ -103,11 +103,11 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
 
 .rela.dyn       0x001b4174        0x0
  .rela.text.start
-                0x001b4174        0x0 /tmp/ccVF9W29.o
+                0x001b4174        0x0 /tmp/ccXJpKyc.o
 
 .data           0x001b4174        0x0
  *(.data*)
- .data          0x001b4174        0x0 /tmp/ccVF9W29.o
+ .data          0x001b4174        0x0 /tmp/ccXJpKyc.o
  .data          0x001b4174        0x0 prof/O2u/fw_g.o
  .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
  .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memset.S.o)
@@ -121,7 +121,7 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
                 0x001b4174                        . = ALIGN (0x4)
                 0x001b4174                        __bss_start = .
  *(.bss*)
- .bss           0x001b4174        0x0 /tmp/ccVF9W29.o
+ .bss           0x001b4174        0x0 /tmp/ccXJpKyc.o
  .bss           0x001b4174       0x9c prof/O2u/fw_g.o
                 0x001b41fc                result_token
                 0x001b4200                ec
@@ -145,7 +145,7 @@ OUTPUT(prof/O2u/fw_g.elf elf32-littleriscv)
 .riscv.attributes
                 0x00000000       0x41
  .riscv.attributes
-                0x00000000       0x3f /tmp/ccVF9W29.o
+                0x00000000       0x3f /tmp/ccXJpKyc.o
  .riscv.attributes
                 0x0000003f       0x41 prof/O2u/fw_g.o
  .riscv.attributes
@@ -169,7 +169,7 @@ OUTPUT(prof/O2u/fw_g.elf elf32-littleriscv)
  .comment       0x00000022       0x23 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
 
 .debug_line     0x00000000     0x6f5c
- .debug_line    0x00000000       0x86 /tmp/ccVF9W29.o
+ .debug_line    0x00000000       0x86 /tmp/ccXJpKyc.o
  .debug_line    0x00000086     0x6605 prof/O2u/fw_g.o
  .debug_line    0x0000668b       0x7a /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
  .debug_line    0x00006705       0x6e /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memset.S.o)
@@ -181,7 +181,7 @@ OUTPUT(prof/O2u/fw_g.elf elf32-littleriscv)
 .debug_line_str
                 0x00000000      0x362
  .debug_line_str
-                0x00000000      0x362 /tmp/ccVF9W29.o
+                0x00000000      0x362 /tmp/ccXJpKyc.o
                                  0x6a (size before relaxing)
  .debug_line_str
                 0x00000362      0x1b6 prof/O2u/fw_g.o
@@ -199,7 +199,7 @@ OUTPUT(prof/O2u/fw_g.elf elf32-littleriscv)
                 0x00000362       0xae /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
 
 .debug_info     0x00000000     0x16a2
- .debug_info    0x00000000       0x24 /tmp/ccVF9W29.o
+ .debug_info    0x00000000       0x24 /tmp/ccXJpKyc.o
  .debug_info    0x00000024      0xf51 prof/O2u/fw_g.o
  .debug_info    0x00000f75       0x31 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
  .debug_info    0x00000fa6       0x31 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memset.S.o)
@@ -209,7 +209,7 @@ OUTPUT(prof/O2u/fw_g.elf elf32-littleriscv)
  .debug_info    0x00001543      0x15f /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
 
 .debug_abbrev   0x00000000      0x6cc
- .debug_abbrev  0x00000000       0x14 /tmp/ccVF9W29.o
+ .debug_abbrev  0x00000000       0x14 /tmp/ccXJpKyc.o
  .debug_abbrev  0x00000014      0x370 prof/O2u/fw_g.o
  .debug_abbrev  0x00000384       0x28 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
  .debug_abbrev  0x000003ac       0x28 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memset.S.o)
@@ -220,7 +220,7 @@ OUTPUT(prof/O2u/fw_g.elf elf32-littleriscv)
 
 .debug_aranges  0x00000000      0x100
  .debug_aranges
-                0x00000000       0x20 /tmp/ccVF9W29.o
+                0x00000000       0x20 /tmp/ccXJpKyc.o
  .debug_aranges
                 0x00000020       0x20 prof/O2u/fw_g.o
  .debug_aranges
@@ -237,7 +237,7 @@ OUTPUT(prof/O2u/fw_g.elf elf32-littleriscv)
                 0x000000e0       0x20 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
 
 .debug_str      0x00000000      0x78d
- .debug_str     0x00000000      0x78d /tmp/ccVF9W29.o
+ .debug_str     0x00000000      0x78d /tmp/ccXJpKyc.o
                                  0x76 (size before relaxing)
  .debug_str     0x0000078d      0x353 prof/O2u/fw_g.o
  .debug_str     0x0000078d       0x59 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)

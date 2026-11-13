@@ -3,13 +3,19 @@
 static inline unsigned cyc(void){unsigned v;__asm__ volatile("csrr %0, mcycle":"=r"(v)::"memory");return v;}
 volatile unsigned ec,sc,en,sn;
 #ifdef USE_ACC
-// Step ③ phase 1: FFN W1/W3/W2 GEMV on gemv_acc (acc/gemv_acc.sv), bit-exact with matmul().
-static void acc_matmul(float* xout, float* x, float* w, int n, int d) {
+// GEMV on gemv_acc (acc/gemv_acc.sv), bit-exact with the software loops:
+//   y[i] = sum_j w[i*wstride + j*jstride] * x[j]   (strides in bytes)
+// Step ③: FFN W1/W3/W2 (USE_ACC). Step ④: attention QK and AV (USE_ACC_ATTN).
+// noinline: keeps the MMIO wait loop out of forward() so profiles charge it to the call line
+static __attribute__((noinline)) void acc_gemv(float* y, float* x, float* w, int n, int d, int wstride, int jstride) {
     volatile unsigned *r = (volatile unsigned*)0x30000000;
-    r[2] = (unsigned)x; r[3] = (unsigned)w; r[4] = (unsigned)xout;
-    r[5] = n; r[6] = d; r[7] = n * 4;
+    r[2] = (unsigned)x; r[3] = (unsigned)w; r[4] = (unsigned)y;
+    r[5] = n; r[6] = d; r[7] = wstride; r[9] = jstride;
     r[0] = 1;
     while (r[1] & 1) ;
+}
+static void acc_matmul(float* xout, float* x, float* w, int n, int d) {
+    acc_gemv(xout, x, w, n, d, n * 4, 4);
 }
 #define FFN_MATMUL acc_matmul
 #else
@@ -180,6 +186,13 @@ float* forward(Transformer* transformer, int token, int pos) {
             float* q = s->q + h * head_size;
             // attention scores for this head
             float* att = s->att + h * p->seq_len;
+#ifdef USE_ACC_ATTN
+            // step ④: q.K^T on the accelerator (rows = timesteps), then the /sqrt(head_size)
+            // on the CPU after the full dot product, exactly as below
+            acc_gemv(att, q, s->key_cache + loff + (h / kv_mul) * head_size, head_size, pos + 1,
+                     kv_dim * 4, 4);
+            for (int t = 0; t <= pos; t++) att[t] /= 0x1.6a09e6p+1f;
+#else
             // iterate over all timesteps, including the current one
             for (int t = 0; t <= pos; t++) {
                 // get the key vector for this head and at this timestep
@@ -193,12 +206,19 @@ float* forward(Transformer* transformer, int token, int pos) {
                 // save the score to the attention buffer
                 att[t] = score;
             }
+#endif
 
             // softmax the scores to get attention weights, from 0..pos inclusively
             softmax(att, pos + 1);
 
             // weighted sum of the values, store back into xb
             float* xb = s->xb + h * head_size;
+#ifdef USE_ACC_ATTN
+            // step ④: V^T.a on the accelerator (rows = head dims, columns = timesteps,
+            // accumulated in t order from +0.0 like the memset + loop below)
+            acc_gemv(xb, att, s->value_cache + loff + (h / kv_mul) * head_size, pos + 1, head_size,
+                     4, kv_dim * 4);
+#else
             memset(xb, 0, head_size * sizeof(float));
             for (int t = 0; t <= pos; t++) {
                 // get the value vector for this head and at this timestep
@@ -210,6 +230,7 @@ float* forward(Transformer* transformer, int token, int pos) {
                     xb[i] += a * v[i];
                 }
             }
+#endif
         }
 
         // final matmul to get the output of the attention

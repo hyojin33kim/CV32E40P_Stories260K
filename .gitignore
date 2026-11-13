@@ -28,7 +28,10 @@ prof/*/image*.bin
 prof/*/dump_*.bin
 prof/*/prof_*.csv
 prof/*/*.o
+# scratch scripts (in-worktree so reads stay inside the working directory)
+.scratch/
 # Step ③ accelerator
 obj_soc/
+obj_soc_new/
 acc/build/
 acc/sweep/dump_*.bin

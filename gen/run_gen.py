@@ -4,7 +4,8 @@
 usage: [GEN_CFLAGS=...] gen/run_gen.py <steps> [prompt text]   (writes gen/out_<steps>_<tag>/)
 GEN_CFLAGS defaults to the step-② SW baseline "-O2 -funroll-loops" (tag O2u);
 GEN_CFLAGS="" reproduces the HOLD -Os build (tag Os).
-GEN_ACC=1 builds with -DUSE_ACC (FFN GEMV on acc/gemv_acc.sv) and runs obj_soc/Vsoc_top;
+GEN_ACC=1 builds with -DUSE_ACC (FFN GEMV on acc/gemv_acc.sv), GEN_ACC=attn adds
+-DUSE_ACC_ATTN (attention QK/AV too); both run obj_soc/Vsoc_top;
 SIM_ACC_LAT / SIM_ACC_GNT_EVERY set the accelerator memory latency / grant period
 (tag <flags>_acc_L<lat>_G<period>). Results must stay bit-exact vs the -Os run.
 Pass criteria (agreed 2026-11-13, host<->RISC is tolerance-based):
@@ -21,11 +22,13 @@ G = W / 'gen'
 steps = int(sys.argv[1]); text = sys.argv[2] if len(sys.argv) > 2 else 'Once upon a time'
 cflags = os.environ.get('GEN_CFLAGS', '-O2 -funroll-loops')
 tag = {'-O2 -funroll-loops': 'O2u', '': 'Os'}.get(cflags, cflags.replace(' ', '').replace('-', '_'))
-acc = os.environ.get('GEN_ACC') == '1'
-fwtag = tag + ('_acc' if acc else '')
+mode = os.environ.get('GEN_ACC', '')
+acc = mode in ('1', 'attn')
+name = {'1': 'acc', 'attn': 'accattn'}.get(mode, '')
+fwtag = tag + ('_' + name if acc else '')
 if acc:
-    cflags += ' -DUSE_ACC'
-    tag += '_acc_L%s_G%s' % (os.environ.get('SIM_ACC_LAT', '0'), os.environ.get('SIM_ACC_GNT_EVERY', '1'))
+    cflags += ' -DUSE_ACC' + (' -DUSE_ACC_ATTN' if mode == 'attn' else '')
+    tag += '_' + name + '_L%s_G%s' % (os.environ.get('SIM_ACC_LAT', '0'), os.environ.get('SIM_ACC_GNT_EVERY', '1'))
 O = G / f'out_{steps}_{tag}'; O.mkdir(exist_ok=True)
 model, tok = W / 'stories260K.bin', G / 'tok512.bin'
 V, L, S, KVD = 512, 5, 512, 32
@@ -51,7 +54,8 @@ struct.pack_into('<II', m, 0x1afff0, np_, steps)
 
 # RTL sim
 t0 = time.time()
-log = run(W / ('obj_soc/Vsoc_top' if acc else 'obj/Vcv32e40p_top'), O / 'image.bin', O / 'dump.bin', str(10**11), O / 'steps.bin')
+sim = os.environ.get('GEN_SIM') or W / ('obj_soc/Vsoc_top' if acc else 'obj/Vcv32e40p_top')
+log = run(sim, O / 'image.bin', O / 'dump.bin', str(10**11), O / 'steps.bin')
 wall = time.time() - t0
 (O / 'sim.log').write_text(log)
 d = (O / 'dump.bin').read_bytes()

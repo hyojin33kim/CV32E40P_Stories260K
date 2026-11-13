@@ -1,6 +1,10 @@
-// GEMV accelerator, phase 1 of step ③ (FFN W1/W3/W2 offload).
+// GEMV accelerator: step ③ (FFN W1/W3/W2) and step ④ (attention QK and AV).
 //
-//   y[i] = sum_j W[i*stride + j] * x[j]      i < D, j < N
+//   y[i] = sum_j W[W_ADDR + i*W_STRIDE + j*J_STRIDE] * x[j]      i < D, j < N
+//
+//   FFN/LM matmul : W_STRIDE = 4*N, J_STRIDE = 4
+//   attention QK  : W = key cache of the head,   W_STRIDE = 4*kv_dim, J_STRIDE = 4
+//   attention AV  : W = value cache of the head, W_STRIDE = 4, J_STRIDE = 4*kv_dim
 //
 // Bit-exact with the RISC-V software matmul() (val = 0.0f; val += w*x in j order):
 // products and sums use cv32e40p_fp_wrapper, the same FPU module instance type the
@@ -13,6 +17,7 @@
 //   0x08 X_ADDR  0x0C W_ADDR  0x10 Y_ADDR  (byte addresses, word aligned)
 //   0x14 N (<= XBUF)  0x18 D (<= YBUF)  0x1C W_STRIDE (bytes between rows)
 //   0x20 LAST_CYCLES R: busy cycles of the last command
+//   0x24 J_STRIDE (bytes between consecutive j of a row; reset value 4)
 //
 // Master port: OBI-like, one request per cycle when granted, in-order read
 // responses (rvalid). Writes complete on grant (no response expected).
@@ -20,7 +25,7 @@
 module gemv_acc
   import cv32e40p_apu_core_pkg::*;
 #(
-    parameter int XBUF = 256,
+    parameter int XBUF = 512,
     parameter int YBUF = 512
 ) (
     input logic clk_i,
@@ -46,12 +51,12 @@ module gemv_acc
   typedef enum logic [1:0] {IDLE, LOADX, ROWS, WB} state_e;
   state_e state_q;
 
-  logic [31:0] x_addr_q, w_addr_q, y_addr_q, n_q, d_q, stride_q, cyc_q;
+  logic [31:0] x_addr_q, w_addr_q, y_addr_q, n_q, d_q, stride_q, jstride_q, cyc_q;
   logic [31:0] xbuf[XBUF];
   logic [31:0] ybuf[YBUF];
 
   // request side counters
-  logic [31:0] iss_i_q, iss_j_q, iss_row_addr_q;
+  logic [31:0] iss_i_q, iss_j_q, iss_row_addr_q, iss_addr_q;
   // response side counters
   logic [31:0] rsp_i_q, rsp_j_q;
   logic [31:0] rows_done_q, wb_q;
@@ -105,7 +110,7 @@ module gemv_acc
       end
       ROWS: begin
         m_req_o  = iss_i_q < d_q;
-        m_addr_o = iss_row_addr_q + (iss_j_q << 2);
+        m_addr_o = iss_addr_q;
       end
       WB: begin
         m_req_o   = wb_q < d_q;
@@ -128,6 +133,7 @@ module gemv_acc
       4'h6: s_rdata_o <= d_q;
       4'h7: s_rdata_o <= stride_q;
       4'h8: s_rdata_o <= cyc_q;
+      4'h9: s_rdata_o <= jstride_q;
       default: s_rdata_o <= '0;
     endcase
   end
@@ -137,7 +143,8 @@ module gemv_acc
     if (!rst_ni) begin
       state_q <= IDLE;
       {x_addr_q, w_addr_q, y_addr_q, n_q, d_q, stride_q, cyc_q} <= '0;
-      {iss_i_q, iss_j_q, iss_row_addr_q, rsp_i_q, rsp_j_q, rows_done_q, wb_q} <= '0;
+      jstride_q <= 32'd4;
+      {iss_i_q, iss_j_q, iss_row_addr_q, iss_addr_q, rsp_i_q, rsp_j_q, rows_done_q, wb_q} <= '0;
       {p_valid_q, p_first_q, p_last_q} <= '0;
       {p_q, p_row_q, acc_q} <= '0;
     end else begin
@@ -149,6 +156,7 @@ module gemv_acc
             cyc_q   <= '0;
             {iss_i_q, iss_j_q, rsp_i_q, rsp_j_q, rows_done_q, wb_q} <= '0;
             iss_row_addr_q <= w_addr_q;
+            iss_addr_q     <= w_addr_q;
           end
           4'h2: x_addr_q <= s_wdata_i;
           4'h3: w_addr_q <= s_wdata_i;
@@ -156,6 +164,7 @@ module gemv_acc
           4'h5: n_q      <= s_wdata_i;
           4'h6: d_q      <= s_wdata_i;
           4'h7: stride_q <= s_wdata_i;
+          4'h9: jstride_q <= s_wdata_i;
           default: ;
         endcase
       end
@@ -180,7 +189,11 @@ module gemv_acc
               iss_j_q        <= '0;
               iss_i_q        <= iss_i_q + 1;
               iss_row_addr_q <= iss_row_addr_q + stride_q;
-            end else iss_j_q <= iss_j_q + 1;
+              iss_addr_q     <= iss_row_addr_q + stride_q;
+            end else begin
+              iss_j_q    <= iss_j_q + 1;
+              iss_addr_q <= iss_addr_q + jstride_q;
+            end
           end
           // stage 1: product of the returning weight and x[j]
           if (m_rvalid_i) begin

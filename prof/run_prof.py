@@ -9,8 +9,9 @@ runs obj_soc/Vsoc_top; accelerator memory reads are taken from the sim's ACC lin
 The firmware is built with -g (code bytes identical to the non -g build; checked
 here) and run on the CSR-free sim profiler (SIM_PROF). Each cycle is charged to the
 forward()/boot() source line that is the current call site, so callee cycles
-(matmul, expf, ...) land on the calling line. Regions are line offsets from the
-`float* forward(` line (forward() body must match baseline/firmware.c).
+(matmul, expf, ...) land on the calling line. Regions are found by source-text
+anchors inside forward(): a region runs from its anchor line to the line before the
+next anchor, so code added inside a region (e.g. #ifdef offload paths) stays in it.
 """
 import csv, json, os, struct, subprocess, sys
 from collections import defaultdict
@@ -31,7 +32,7 @@ src_text = (W / src).read_text()
 GEN = 'pos0=ctrl[2]' in src_text
 assert GEN or not ACC, 'PROF_ACC needs gen/firmware_gen.c'
 if ACC: OPT += ' -DUSE_ACC'
-SIM = W / ('obj_soc/Vsoc_top' if ACC else 'obj_prof/Vcv32e40p_top')
+SIM = Path(os.environ['PROF_SIM']) if os.environ.get('PROF_SIM') else W / ('obj_soc/Vsoc_top' if ACC else 'obj_prof/Vcv32e40p_top')
 FWD = next(i for i, l in enumerate(src_text.splitlines(), 1) if l.startswith('float* forward('))
 for name, extra in (('fw_g', '-g ' + OPT), ('fw', OPT)):
     sh('env', f'SRC={src}', f'OUT=prof/{tag}/{name}', f'CFLAGS_EXTRA={extra}', W / 'build.sh', cwd=W)
@@ -52,15 +53,24 @@ def leaf(pc):
             return 'save/restore' if n.startswith('__riscv_') else n
     return 'other'
 
-REGIONS = [  # (first line, last line, region) in baseline/firmware.c, forward() at line 113
-    (113, 128, 'setup+embed'), (131, 131, 'layer loop'), (134, 134, 'rmsnorm'),
-    (137, 139, 'misc'), (142, 144, 'W_qkv'), (147, 160, 'RoPE'),
-    (165, 165, 'attn head loop'), (167, 182, 'attn QK'), (185, 185, 'softmax'),
-    (188, 200, 'attn AV'), (203, 203, 'W_o'), (206, 208, 'residual'), (211, 211, 'rmsnorm'),
-    (215, 216, 'FFN W1/W3'), (219, 226, 'SwiGLU'), (229, 229, 'FFN W2'), (232, 235, 'residual'),
-    (238, 238, 'rmsnorm'), (241, 243, 'LM head'),
+ANCHORS = [  # (substring of the first line of the region, region), in source order
+    ('float* forward(', 'setup+embed'), ('for(unsigned long long l = 0', 'layer loop'),
+    ('rmsnorm(s->xb, x, w->rms_att_weight', 'rmsnorm'), ('int loff =', 'misc'),
+    ('// qkv matmuls', 'W_qkv'), ('// RoPE', 'RoPE'), ('for (h = 0; h < p->n_heads', 'attn head loop'),
+    ('// get the query vector for this head', 'attn QK'), ('// softmax the scores', 'softmax'),
+    ('// weighted sum of the values', 'attn AV'), ('// final matmul to get the output of the attention', 'W_o'),
+    ('// residual connection back into x', 'residual'), ('rmsnorm(s->xb, x, w->rms_ffn_weight', 'rmsnorm'),
+    ('// first calculate self.w1(x) and self.w3(x)', 'FFN W1/W3'), ('// SwiGLU non-linearity', 'SwiGLU'),
+    ('// final matmul to get the output of the ffn', 'FFN W2'), ('// residual connection\n', 'residual'),
+    ('// final rmsnorm', 'rmsnorm'), ('// classifier into logits', 'LM head'),
 ]
-REGIONS = [(a - 113 + FWD, b - 113 + FWD, r) for a, b, r in REGIONS]
+src_lines = [l + '\n' for l in src_text.splitlines()]
+starts, k = [], FWD - 1
+for a, r in ANCHORS:
+    while a not in src_lines[k]: k += 1
+    starts.append((k + 1, r)); k += 1
+fwd_end = next(i for i in range(k, len(src_lines)) if src_lines[i].startswith('}')) + 1
+REGIONS = [(ln, (starts[i + 1][0] - 1 if i + 1 < len(starts) else fwd_end), r) for i, (ln, r) in enumerate(starts)]
 
 image = O / 'image.bin'
 sh('python3', W / 'image.py', O / 'fw.elf', image)

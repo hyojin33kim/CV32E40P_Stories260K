@@ -1,5 +1,6 @@
 {
  "1": {
+  "acc": null,
   "fw_measured_cycles": 1454872,
   "logits_kv_bitexact_vs_hold": true,
   "profiled_forward_cycles": 1454861,
@@ -341,6 +342,7 @@
   }
  },
  "128": {
+  "acc": null,
   "fw_measured_cycles": 3039675,
   "logits_kv_bitexact_vs_hold": true,
   "profiled_forward_cycles": 3039664,
@@ -682,6 +684,7 @@
   }
  },
  "512": {
+  "acc": null,
   "fw_measured_cycles": 7854557,
   "logits_kv_bitexact_vs_hold": true,
   "profiled_forward_cycles": 7854546,

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Step ③: accelerator memory latency / bandwidth sweep (single forward at ctx1 and ctx512).
 
-Uses the images built by `PROF_ACC=1 prof/run_prof.py gen/firmware_gen.c acc_L0_G1`.
+usage: acc/sweep_mem.py <prof tag> [workers]   (images from prof/<tag>/, e.g. acc_ffn_attn_L0_G1)
+SWEEP_SIM overrides the simulator (default obj_soc/Vsoc_top).
 SIM_ACC_LAT      : extra cycles before each read response (pipelined, unlimited outstanding)
 SIM_ACC_GNT_EVERY: one request granted every P cycles (32-bit port -> 4/P bytes per cycle)
 Every run is checked bit-exact (logits + KV) against the HOLD dump.
@@ -11,15 +12,17 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 W = Path(__file__).resolve().parent.parent
-P = W / 'prof' / 'acc_L0_G1'
-O = W / 'acc' / 'sweep'; O.mkdir(parents=True, exist_ok=True)
+TAG = sys.argv[1]
+P = W / 'prof' / TAG
+O = W / 'acc' / 'sweep' / TAG; O.mkdir(parents=True, exist_ok=True)
+SIM = os.environ.get('SWEEP_SIM', str(W / 'obj_soc/Vsoc_top'))
 base = json.load(open(W / 'prof' / 'gen_O2u' / 'summary.json'))
 LATS, GNTS = (0, 16, 64, 128), (1, 2, 4)
 
 def one(t, lat, gp):
     out = O / f'dump_{t}_L{lat}_G{gp}.bin'
     env = dict(os.environ, SIM_ACC_LAT=str(lat), SIM_ACC_GNT_EVERY=str(gp))
-    so = subprocess.run([str(W / 'obj_soc/Vsoc_top'), str(P / f'image_{t}.bin'), str(out)],
+    so = subprocess.run([SIM, str(P / f'image_{t}.bin'), str(out)],
                         env=env, check=True, capture_output=True, text=True).stdout
     d = out.read_bytes(); h = (W / f'base_{t}.bin').read_bytes()
     ok = d[0x1a4a00:0x1a5200] == h[0x1a4a00:0x1a5200] and d[0x100000:0x1a0000] == h[0x100000:0x1a0000]
@@ -29,7 +32,7 @@ def one(t, lat, gp):
                 speedup=base[str(t)]['fw_measured_cycles'] / cyc)
 
 jobs = [(t, l, g) for t in (1, 512) for l in LATS for g in GNTS]
-with ThreadPoolExecutor(max_workers=int(sys.argv[1]) if len(sys.argv) > 1 else 8) as ex:
+with ThreadPoolExecutor(max_workers=int(sys.argv[2]) if len(sys.argv) > 2 else 8) as ex:
     res = list(ex.map(lambda a: one(*a), jobs))
 (O / 'sweep.json').write_text(json.dumps(res, indent=1))
 lines = ['| ctx | latency \\ grant period | ' + ' | '.join(f'G={g} ({4 / g:g} B/cyc)' for g in GNTS) + ' |',

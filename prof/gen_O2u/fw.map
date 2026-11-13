@@ -24,7 +24,7 @@ CTRL             0x001b4000         0x0004c000         rw
 
 Linker script and memory map
 
-LOAD /tmp/ccmHwqUI.o
+LOAD /tmp/ccZDgfbK.o
 LOAD prof/gen_O2u/fw.o
 LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libm.a
 LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a
@@ -32,10 +32,10 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
 
 .text           0x01000080     0x28f8
  *(.text.start)
- .text.start    0x01000080       0x38 /tmp/ccmHwqUI.o
+ .text.start    0x01000080       0x38 /tmp/ccZDgfbK.o
                 0x01000080                _start
  *(.text*)
- .text          0x010000b8        0x0 /tmp/ccmHwqUI.o
+ .text          0x010000b8        0x0 /tmp/ccZDgfbK.o
  .text          0x010000b8     0x2560 prof/gen_O2u/fw.o
                 0x010000b8                rmsnorm
                 0x010003a6                softmax
@@ -103,11 +103,11 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
 
 .rela.dyn       0x001b4174        0x0
  .rela.text.start
-                0x001b4174        0x0 /tmp/ccmHwqUI.o
+                0x001b4174        0x0 /tmp/ccZDgfbK.o
 
 .data           0x001b4174        0x0
  *(.data*)
- .data          0x001b4174        0x0 /tmp/ccmHwqUI.o
+ .data          0x001b4174        0x0 /tmp/ccZDgfbK.o
  .data          0x001b4174        0x0 prof/gen_O2u/fw.o
  .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
  .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memset.S.o)
@@ -121,7 +121,7 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
                 0x001b4174                        . = ALIGN (0x4)
                 0x001b4174                        __bss_start = .
  *(.bss*)
- .bss           0x001b4174        0x0 /tmp/ccmHwqUI.o
+ .bss           0x001b4174        0x0 /tmp/ccZDgfbK.o
  .bss           0x001b4174       0x9c prof/gen_O2u/fw.o
                 0x001b41fc                result_token
                 0x001b4200                ec
@@ -145,7 +145,7 @@ OUTPUT(prof/gen_O2u/fw.elf elf32-littleriscv)
 .riscv.attributes
                 0x00000000       0x41
  .riscv.attributes
-                0x00000000       0x3f /tmp/ccmHwqUI.o
+                0x00000000       0x3f /tmp/ccZDgfbK.o
  .riscv.attributes
                 0x0000003f       0x41 prof/gen_O2u/fw.o
  .riscv.attributes

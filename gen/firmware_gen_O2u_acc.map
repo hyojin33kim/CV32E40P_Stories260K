@@ -24,68 +24,68 @@ CTRL             0x001b4000         0x0004c000         rw
 
 Linker script and memory map
 
-LOAD /tmp/ccY5cpZQ.o
+LOAD /tmp/ccWOf45c.o
 LOAD gen/firmware_gen_O2u_acc.o
 LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libm.a
 LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a
 LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
 
-.text           0x01000080     0x2548
+.text           0x01000080     0x24fc
  *(.text.start)
- .text.start    0x01000080       0x38 /tmp/ccY5cpZQ.o
+ .text.start    0x01000080       0x38 /tmp/ccWOf45c.o
                 0x01000080                _start
  *(.text*)
- .text          0x010000b8        0x0 /tmp/ccY5cpZQ.o
- .text          0x010000b8     0x21b0 gen/firmware_gen_O2u_acc.o
-                0x010000b8                rmsnorm
-                0x010003a6                softmax
-                0x01000804                matmul
-                0x01000980                forward
-                0x01001f00                boot
- .text          0x01002268        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
- .text.memcpy   0x01002268       0x24 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
-                0x01002268                memcpy
- .text          0x0100228c        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memset.S.o)
- .text.memset   0x0100228c       0x1c /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memset.S.o)
-                0x0100228c                memset
- .text          0x010022a8        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
- .text.expf     0x010022a8      0x21c /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
-                0x010022a8                expf
- .text          0x010024c4        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .text          0x010000b8        0x0 /tmp/ccWOf45c.o
+ .text          0x010000b8     0x2164 gen/firmware_gen_O2u_acc.o
+                0x0100010a                rmsnorm
+                0x010003f8                softmax
+                0x01000856                matmul
+                0x010009d2                forward
+                0x01001eb4                boot
+ .text          0x0100221c        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
+ .text.memcpy   0x0100221c       0x24 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
+                0x0100221c                memcpy
+ .text          0x01002240        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memset.S.o)
+ .text.memset   0x01002240       0x1c /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memset.S.o)
+                0x01002240                memset
+ .text          0x0100225c        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .text.expf     0x0100225c      0x21c /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+                0x0100225c                expf
+ .text          0x01002478        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
  .text.__math_uflowf
-                0x010024c4       0x24 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
-                0x010024c4                __math_uflowf
- .text          0x010024e8        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+                0x01002478       0x24 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+                0x01002478                __math_uflowf
+ .text          0x0100249c        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
  .text.__math_oflowf
-                0x010024e8       0x24 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
-                0x010024e8                __math_oflowf
- .text          0x0100250c       0xbc /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
-                0x0100250c                __riscv_save_12
-                0x0100251c                __riscv_save_8
-                0x0100251c                __riscv_save_11
-                0x0100251c                __riscv_save_9
-                0x0100251c                __riscv_save_10
-                0x01002538                __riscv_save_7
-                0x01002538                __riscv_save_4
-                0x01002538                __riscv_save_6
-                0x01002538                __riscv_save_5
-                0x01002568                __riscv_save_1
-                0x01002568                __riscv_save_3
-                0x01002568                __riscv_save_2
-                0x01002568                __riscv_save_0
-                0x01002580                __riscv_restore_12
-                0x01002588                __riscv_restore_10
-                0x01002588                __riscv_restore_11
-                0x01002588                __riscv_restore_8
-                0x01002588                __riscv_restore_9
-                0x0100259c                __riscv_restore_5
-                0x0100259c                __riscv_restore_6
-                0x0100259c                __riscv_restore_4
-                0x0100259c                __riscv_restore_7
-                0x010025b0                __riscv_restore_3
-                0x010025b0                __riscv_restore_2
-                0x010025b0                __riscv_restore_0
-                0x010025b0                __riscv_restore_1
+                0x0100249c       0x24 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+                0x0100249c                __math_oflowf
+ .text          0x010024c0       0xbc /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
+                0x010024c0                __riscv_save_12
+                0x010024d0                __riscv_save_8
+                0x010024d0                __riscv_save_11
+                0x010024d0                __riscv_save_9
+                0x010024d0                __riscv_save_10
+                0x010024ec                __riscv_save_7
+                0x010024ec                __riscv_save_4
+                0x010024ec                __riscv_save_6
+                0x010024ec                __riscv_save_5
+                0x0100251c                __riscv_save_1
+                0x0100251c                __riscv_save_3
+                0x0100251c                __riscv_save_2
+                0x0100251c                __riscv_save_0
+                0x01002534                __riscv_restore_12
+                0x0100253c                __riscv_restore_10
+                0x0100253c                __riscv_restore_11
+                0x0100253c                __riscv_restore_8
+                0x0100253c                __riscv_restore_9
+                0x01002550                __riscv_restore_5
+                0x01002550                __riscv_restore_6
+                0x01002550                __riscv_restore_4
+                0x01002550                __riscv_restore_7
+                0x01002564                __riscv_restore_3
+                0x01002564                __riscv_restore_2
+                0x01002564                __riscv_restore_0
+                0x01002564                __riscv_restore_1
 
 .rodata         0x001b4000       0x7c
  *(.rodata*)
@@ -103,11 +103,11 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
 
 .rela.dyn       0x001b4174        0x0
  .rela.text.start
-                0x001b4174        0x0 /tmp/ccY5cpZQ.o
+                0x001b4174        0x0 /tmp/ccWOf45c.o
 
 .data           0x001b4174        0x0
  *(.data*)
- .data          0x001b4174        0x0 /tmp/ccY5cpZQ.o
+ .data          0x001b4174        0x0 /tmp/ccWOf45c.o
  .data          0x001b4174        0x0 gen/firmware_gen_O2u_acc.o
  .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
  .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memset.S.o)
@@ -121,7 +121,7 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
                 0x001b4174                        . = ALIGN (0x4)
                 0x001b4174                        __bss_start = .
  *(.bss*)
- .bss           0x001b4174        0x0 /tmp/ccY5cpZQ.o
+ .bss           0x001b4174        0x0 /tmp/ccWOf45c.o
  .bss           0x001b4174       0x9c gen/firmware_gen_O2u_acc.o
                 0x001b41fc                result_token
                 0x001b4200                ec
@@ -145,7 +145,7 @@ OUTPUT(gen/firmware_gen_O2u_acc.elf elf32-littleriscv)
 .riscv.attributes
                 0x00000000       0x41
  .riscv.attributes
-                0x00000000       0x3f /tmp/ccY5cpZQ.o
+                0x00000000       0x3f /tmp/ccWOf45c.o
  .riscv.attributes
                 0x0000003f       0x41 gen/firmware_gen_O2u_acc.o
  .riscv.attributes
