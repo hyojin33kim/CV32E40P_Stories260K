@@ -56,8 +56,22 @@ DDR 조건 스윕 범위: ctx1 2.82×(latency 100·outstanding 4·burst 4·8 B/c
   11-14 확인 시 Windows에 **H: 드라이브 없음**(C:, E:, F:만 연결) → 현재 사용 불가.
   `C:\Xilinx`에는 Vivado_Lab(Lab Edition)과 설치기(xic)만 있음. H: 연결 후 `cd /mnt/c && vivado -version`으로 확인.
 
-## 남은 일
-1. 메모리 모델 후속: 명령 간 Weight prefetch(고 latency 대응), `ACC_RUN=16`·`RMS_SRAM`·`EMB_WORDS` 기본 승격 여부
-2. FPGA 합성·타이밍·면적 (Vivado 사용 가능해진 후)
-3. 선택: VFU/MAC lane 추가, CPU 잔여 작업 overlap, 다중 프롬프트·sampling 검증, expf 전수 비교
-4. ⑤ ZCU104 통합 — 대기
+## 남은 일 (권장 순서, 11-14 기준)
+1. **메모리 모델 후속**
+   - 명령 간 Weight prefetch — 고 latency 대응(스윕: latency 100 cycles에서 ctx1 ≈7×).
+   - `ACC_RUN=16`·`RMS_SRAM`·`EMB_WORDS` 기본 승격(권고). 이상 모델 cycles +1.4% → reproduce 기준값 재생성 필요.
+   - DDR 조건 E2E 512 step 측정.
+2. **FPGA 합성·타이밍·면적 (Vivado)** — FPU 지연 0(조합) 가정의 200 MHz 검증, 실패 시 FPU 파이프라인 + 행 interleave로
+   bit-exact 유지. FPU 13개(나눗셈기 포함) XCZU7EV 면적 확인. **필요: Windows H: 드라이브 연결.**
+3. **선택 최적화** — ctx512 softmax 66~69%(VFU lane 8개 또는 exp 파이프라인), CPU 잔여(rmsnorm·RoPE·residual, ctx1 ≈15%) overlap.
+4. **검증 보강(선택)** — 다중 프롬프트, temperature·top-p sampling, expf 2³² 전수 비교.
+5. **⑤ ZCU104 통합** — 대기. DDR latency·대역폭 실측으로 메모리 모델 보정.
+
+## 미검증
+- FPGA 타이밍·면적(합성 안 함), 실제 DDR 수치(현재 가정값), 다중 프롬프트·sampling.
+- E2E 512 step은 이상 메모리 조건만 측정(DDR 조건 미측정).
+
+## 기록 위치
+- 이 파일(`PROGRESS.md`): 현재 상태의 단일 원본 — 단계가 끝날 때마다 갱신.
+- 단계별 상세: 위 표의 기록 파일.
+- Notion(`업무 / LLM HW Architecture`): 승인된 결정·이력·교훈. 상태 표는 이 파일을 링크.
