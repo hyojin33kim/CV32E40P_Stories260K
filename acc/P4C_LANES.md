@@ -48,7 +48,10 @@
 | + QK/AV (accattn) | 59,100,146 | 2.00× |
 | + VFU (accall) | 40,037,568 | 2.96× |
 | 전부 (accfull) | **10,466,504** | **11.32×** |
-- 512 step 최종 구성: 실행 중(완료 후 기입).
+- 512 step 최종 구성(accfull, l4v4): **231,588,051 cycles, SW 기준선 2,383,853,770 대비 10.29×**.
+  512 step logits·KV·토큰 `-Os`와 bit 동일, host 단독 greedy와 토큰열 일치. 토큰당 평균 0.45M cycles.
+- VFU 단위 테스트 (lane 빌드, `vfu/out/results.json`): exp·softmax·silu·divs·divsoftmax × 4 seed × 65,536
+  = **1,310,720 원소, 불일치 0**.
 
 ## 한계 / 미검증
 - FPGA 합성·타이밍 미검증: FPU 지연 0(조합) 가정, lane별 FPU 2개(GEMV)·1개(VFU) 면적 미평가.
