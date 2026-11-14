@@ -1,9 +1,9 @@
 Archive member included to satisfy reference by file (symbol)
 
 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
-                              gen/firmware_gen_O2u_accattn.o (memcpy)
+                              /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o (memcpy)
 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
-                              gen/firmware_gen_O2u_accattn.o (expf)
+                              /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o (expf)
 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
                               /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o) (__math_uflowf)
 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
@@ -22,19 +22,19 @@ CTRL             0x001b4000         0x0004c000         rw
 
 Linker script and memory map
 
-LOAD /tmp/ccodZyNV.o
-LOAD gen/firmware_gen_O2u_accattn.o
+LOAD /tmp/cc9kFo0I.o
+LOAD /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o
 LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libm.a
 LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a
 LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
 
 .text           0x01000080     0x21bc
  *(.text.start)
- .text.start    0x01000080       0x38 /tmp/ccodZyNV.o
+ .text.start    0x01000080       0x38 /tmp/cc9kFo0I.o
                 0x01000080                _start
  *(.text*)
- .text          0x010000b8        0x0 /tmp/ccodZyNV.o
- .text          0x010000b8     0x1e40 gen/firmware_gen_O2u_accattn.o
+ .text          0x010000b8        0x0 /tmp/cc9kFo0I.o
+ .text          0x010000b8     0x1e40 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o
                 0x0100010c                rmsnorm
                 0x010003fa                softmax
                 0x01000858                matmul
@@ -84,9 +84,9 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
 
 .rodata         0x001b4000       0x7c
  *(.rodata*)
- .rodata.cst4   0x001b4000       0x48 gen/firmware_gen_O2u_accattn.o
+ .rodata.cst4   0x001b4000       0x48 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o
                                   0xc (size before relaxing)
- .rodata        0x001b4048       0x1c gen/firmware_gen_O2u_accattn.o
+ .rodata        0x001b4048       0x1c /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o
  *(.srodata*)
  .srodata.cst4  0x001b4064       0x30 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
  .srodata       0x001b4064       0x18 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
@@ -98,12 +98,12 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
 
 .rela.dyn       0x001b4174        0x0
  .rela.text.start
-                0x001b4174        0x0 /tmp/ccodZyNV.o
+                0x001b4174        0x0 /tmp/cc9kFo0I.o
 
 .data           0x001b4174        0x0
  *(.data*)
- .data          0x001b4174        0x0 /tmp/ccodZyNV.o
- .data          0x001b4174        0x0 gen/firmware_gen_O2u_accattn.o
+ .data          0x001b4174        0x0 /tmp/cc9kFo0I.o
+ .data          0x001b4174        0x0 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o
  .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
  .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
  .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
@@ -115,8 +115,8 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
                 0x001b4174                        . = ALIGN (0x4)
                 0x001b4174                        __bss_start = .
  *(.bss*)
- .bss           0x001b4174        0x0 /tmp/ccodZyNV.o
- .bss           0x001b4174       0x9c gen/firmware_gen_O2u_accattn.o
+ .bss           0x001b4174        0x0 /tmp/cc9kFo0I.o
+ .bss           0x001b4174       0x9c /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o
                 0x001b41fc                result_token
                 0x001b4200                ec
                 0x001b4204                sc
@@ -133,14 +133,14 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
                 0x001b4210                        __bss_end = .
                 0x00200000                        __stack_top = (ORIGIN (CTRL) + LENGTH (CTRL))
                 0x00000001                        ASSERT ((__bss_end <= (__stack_top - 0x1000)), control SRAM overflow)
-OUTPUT(gen/firmware_gen_O2u_accattn.elf elf32-littleriscv)
+OUTPUT(/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.elf elf32-littleriscv)
 
 .riscv.attributes
                 0x00000000       0x41
  .riscv.attributes
-                0x00000000       0x3f /tmp/ccodZyNV.o
+                0x00000000       0x3f /tmp/cc9kFo0I.o
  .riscv.attributes
-                0x0000003f       0x41 gen/firmware_gen_O2u_accattn.o
+                0x0000003f       0x41 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o
  .riscv.attributes
                 0x00000080       0x36 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
  .riscv.attributes
@@ -153,7 +153,7 @@ OUTPUT(gen/firmware_gen_O2u_accattn.elf elf32-littleriscv)
                 0x0000015e       0x36 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
 
 .comment        0x00000000       0x22
- .comment       0x00000000       0x22 gen/firmware_gen_O2u_accattn.o
+ .comment       0x00000000       0x22 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o
                                  0x23 (size before relaxing)
  .comment       0x00000022       0x23 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
  .comment       0x00000022       0x23 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)

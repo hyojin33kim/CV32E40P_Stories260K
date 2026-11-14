@@ -6,7 +6,7 @@
   "steps": 8,
   "prompt": "Once upon a time",
   "n_prompt": 5,
-  "sim_wall_s": 20.2,
+  "sim_wall_s": 25.6,
   "cycles_total": 6633834,
   "cycles_first": 798337,
   "cycles_last": 856751,

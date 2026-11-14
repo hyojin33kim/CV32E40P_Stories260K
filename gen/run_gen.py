@@ -5,7 +5,11 @@ usage: [GEN_CFLAGS=...] gen/run_gen.py <steps> [prompt text]   (writes gen/out_<
 GEN_CFLAGS defaults to the step-② SW baseline "-O2 -funroll-loops" (tag O2u);
 GEN_CFLAGS="" reproduces the HOLD -Os build (tag Os).
 GEN_ACC=1 builds with -DUSE_ACC (FFN GEMV on acc/gemv_acc.sv), GEN_ACC=attn adds
--DUSE_ACC_ATTN (attention QK/AV too); both run obj_soc/Vsoc_top;
+-DUSE_ACC_ATTN (attention QK/AV too), GEN_ACC=all adds -DUSE_ACC_VFU (softmax and
+SwiGLU on acc/vfu.sv), GEN_ACC=full adds -DUSE_ACC_MM (Wq/Wk/Wv/Wo/LM head on
+gemv_acc) and -DUSE_ACC_VFU_DIV (QK /sqrt(8) fused into the VFU softmax); all run
+obj_soc/Vsoc_top. The accelerator tag carries GEN_HW (default '_l4v4' = the default
+obj_soc build: 4 MAC lanes, 4 VFU lanes); runs before the lanes have no GEN_HW part;
 SIM_ACC_LAT / SIM_ACC_GNT_EVERY set the accelerator memory latency / grant period
 (tag <flags>_acc_L<lat>_G<period>). Results must stay bit-exact vs the -Os run.
 Pass criteria (agreed 2026-11-13, host<->RISC is tolerance-based):
@@ -23,13 +27,16 @@ steps = int(sys.argv[1]); text = sys.argv[2] if len(sys.argv) > 2 else 'Once upo
 cflags = os.environ.get('GEN_CFLAGS', '-O2 -funroll-loops')
 tag = {'-O2 -funroll-loops': 'O2u', '': 'Os'}.get(cflags, cflags.replace(' ', '').replace('-', '_'))
 mode = os.environ.get('GEN_ACC', '')
-acc = mode in ('1', 'attn')
-name = {'1': 'acc', 'attn': 'accattn'}.get(mode, '')
+acc = mode in ('1', 'attn', 'all', 'full')
+name = {'1': 'acc', 'attn': 'accattn', 'all': 'accall', 'full': 'accfull'}.get(mode, '')
 fwtag = tag + ('_' + name if acc else '')
 if acc:
-    cflags += ' -DUSE_ACC' + (' -DUSE_ACC_ATTN' if mode == 'attn' else '')
-    tag += '_' + name + '_L%s_G%s' % (os.environ.get('SIM_ACC_LAT', '0'), os.environ.get('SIM_ACC_GNT_EVERY', '1'))
-O = G / f'out_{steps}_{tag}'; O.mkdir(exist_ok=True)
+    cflags += ' -DUSE_ACC' + {'1': '', 'attn': ' -DUSE_ACC_ATTN', 'all': ' -DUSE_ACC_ATTN -DUSE_ACC_VFU',
+                               'full': ' -DUSE_ACC_ATTN -DUSE_ACC_VFU -DUSE_ACC_MM -DUSE_ACC_VFU_DIV'}[mode]
+    tag += '_' + name + os.environ.get('GEN_HW', '_l4v4') + '_L%s_G%s' % (os.environ.get('SIM_ACC_LAT', '0'), os.environ.get('SIM_ACC_GNT_EVERY', '1'))
+OUTROOT = Path(os.environ.get('GEN_OUT', G))  # reproduce.sh points this at repro/gen
+OUTROOT.mkdir(parents=True, exist_ok=True)
+O = OUTROOT / f'out_{steps}_{tag}'; O.mkdir(exist_ok=True)
 model, tok = W / 'stories260K.bin', G / 'tok512.bin'
 V, L, S, KVD = 512, 5, 512, 32
 
@@ -44,9 +51,9 @@ prompt = np.fromfile(O / 'prompt.u32', dtype='<u4')
 assert steps >= np_, 'steps must cover the prompt'
 
 # firmware + image
-fw = f'gen/firmware_gen_{fwtag}'
+fw = OUTROOT / f'firmware_gen_{fwtag}'
 run('env', 'SRC=gen/firmware_gen.c', f'OUT={fw}', 'TC=/usr', f'CFLAGS_EXTRA={cflags}', W / 'build.sh', cwd=W)
-run('python3', W / 'image.py', W / f'{fw}.elf', O / 'image.bin')
+run('python3', W / 'image.py', f'{fw}.elf', O / 'image.bin')
 m = bytearray((O / 'image.bin').read_bytes())
 m[0x1ae000:0x1ae000 + 4 * np_] = prompt.tobytes()
 struct.pack_into('<II', m, 0x1afff0, np_, steps)
@@ -88,14 +95,14 @@ div = np.nonzero(free[gen_from:] != toks[gen_from:])[0]
 argmax_mm = np.nonzero(ra != ha)[0]
 
 # RISC-SW numerics must not depend on compiler flags: compare with the -Os run if present
-ref = G / f'out_{steps}_Os'
+ref = OUTROOT / f'out_{steps}_Os' if (OUTROOT / f'out_{steps}_Os' / 'steps.bin').exists() else G / f'out_{steps}_Os'
 if tag != 'Os' and (ref / 'steps.bin').exists() and (ref / 'dump.bin').exists():
     rd = (ref / 'dump.bin').read_bytes()
     bitexact_vs_Os = bool((O / 'steps.bin').read_bytes() == (ref / 'steps.bin').read_bytes()
                           and d[0x100000:0x1a0000] == rd[0x100000:0x1a0000] and d[0x1ae800:0x1aec00] == rd[0x1ae800:0x1aec00])
 else:
     bitexact_vs_Os = None
-text_bytes = int([l for l in run('/usr/bin/riscv64-unknown-elf-size', '-A', W / f'{fw}.elf').splitlines()
+text_bytes = int([l for l in run('/usr/bin/riscv64-unknown-elf-size', '-A', f'{fw}.elf').splitlines()
                   if l.startswith('.text')][0].split()[1])
 acc_line = [l for l in log.splitlines() if l.startswith('ACC ')]
 res = dict(

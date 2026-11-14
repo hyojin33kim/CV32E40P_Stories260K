@@ -30,8 +30,15 @@ prof/*/prof_*.csv
 prof/*/*.o
 # scratch scripts (in-worktree so reads stay inside the working directory)
 .scratch/
+# reproduce.sh outputs
+repro/
 # Step ③ accelerator
 obj_soc/
 obj_soc_new/
+obj_soc_*/
 acc/build/
 acc/sweep/dump_*.bin
+acc/sweep/*/dump_*.bin
+# Step ④-b VFU unit test: keep the result summary only
+vfu/out/*
+!vfu/out/results.json

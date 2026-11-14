@@ -4,7 +4,8 @@
 usage: acc/sweep_mem.py <prof tag> [workers]   (images from prof/<tag>/, e.g. acc_ffn_attn_L0_G1)
 SWEEP_SIM overrides the simulator (default obj_soc/Vsoc_top).
 SIM_ACC_LAT      : extra cycles before each read response (pipelined, unlimited outstanding)
-SIM_ACC_GNT_EVERY: one request granted every P cycles (32-bit port -> 4/P bytes per cycle)
+SIM_ACC_GNT_EVERY: one request granted every P cycles (BYTES per grant: env SWEEP_BYTES, default 16 =
+                   128-bit line; the pre-lane runs used a 32-bit port, SWEEP_BYTES=4)
 Every run is checked bit-exact (logits + KV) against the HOLD dump.
 """
 import json, os, struct, subprocess, sys
@@ -13,11 +14,13 @@ from pathlib import Path
 
 W = Path(__file__).resolve().parent.parent
 TAG = sys.argv[1]
-P = W / 'prof' / TAG
-O = W / 'acc' / 'sweep' / TAG; O.mkdir(parents=True, exist_ok=True)
+PROF = Path(os.environ.get('PROF_OUT', W / 'prof'))
+P = PROF / TAG
+O = Path(os.environ.get('SWEEP_OUT', W / 'acc' / 'sweep')) / TAG; O.mkdir(parents=True, exist_ok=True)
 SIM = os.environ.get('SWEEP_SIM', str(W / 'obj_soc/Vsoc_top'))
-base = json.load(open(W / 'prof' / 'gen_O2u' / 'summary.json'))
+base = json.load(open(PROF / 'gen_O2u' / 'summary.json'))
 LATS, GNTS = (0, 16, 64, 128), (1, 2, 4)
+BYTES = int(os.environ.get('SWEEP_BYTES', 16))
 
 def one(t, lat, gp):
     out = O / f'dump_{t}_L{lat}_G{gp}.bin'
@@ -35,7 +38,7 @@ jobs = [(t, l, g) for t in (1, 512) for l in LATS for g in GNTS]
 with ThreadPoolExecutor(max_workers=int(sys.argv[2]) if len(sys.argv) > 2 else 8) as ex:
     res = list(ex.map(lambda a: one(*a), jobs))
 (O / 'sweep.json').write_text(json.dumps(res, indent=1))
-lines = ['| ctx | latency \\ grant period | ' + ' | '.join(f'G={g} ({4 / g:g} B/cyc)' for g in GNTS) + ' |',
+lines = ['| ctx | latency \\ grant period | ' + ' | '.join(f'G={g} ({BYTES / g:g} B/cyc)' for g in GNTS) + ' |',
          '|---|---|' + '---:|' * len(GNTS)]
 for t in (1, 512):
     sw = base[str(t)]['fw_measured_cycles']
