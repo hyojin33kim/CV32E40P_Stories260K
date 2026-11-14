@@ -22,7 +22,7 @@ CTRL             0x001b4000         0x0004c000         rw
 
 Linker script and memory map
 
-LOAD /tmp/ccFO6PhD.o
+LOAD /tmp/cc9kFo0I.o
 LOAD /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o
 LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libm.a
 LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a
@@ -30,10 +30,10 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
 
 .text           0x01000080     0x21bc
  *(.text.start)
- .text.start    0x01000080       0x38 /tmp/ccFO6PhD.o
+ .text.start    0x01000080       0x38 /tmp/cc9kFo0I.o
                 0x01000080                _start
  *(.text*)
- .text          0x010000b8        0x0 /tmp/ccFO6PhD.o
+ .text          0x010000b8        0x0 /tmp/cc9kFo0I.o
  .text          0x010000b8     0x1e40 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o
                 0x0100010c                rmsnorm
                 0x010003fa                softmax
@@ -98,11 +98,11 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
 
 .rela.dyn       0x001b4174        0x0
  .rela.text.start
-                0x001b4174        0x0 /tmp/ccFO6PhD.o
+                0x001b4174        0x0 /tmp/cc9kFo0I.o
 
 .data           0x001b4174        0x0
  *(.data*)
- .data          0x001b4174        0x0 /tmp/ccFO6PhD.o
+ .data          0x001b4174        0x0 /tmp/cc9kFo0I.o
  .data          0x001b4174        0x0 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o
  .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(memcpy-asm.S.o)
  .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
@@ -115,7 +115,7 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
                 0x001b4174                        . = ALIGN (0x4)
                 0x001b4174                        __bss_start = .
  *(.bss*)
- .bss           0x001b4174        0x0 /tmp/ccFO6PhD.o
+ .bss           0x001b4174        0x0 /tmp/cc9kFo0I.o
  .bss           0x001b4174       0x9c /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o
                 0x001b41fc                result_token
                 0x001b4200                ec
@@ -138,7 +138,7 @@ OUTPUT(/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.c
 .riscv.attributes
                 0x00000000       0x41
  .riscv.attributes
-                0x00000000       0x3f /tmp/ccFO6PhD.o
+                0x00000000       0x3f /tmp/cc9kFo0I.o
  .riscv.attributes
                 0x0000003f       0x41 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_O2u_accattn.o
  .riscv.attributes

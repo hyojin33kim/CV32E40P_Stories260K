@@ -38,18 +38,19 @@ if(profpath&&getenv("SIM_PROF_SITES")){std::string s=getenv("SIM_PROF_SITES");si
 auto dumpprof=[&](){if(!profpath)return;std::ofstream o(profpath);o<<"site,pc,cycles,rd_w,rd_kv,rd_act,rd_rope,rd_ctrl,rd_other,wr_w,wr_kv,wr_act,wr_rope,wr_ctrl,wr_other\n";for(auto&kv:prof){o<<std::hex<<(unsigned)(kv.first>>32)<<','<<(unsigned)kv.first<<std::dec<<','<<kv.second.cyc;for(int k=0;k<6;k++)o<<','<<kv.second.rd[k];for(int k=0;k<6;k++)o<<','<<kv.second.wr[k];o<<'\n';}};
 #ifdef SOC
 // Accelerator memory port model: grant every SIM_ACC_GNT_EVERY cycles (bandwidth),
-// read data returned SIM_ACC_LAT cycles after the earliest OBI response cycle, in order.
+// read data (the 16-byte aligned line holding the address) returned SIM_ACC_LAT cycles
+// after the earliest OBI response cycle, in order; writes are 32-bit words.
 unsigned acc_lat=getenv("SIM_ACC_LAT")?atoi(getenv("SIM_ACC_LAT")):0,acc_gp=getenv("SIM_ACC_GNT_EVERY")?atoi(getenv("SIM_ACC_GNT_EVERY")):1;
-std::deque<std::pair<unsigned long long,unsigned>>accq;unsigned long long acc_rd=0,acc_wr=0;
+struct Line{unsigned long long t;unsigned w[4];};std::deque<Line>accq;unsigned long long acc_rd=0,acc_wr=0;
 #endif
 for(unsigned long long c=0;c<maxc;c++){
 t.clk_i=0;t.scan_cg_en_i=c<5;t.rst_ni=c>=5;t.instr_gnt_i=1;t.data_gnt_i=1;t.instr_rvalid_i=iv;t.instr_rdata_i=ir;t.data_rvalid_i=dv;t.data_rdata_i=dr;
 #ifdef SOC
-t.acc_gnt_i=(c%acc_gp)==0;if(!accq.empty()&&accq.front().first<=c){t.acc_rvalid_i=1;t.acc_rdata_i=accq.front().second;accq.pop_front();}else t.acc_rvalid_i=0;
+t.acc_gnt_i=(c%acc_gp)==0;if(!accq.empty()&&accq.front().t<=c){t.acc_rvalid_i=1;for(int k=0;k<4;k++)t.acc_rdata_i[k]=accq.front().w[k];accq.pop_front();}else t.acc_rvalid_i=0;
 #endif
 t.eval();
 #ifdef SOC
-if(t.acc_req_o&&t.acc_gnt_i&&t.rst_ni){unsigned a=t.acc_addr_o&~3u;if(t.acc_we_o){acc_wr++;memcpy(&mem[a],&t.acc_wdata_o,4);}else{acc_rd++;accq.push_back({c+1+acc_lat,rd(a)});}}
+if(t.acc_req_o&&t.acc_gnt_i&&t.rst_ni){unsigned a=t.acc_addr_o&~3u;if(t.acc_we_o){acc_wr++;memcpy(&mem[a],&t.acc_wdata_o,4);}else{acc_rd++;Line l{c+1+acc_lat,{}};unsigned b=a&~15u;for(int k=0;k<4;k++)l.w[k]=rd(b+4*k);accq.push_back(l);}}
 #endif
 Prof*pp=nullptr;if(profpath){unsigned pc=t.CORE(pc_id);for(auto&r:sites)if(pc>=r.first&&pc<r.second){site=pc;break;}pp=&prof[((unsigned long long)site<<32)|pc];pp->cyc++;
  if(t.data_req_o&&t.rst_ni){int k=memclass(t.data_addr_o);if(t.data_we_o)pp->wr[k]++;else pp->rd[k]++;}}

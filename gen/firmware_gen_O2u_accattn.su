@@ -1,6 +1,6 @@
 gen/firmware_gen.c:10:39:acc_gemv	0	static
-gen/firmware_gen.c:95:6:rmsnorm	0	static
-gen/firmware_gen.c:110:6:softmax	48	static
-gen/firmware_gen.c:130:6:matmul	0	static
-gen/firmware_gen.c:144:8:forward	192	static
-gen/firmware_gen.c:305:6:boot	80	static
+gen/firmware_gen.c:102:6:rmsnorm	0	static
+gen/firmware_gen.c:117:6:softmax	48	static
+gen/firmware_gen.c:137:6:matmul	0	static
+gen/firmware_gen.c:151:8:forward	192	static
+gen/firmware_gen.c:316:6:boot	80	static

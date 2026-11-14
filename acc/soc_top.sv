@@ -1,11 +1,15 @@
 // CV32E40P (FPU=1) + gemv_acc + vfu. Same external CPU ports as cv32e40p_top as used
-// by sim.cpp, plus one accelerator memory master (acc_*), served by the simulator.
+// by sim.cpp, plus one accelerator memory master (acc_*: 128-bit read lines, 32-bit
+// writes), served by the simulator.
 // CPU data accesses to 0x3000_0000..0x3000_003F go to the gemv_acc registers and
 // 0x3000_0040..0x3000_007F to the vfu registers (granted immediately, read data
 // returned next cycle); everything else is passed to the external data port unchanged.
 // gemv_acc and vfu share the memory master; the CPU waits for each command, so at
 // most one engine is busy (the busy vfu owns the port, otherwise gemv_acc).
-module soc_top (
+module soc_top #(
+    parameter int ACC_LANES = 4,  // gemv_acc MAC lanes  (build_sim.sh: ACC_LANES=<n>)
+    parameter int VFU_LANES = 4   // vfu element engines (build_sim.sh: VFU_LANES=<n>)
+) (
     input logic clk_i,
     input logic rst_ni,
     input logic pulp_clock_en_i,
@@ -35,7 +39,7 @@ module soc_top (
     output logic [31:0] acc_wdata_o,
     input  logic        acc_gnt_i,
     input  logic        acc_rvalid_i,
-    input  logic [31:0] acc_rdata_i
+    input  logic [127:0] acc_rdata_i
 );
   localparam logic [31:0] ACC_BASE = 32'h3000_0000;
 
@@ -82,7 +86,7 @@ module soc_top (
   assign acc_addr_o  = vfu_busy ? v_addr : g_addr;
   assign acc_wdata_o = vfu_busy ? v_wdata : g_wdata;
 
-  gemv_acc acc_i (
+  gemv_acc #(.LANES(ACC_LANES)) acc_i (
       .clk_i, .rst_ni,
       .s_req_i(c_req && is_mmio && !is_vfu), .s_we_i(c_we), .s_addr_i(c_addr[5:0]),
       .s_wdata_i(c_wdata), .s_rdata_o(g_rdata),
@@ -90,7 +94,7 @@ module soc_top (
       .m_gnt_i(acc_gnt_i && !vfu_busy), .m_rvalid_i(acc_rvalid_i && !vfu_busy), .m_rdata_i(acc_rdata_i)
   );
 
-  vfu vfu_i (
+  vfu #(.LANES(VFU_LANES)) vfu_i (
       .clk_i, .rst_ni,
       .s_req_i(c_req && is_mmio && is_vfu), .s_we_i(c_we), .s_addr_i(c_addr[5:0]),
       .s_wdata_i(c_wdata), .s_rdata_o(v_rdata),

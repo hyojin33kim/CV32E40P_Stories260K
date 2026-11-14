@@ -14,15 +14,14 @@ R = W / 'repro'
 TOL = 1e-4
 rows, bad = [], 0
 MODE = sys.argv[1] if len(sys.argv) > 1 else 'quick'
-EXPECT = ['prof/O2u', 'prof/gen_O2u', 'prof/acc_ffn_L0_G1', 'prof/acc_ffn_attn_L0_G1',
-          'prof/acc_all_L0_G1', 'gen/out_8_Os', 'gen/out_8_O2u_accattn_L0_G1',
-          'gen/out_8_O2u_accall_L0_G1']
+HW = '_l4v4'  # default SoC build: 4 MAC lanes, 4 VFU lanes
+EXPECT = ['prof/O2u', 'prof/gen_O2u'] + [f'prof/acc_{t}{HW}' for t in ('ffn', 'attn', 'all', 'full')] + \
+         ['gen/out_8_Os'] + [f'gen/out_8_O2u_{m}{HW}_L0_G1' for m in ('accattn', 'accall', 'accfull')]
 if MODE in ('standard', 'full'):
-    EXPECT += ['gen/out_64_Os', 'gen/out_64_O2u', 'gen/out_64_O2u_acc_L0_G1', 'gen/out_64_O2u_accattn_L0_G1',
-               'gen/out_64_O2u_accall_L0_G1']
+    EXPECT += ['gen/out_64_Os', 'gen/out_64_O2u'] + \
+              [f'gen/out_64_O2u_{m}{HW}_L0_G1' for m in ('acc', 'accattn', 'accall', 'accfull')]
 if MODE == 'full':
-    EXPECT += ['gen/out_512_Os', 'gen/out_512_O2u', 'gen/out_512_O2u_accattn_L0_G1',
-               'gen/out_512_O2u_accall_L0_G1']
+    EXPECT += ['gen/out_512_Os', 'gen/out_512_O2u', f'gen/out_512_O2u_accfull{HW}_L0_G1']
 for e in EXPECT:  # a failed background run leaves no result file
     if not ((R / e / 'summary.json').exists() or (R / e / 'result.json').exists()):
         rows.append((e, 'missing (run failed? see repro/*.txt)', False)); bad += 1

@@ -35,6 +35,7 @@ repro/
 # Step ③ accelerator
 obj_soc/
 obj_soc_new/
+obj_soc_*/
 acc/build/
 acc/sweep/dump_*.bin
 acc/sweep/*/dump_*.bin

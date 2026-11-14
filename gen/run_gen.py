@@ -6,7 +6,10 @@ GEN_CFLAGS defaults to the step-② SW baseline "-O2 -funroll-loops" (tag O2u);
 GEN_CFLAGS="" reproduces the HOLD -Os build (tag Os).
 GEN_ACC=1 builds with -DUSE_ACC (FFN GEMV on acc/gemv_acc.sv), GEN_ACC=attn adds
 -DUSE_ACC_ATTN (attention QK/AV too), GEN_ACC=all adds -DUSE_ACC_VFU (softmax and
-SwiGLU on acc/vfu.sv); all run obj_soc/Vsoc_top;
+SwiGLU on acc/vfu.sv), GEN_ACC=full adds -DUSE_ACC_MM (Wq/Wk/Wv/Wo/LM head on
+gemv_acc) and -DUSE_ACC_VFU_DIV (QK /sqrt(8) fused into the VFU softmax); all run
+obj_soc/Vsoc_top. The accelerator tag carries GEN_HW (default '_l4v4' = the default
+obj_soc build: 4 MAC lanes, 4 VFU lanes); runs before the lanes have no GEN_HW part;
 SIM_ACC_LAT / SIM_ACC_GNT_EVERY set the accelerator memory latency / grant period
 (tag <flags>_acc_L<lat>_G<period>). Results must stay bit-exact vs the -Os run.
 Pass criteria (agreed 2026-11-13, host<->RISC is tolerance-based):
@@ -24,12 +27,13 @@ steps = int(sys.argv[1]); text = sys.argv[2] if len(sys.argv) > 2 else 'Once upo
 cflags = os.environ.get('GEN_CFLAGS', '-O2 -funroll-loops')
 tag = {'-O2 -funroll-loops': 'O2u', '': 'Os'}.get(cflags, cflags.replace(' ', '').replace('-', '_'))
 mode = os.environ.get('GEN_ACC', '')
-acc = mode in ('1', 'attn', 'all')
-name = {'1': 'acc', 'attn': 'accattn', 'all': 'accall'}.get(mode, '')
+acc = mode in ('1', 'attn', 'all', 'full')
+name = {'1': 'acc', 'attn': 'accattn', 'all': 'accall', 'full': 'accfull'}.get(mode, '')
 fwtag = tag + ('_' + name if acc else '')
 if acc:
-    cflags += ' -DUSE_ACC' + {'1': '', 'attn': ' -DUSE_ACC_ATTN', 'all': ' -DUSE_ACC_ATTN -DUSE_ACC_VFU'}[mode]
-    tag += '_' + name + '_L%s_G%s' % (os.environ.get('SIM_ACC_LAT', '0'), os.environ.get('SIM_ACC_GNT_EVERY', '1'))
+    cflags += ' -DUSE_ACC' + {'1': '', 'attn': ' -DUSE_ACC_ATTN', 'all': ' -DUSE_ACC_ATTN -DUSE_ACC_VFU',
+                               'full': ' -DUSE_ACC_ATTN -DUSE_ACC_VFU -DUSE_ACC_MM -DUSE_ACC_VFU_DIV'}[mode]
+    tag += '_' + name + os.environ.get('GEN_HW', '_l4v4') + '_L%s_G%s' % (os.environ.get('SIM_ACC_LAT', '0'), os.environ.get('SIM_ACC_GNT_EVERY', '1'))
 OUTROOT = Path(os.environ.get('GEN_OUT', G))  # reproduce.sh points this at repro/gen
 OUTROOT.mkdir(parents=True, exist_ok=True)
 O = OUTROOT / f'out_{steps}_{tag}'; O.mkdir(exist_ok=True)

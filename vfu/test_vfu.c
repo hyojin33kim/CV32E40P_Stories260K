@@ -6,6 +6,7 @@
 //   2 softmax : softmax over chunks IN[j..j+len) (len from AUX, 1..512, as llama2.c)
 //   3 silu    : (v*(1/(1+expf(-v))))*g          HW cmd SILU, g = AUX
 //   4 divs    : IN[i] / 0x1.6a09e6p+1f            HW cmd DIVS
+//   5 divsoftmax: chunks (len from AUX): IN[i] /= 0x1.6a09e6p+1f, then softmax
 // Results: 0x1aff00 = {mismatches, first mismatch index, N, test, cycles sw, cycles hw}
 #include <math.h>
 #include <string.h>
@@ -51,12 +52,19 @@ void boot(void) {
         SW[i] = val;
     }
     if (test == 4) for (unsigned i = 0; i < n; i++) SW[i] /= 0x1.6a09e6p+1f;
+    if (test == 5) for (unsigned j = 0; j < n;) {
+        unsigned len = ((unsigned*)AUX)[j]; if (len > n - j) len = n - j;
+        for (unsigned i = 0; i < len; i++) SW[j + i] /= 0x1.6a09e6p+1f;
+        softmax(SW + j, len); j += len;
+    }
     unsigned c1 = cyc();
     // hardware
     memcpy(HW, IN, n * 4);
-    if (test == 2) for (unsigned j = 0; j < n;) {
+    if (test == 2 || test == 5) for (unsigned j = 0; j < n;) {
         unsigned len = ((unsigned*)AUX)[j]; if (len > n - j) len = n - j;
-        vfu(1, HW + j, 0, len, 0); j += len;
+        if (test == 2) vfu(1, HW + j, 0, len, 0);
+        else vfu(5, HW + j, 0, len, 0x1.6a09e6p+1f);
+        j += len;
     } else for (unsigned j = 0; j < n; j += 512) {
         unsigned len = n - j < 512 ? n - j : 512;
         if (test == 1) vfu(4, HW + j, 0, len, 0);

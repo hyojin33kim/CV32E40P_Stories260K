@@ -17,7 +17,7 @@ O = Path(os.environ.get('TEST_OUT', W / 'vfu' / 'out')); O.mkdir(parents=True, e
 SIM = os.environ.get('TEST_SIM', str(W / 'obj_soc/Vsoc_top'))
 SEEDS = int(sys.argv[1]) if len(sys.argv) > 1 else 4
 N = int(sys.argv[2]) if len(sys.argv) > 2 else 65536
-TESTS = {1: 'exp', 2: 'softmax', 3: 'silu', 4: 'divs'}
+TESTS = {1: 'exp', 2: 'softmax', 3: 'silu', 4: 'divs', 5: 'divsoftmax'}
 
 def f2u(a): return np.asarray(a, dtype='<f4').view('<u4')
 def u2f(a): return np.asarray(a, dtype='<u4').view('<f4')
@@ -43,7 +43,7 @@ def inputs(test, rng):
     aux = np.zeros(N, dtype=np.uint32)
     if test == 1:
         x = exp_inputs(rng)
-    elif test == 2:  # softmax chunks with llama2.c-like scores, ties and +-0
+    elif test in (2, 5):  # softmax chunks with llama2.c-like scores, ties and +-0
         x = f2u(rng.normal(0, 3, N).astype(np.float32) * rng.choice([1, 4, 0.01], N).astype(np.float32))
         x[rng.integers(0, N, N // 64)] = 0x80000000
         x[rng.integers(0, N, N // 64)] = 0

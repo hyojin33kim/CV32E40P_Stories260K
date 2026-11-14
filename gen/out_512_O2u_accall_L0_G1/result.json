@@ -1,0 +1,23 @@
+{
+  "acc": "ACC reads=180910080 writes=12154880 lat=0 gnt_every=1",
+  "cflags": "-O2 -funroll-loops -DUSE_ACC -DUSE_ACC_ATTN -DUSE_ACC_VFU",
+  "text_bytes": 8528,
+  "logits_kv_tokens_bitexact_vs_Os": true,
+  "steps": 512,
+  "prompt": "Once upon a time",
+  "n_prompt": 5,
+  "sim_wall_s": 3361.7,
+  "cycles_total": 935009417,
+  "cycles_first": 728297,
+  "cycles_last": 2926645,
+  "logits_rel_L2_max": 3.5415573620412033e-06,
+  "logits_bitexact_steps": 0,
+  "risc_token_is_own_argmax": true,
+  "argmax_mismatch_steps": [],
+  "min_host_top2_margin": 0.0026493072509765625,
+  "kv_rel_L2_max": 5.991648208691913e-07,
+  "kv_bitexact_positions": 0,
+  "kv_beyond_steps_zero": true,
+  "host_free_run_first_divergence": null,
+  "pass": true
+}
