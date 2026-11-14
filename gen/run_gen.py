@@ -26,10 +26,12 @@ G = W / 'gen'
 steps = int(sys.argv[1]); text = sys.argv[2] if len(sys.argv) > 2 else 'Once upon a time'
 cflags = os.environ.get('GEN_CFLAGS', '-O2 -funroll-loops')
 tag = {'-O2 -funroll-loops': 'O2u', '': 'Os'}.get(cflags, cflags.replace(' ', '').replace('-', '_'))
+extra = os.environ.get('GEN_EXTRA', '')   # extra -D flags (memory-model study); name them in GEN_HW
+if extra: cflags += ' ' + extra
 mode = os.environ.get('GEN_ACC', '')
 acc = mode in ('1', 'attn', 'all', 'full')
 name = {'1': 'acc', 'attn': 'accattn', 'all': 'accall', 'full': 'accfull'}.get(mode, '')
-fwtag = tag + ('_' + name if acc else '')
+fwtag = tag + ('_' + name if acc else '') + extra.replace(' ', '').replace('-D', '_').lower()
 if acc:
     cflags += ' -DUSE_ACC' + {'1': '', 'attn': ' -DUSE_ACC_ATTN', 'all': ' -DUSE_ACC_ATTN -DUSE_ACC_VFU',
                                'full': ' -DUSE_ACC_ATTN -DUSE_ACC_VFU -DUSE_ACC_MM -DUSE_ACC_VFU_DIV'}[mode]
