@@ -17,7 +17,7 @@
 | ④-a QK/AV | 11-13 | 같은 엔진 stride 재사용, ctx512 1.55× | `acc/P3_ACC.md` | `prof/acc_ffn_attn_L0_G1` |
 | ④-b VFU | 11-14 | softmax·SiLU·expf HW(picolibc sf_exp 연산 순서), 1M 원소 불일치 0 | `acc/P4B_VFU.md` | `prof/acc_all_L0_G1`, `vfu/` |
 | 범위 확대 + lanes | 11-14 | 모든 GEMV, MAC 4 lanes, VFU 4 lanes, ÷√8 융합 → **11.93×/10.67×/10.07×**, E2E 512 step **10.29×** | `acc/P4C_LANES.md` | `prof/acc_full_l4v4`, `gen/out_512_O2u_accfull_l4v4_L0_G1` |
-| 메모리 모델 현실화 | 11-14~ | 계획 수립, 착수 | `acc/P5_MEMORY_PLAN.md` | — |
+| 메모리 모델 현실화 | 11-14 | DDR/SRAM sim 모델, burst run fetch, RMS·embedding 최적화 → DDR에서도 **10.27×/9.97×/9.82×**, E2E 64 step **10.09×**, 스윕 162 조건 bit-exact | `acc/P5_MEMORY_PLAN.md` | `prof/ddr_full_opt`, `acc/sweep/ddr_ddr_full_opt`, `gen/out_64_O2u_accfull_l4v4r16_ddr_opt_L0_G1` |
 
 ## 현재 성능 (사실, SW 기준선 대비, 가속기 포트 16 B/cycle, latency 0)
 | | SW 기준선 cycles | 최종 가속 cycles | 배율 | bit-exact |
@@ -26,6 +26,16 @@
 | single step ctx128 | 3,039,674 | 284,910 | 10.67× | HOLD와 동일 |
 | single step ctx512 | 7,854,556 | 780,213 | 10.07× | HOLD와 동일 |
 | E2E 512 step | 2,383,853,770 | 231,588,051 | 10.29× | `-Os`와 동일 |
+
+DDR 모델(Weight는 DDR: latency 40, burst 16, 12.8 B/cycle, outstanding 8 / KV·activation은 SRAM) 적용 시:
+
+| | 이상 SW cycles | DDR 가속 cycles | 배율 | bit-exact |
+|---|---:|---:|---:|---|
+| single step ctx1 | 1,454,871 | 141,694 | 10.27× | HOLD와 동일 |
+| single step ctx512 | 7,854,556 | 799,949 | 9.82× | HOLD와 동일 |
+| E2E 64 step | 118,431,746 | 11,736,888 | 10.09× | `-Os`와 동일 |
+
+DDR 조건 스윕 범위: ctx1 2.82×(latency 100·outstanding 4·burst 4·8 B/c) ~ 11.77×. 최대 미지수는 실제 DDR latency(⑤ 실측).
 
 ## 사용자 결정 이력
 | 날짜 | 결정 |
@@ -47,7 +57,7 @@
   `C:\Xilinx`에는 Vivado_Lab(Lab Edition)과 설치기(xic)만 있음. H: 연결 후 `cd /mnt/c && vivado -version`으로 확인.
 
 ## 남은 일
-1. 메모리 모델 현실화 (진행 중, `acc/P5_MEMORY_PLAN.md`)
+1. 메모리 모델 후속: 명령 간 Weight prefetch(고 latency 대응), `ACC_RUN=16`·`RMS_SRAM`·`EMB_WORDS` 기본 승격 여부
 2. FPGA 합성·타이밍·면적 (Vivado 사용 가능해진 후)
 3. 선택: VFU/MAC lane 추가, CPU 잔여 작업 overlap, 다중 프롬프트·sampling 검증, expf 전수 비교
 4. ⑤ ZCU104 통합 — 대기

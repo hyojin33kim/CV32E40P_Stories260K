@@ -15,7 +15,9 @@
 // Memory master: 128-bit read lines (address 16-byte aligned by the memory, in-order
 // responses), 32-bit word writes (complete on grant). Weight fetch per row group:
 //   mode A (J_STRIDE=4, W and W_STRIDE 16B aligned, N%4==0): a line = 4 consecutive j
-//          of one row; lines go round-robin over the lanes (16 B/cycle feeds 4 lanes)
+//          of one row; each lane gets RUN consecutive lines of its row before the next lane
+//          (RUN=1: round-robin per line; RUN>1: contiguous runs that a DDR interconnect can
+//          issue as bursts). Each lane still receives its row in j order.
 //   mode B (W_STRIDE=4, J_STRIDE%16==0, W 16B aligned, LANES<=4): a line = the same j
 //          of up to 4 consecutive rows (one line per j feeds all lanes)
 //   mode C (anything else): one word per request
@@ -33,6 +35,7 @@ module gemv_acc
     parameter int XBUF   = 512,
     parameter int YBUF   = 512,
     parameter int LANES  = 4,
+    parameter int RUN    = 1,               // mode A lines per lane before switching lanes
     parameter int FDEPTH = 128              // words per lane FIFO (power of two); covers
                                             // ~FDEPTH cycles of memory latency per lane
 ) (
@@ -74,7 +77,7 @@ module gemv_acc
   logic [FW:0]   f_cnt_q[LANES], f_res_q[LANES];   // stored words, reserved (in flight)
 
   // issue side: group base row, chunk (A) / j (B, C), lane (A, C)
-  logic [31:0] is_i0_q, is_k_q, is_p_q;
+  logic [31:0] is_i0_q, is_k_q, is_p_q, is_kb_q;   // is_kb_q: first chunk of the current run (A)
   // consume side: group base row, j
   logic [31:0] cs_i0_q, cs_j_q;
 
@@ -201,7 +204,7 @@ module gemv_acc
       state_q <= IDLE; mode_q <= MA;
       {x_addr_q, w_addr_q, y_addr_q, n_q, d_q, stride_q, cyc_q} <= '0;
       jstride_q <= 32'd4;
-      {ld_iss_q, ld_rsp_q, wb_q, is_i0_q, is_k_q, is_p_q, cs_i0_q, cs_j_q} <= '0;
+      {ld_iss_q, ld_rsp_q, wb_q, is_i0_q, is_k_q, is_p_q, cs_i0_q, cs_j_q, is_kb_q} <= '0;
       {t_wr_q, t_rd_q} <= '0;
       {p_valid_q, p_first_q, p_last_q, p_i0_q, p_na_q} <= '0;
       for (int p = 0; p < LANES; p++) begin
@@ -213,7 +216,7 @@ module gemv_acc
         unique case (s_addr_i[5:2])
           4'h0: if (s_wdata_i[0]) begin
             state_q <= LOADX; cyc_q <= '0;
-            {ld_iss_q, ld_rsp_q, wb_q, is_i0_q, is_k_q, is_p_q, cs_i0_q, cs_j_q} <= '0;
+            {ld_iss_q, ld_rsp_q, wb_q, is_i0_q, is_k_q, is_p_q, cs_i0_q, cs_j_q, is_kb_q} <= '0;
             if (jstride_q == 4 && stride_q[3:0] == 0 && w_addr_q[3:0] == 0 && n_q[1:0] == 0)
               mode_q <= MA;
             else if (LANES <= 4 && stride_q == 4 && jstride_q[3:0] == 0 && w_addr_q[3:0] == 0)
@@ -249,11 +252,13 @@ module gemv_acc
             tag[t_wr_q] <= is_tag; t_wr_q <= t_wr_q + 1;
             unique case (mode_q)
               MA: begin
-                if (is_p_q + 1 < is_na) is_p_q <= is_p_q + 1;
+                // runs of RUN chunks per lane: (group, run, lane, chunk in run)
+                if (is_k_q + 1 - is_kb_q < RUN && ((is_k_q + 1) << 2) < n_q) is_k_q <= is_k_q + 1;
+                else if (is_p_q + 1 < is_na) begin is_p_q <= is_p_q + 1; is_k_q <= is_kb_q; end
                 else begin
                   is_p_q <= '0;
-                  if (((is_k_q + 1) << 2) < n_q) is_k_q <= is_k_q + 1;
-                  else begin is_k_q <= '0; is_i0_q <= is_i0_q + LANES; end
+                  if (((is_k_q + 1) << 2) < n_q) begin is_kb_q <= is_k_q + 1; is_k_q <= is_k_q + 1; end
+                  else begin is_kb_q <= '0; is_k_q <= '0; is_i0_q <= is_i0_q + LANES; end
                 end
               end
               MB: begin

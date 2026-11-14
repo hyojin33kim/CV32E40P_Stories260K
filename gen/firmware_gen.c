@@ -163,7 +163,12 @@ float* forward(Transformer* transformer, int token, int pos) {
 
     // copy the token embedding into x
     float* content_row = w->token_embedding_table + token * dim;
+#ifdef EMB_WORDS
+    // memory-model study: word copy (64 DDR loads instead of memcpy's byte loads), same bits
+    for (int i = 0; i < dim; i++) ((unsigned*)x)[i] = ((const unsigned*)content_row)[i];
+#else
     memcpy(x, content_row, dim*sizeof(*x));
+#endif
 
     // forward all the layers
     for(unsigned long long l = 0; l < p->n_layers; l++) {
@@ -323,6 +328,11 @@ void boot(void) {
  w->w1=(float*)0x5c000; w->w2=w->w1+55040; w->w3=w->w2+55040;
  w->rms_att_weight=(float*)0xfd400; w->rms_ffn_weight=w->rms_att_weight+320;
  w->rms_final_weight=w->rms_ffn_weight+320;
+#ifdef RMS_SRAM
+ // memory-model study: keep the 704 RMSNorm weights in on-chip SRAM (copied once from DDR)
+ { float *d=(float*)0x1a6000; for(int i=0;i<704;i++) d[i]=w->rms_att_weight[i];
+   w->rms_att_weight=d; w->rms_ffn_weight=d+320; w->rms_final_weight=d+640; }
+#endif
  RunState *s=&tr.state;
  s->x=(float*)0x1a0000;s->xb=(float*)0x1a0100;s->xb2=(float*)0x1a0200;
  s->q=(float*)0x1a0300;s->hb=(float*)0x1a0400;s->hb2=(float*)0x1a0700;

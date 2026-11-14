@@ -42,3 +42,12 @@ acc/sweep/*/dump_*.bin
 # Step ④-b VFU unit test: keep the result summary only
 vfu/out/*
 !vfu/out/results.json
+# Memory-model study
+obj_ddr/
+gen/ddr_sw/*/*
+gen/ddr_sw/firmware_gen*
+!gen/ddr_sw/*/result.json
+!gen/ddr_sw/*/sim.log
+!gen/ddr_sw/*/cycles.npy
+!gen/ddr_sw/*/risc_toks.u32
+!gen/ddr_sw/*/prompt.u32

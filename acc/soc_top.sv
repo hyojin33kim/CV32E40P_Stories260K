@@ -8,7 +8,8 @@
 // most one engine is busy (the busy vfu owns the port, otherwise gemv_acc).
 module soc_top #(
     parameter int ACC_LANES = 4,  // gemv_acc MAC lanes  (build_sim.sh: ACC_LANES=<n>)
-    parameter int VFU_LANES = 4   // vfu element engines (build_sim.sh: VFU_LANES=<n>)
+    parameter int VFU_LANES = 4,  // vfu element engines (build_sim.sh: VFU_LANES=<n>)
+    parameter int ACC_RUN   = 1   // gemv_acc mode-A lines per lane run (build_sim.sh: ACC_RUN=<n>)
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -86,7 +87,7 @@ module soc_top #(
   assign acc_addr_o  = vfu_busy ? v_addr : g_addr;
   assign acc_wdata_o = vfu_busy ? v_wdata : g_wdata;
 
-  gemv_acc #(.LANES(ACC_LANES)) acc_i (
+  gemv_acc #(.LANES(ACC_LANES), .RUN(ACC_RUN)) acc_i (
       .clk_i, .rst_ni,
       .s_req_i(c_req && is_mmio && !is_vfu), .s_we_i(c_we), .s_addr_i(c_addr[5:0]),
       .s_wdata_i(c_wdata), .s_rdata_o(g_rdata),
