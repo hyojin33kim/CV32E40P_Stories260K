@@ -1,0 +1,82 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Sat Nov 14 20:28:08 2026
+| Host         : hyojin-desktop running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -hierarchical_depth 3 -file reports_soc_top/util_synth_hier.rpt
+| Design       : soc_top
+| Device       : xczu7ev-ffvc1156-2-e
+| Speed File   : -2
+| Design State : Synthesized
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++------------------------------+--------------------------+------------+------------+---------+------+--------+--------+--------+------+------------+
+|           Instance           |          Module          | Total LUTs | Logic LUTs | LUTRAMs | SRLs |   FFs  | RAMB36 | RAMB18 | URAM | DSP Blocks |
++------------------------------+--------------------------+------------+------------+---------+------+--------+--------+--------+------+------------+
+| soc_top                      |                    (top) |     234266 |     234266 |       0 |    0 | 112285 |      0 |      0 |    0 |         39 |
+|   (soc_top)                  |                    (top) |          0 |          0 |       0 |    0 |      2 |      0 |      0 |    0 |          0 |
+|   acc_i                      |                 gemv_acc |      96060 |      96060 |       0 |    0 |  71478 |      0 |      0 |    0 |         22 |
+|     (acc_i)                  |                 gemv_acc |      57406 |      57406 |       0 |    0 |  71478 |      0 |      0 |    0 |          6 |
+|     g_lane[0].add_i          |   cv32e40p_fp_wrapper_89 |       4896 |       4896 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|       (g_lane[0].add_i)      |   cv32e40p_fp_wrapper_89 |        208 |        208 |       0 |    0 |      0 |      0 |      0 |    0 |          0 |
+|       i_fpnew_bulk           |            fpnew_top_125 |       4690 |       4690 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|     g_lane[0].mul_i          |   cv32e40p_fp_wrapper_90 |       2863 |       2863 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|       (g_lane[0].mul_i)      |   cv32e40p_fp_wrapper_90 |        184 |        184 |       0 |    0 |      0 |      0 |      0 |    0 |          0 |
+|       i_fpnew_bulk           |            fpnew_top_121 |       2691 |       2691 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|     g_lane[1].add_i          |   cv32e40p_fp_wrapper_91 |       8047 |       8047 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|       (g_lane[1].add_i)      |   cv32e40p_fp_wrapper_91 |        208 |        208 |       0 |    0 |      0 |      0 |      0 |    0 |          0 |
+|       i_fpnew_bulk           |            fpnew_top_117 |       7841 |       7841 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|     g_lane[1].mul_i          |   cv32e40p_fp_wrapper_92 |       2863 |       2863 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|       (g_lane[1].mul_i)      |   cv32e40p_fp_wrapper_92 |        184 |        184 |       0 |    0 |      0 |      0 |      0 |    0 |          0 |
+|       i_fpnew_bulk           |            fpnew_top_113 |       2691 |       2691 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|     g_lane[2].add_i          |   cv32e40p_fp_wrapper_93 |       3712 |       3712 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|       (g_lane[2].add_i)      |   cv32e40p_fp_wrapper_93 |        208 |        208 |       0 |    0 |      0 |      0 |      0 |    0 |          0 |
+|       i_fpnew_bulk           |            fpnew_top_109 |       3506 |       3506 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|     g_lane[2].mul_i          |   cv32e40p_fp_wrapper_94 |       3964 |       3964 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|       (g_lane[2].mul_i)      |   cv32e40p_fp_wrapper_94 |        184 |        184 |       0 |    0 |      0 |      0 |      0 |    0 |          0 |
+|       i_fpnew_bulk           |            fpnew_top_105 |       3792 |       3792 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|     g_lane[3].add_i          |   cv32e40p_fp_wrapper_95 |       6351 |       6351 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|       (g_lane[3].add_i)      |   cv32e40p_fp_wrapper_95 |        208 |        208 |       0 |    0 |      0 |      0 |      0 |    0 |          0 |
+|       i_fpnew_bulk           |            fpnew_top_101 |       6145 |       6145 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|     g_lane[3].mul_i          |   cv32e40p_fp_wrapper_96 |       6014 |       6014 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|       (g_lane[3].mul_i)      |   cv32e40p_fp_wrapper_96 |        184 |        184 |       0 |    0 |      0 |      0 |      0 |    0 |          0 |
+|       i_fpnew_bulk           |             fpnew_top_97 |       5842 |       5842 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|   cpu_i                      |             cv32e40p_top |      11263 |      11263 |       0 |    0 |   3637 |      0 |      0 |    0 |          7 |
+|     core_i                   |            cv32e40p_core |       9678 |       9678 |       0 |    0 |   3338 |      0 |      0 |    0 |          5 |
+|       cs_registers_i         |    cv32e40p_cs_registers |        116 |        116 |       0 |    0 |    473 |      0 |      0 |    0 |          0 |
+|       ex_stage_i             |        cv32e40p_ex_stage |        528 |        528 |       0 |    0 |    173 |      0 |      0 |    0 |          5 |
+|       id_stage_i             |        cv32e40p_id_stage |       7784 |       7784 |       0 |    0 |   2388 |      0 |      0 |    0 |          0 |
+|       if_stage_i             |        cv32e40p_if_stage |       1007 |       1007 |       0 |    0 |    261 |      0 |      0 |    0 |          0 |
+|       load_store_unit_i      | cv32e40p_load_store_unit |        271 |        271 |       0 |    0 |     41 |      0 |      0 |    0 |          0 |
+|     fpu_gen.fp_wrapper_i     |   cv32e40p_fp_wrapper_68 |       1600 |       1600 |       0 |    0 |    299 |      0 |      0 |    0 |          2 |
+|       (fpu_gen.fp_wrapper_i) |   cv32e40p_fp_wrapper_68 |        546 |        546 |       0 |    0 |      0 |      0 |      0 |    0 |          0 |
+|       i_fpnew_bulk           |             fpnew_top_69 |       1054 |       1054 |       0 |    0 |    299 |      0 |      0 |    0 |          2 |
+|   vfu_i                      |                      vfu |     126943 |     126943 |       0 |    0 |  37168 |      0 |      0 |    0 |         10 |
+|     (vfu_i)                  |                      vfu |      30758 |      30758 |       0 |    0 |  33740 |      0 |      0 |    0 |          0 |
+|     g_lane[0].lane_i         |                 vfu_lane |       9608 |       9608 |       0 |    0 |    857 |      0 |      0 |    0 |          2 |
+|       (g_lane[0].lane_i)     |                 vfu_lane |       6183 |       6183 |       0 |    0 |    585 |      0 |      0 |    0 |          0 |
+|       fpu_i                  |   cv32e40p_fp_wrapper_48 |       3429 |       3429 |       0 |    0 |    272 |      0 |      0 |    0 |          2 |
+|     g_lane[1].lane_i         |               vfu_lane_0 |      20611 |      20611 |       0 |    0 |    857 |      0 |      0 |    0 |          2 |
+|       (g_lane[1].lane_i)     |               vfu_lane_0 |      17186 |      17186 |       0 |    0 |    585 |      0 |      0 |    0 |          0 |
+|       fpu_i                  |   cv32e40p_fp_wrapper_28 |       3429 |       3429 |       0 |    0 |    272 |      0 |      0 |    0 |          2 |
+|     g_lane[2].lane_i         |               vfu_lane_1 |       9236 |       9236 |       0 |    0 |    857 |      0 |      0 |    0 |          2 |
+|       (g_lane[2].lane_i)     |               vfu_lane_1 |       5811 |       5811 |       0 |    0 |    585 |      0 |      0 |    0 |          0 |
+|       fpu_i                  |    cv32e40p_fp_wrapper_8 |       3429 |       3429 |       0 |    0 |    272 |      0 |      0 |    0 |          2 |
+|     g_lane[3].lane_i         |               vfu_lane_2 |      55888 |      55888 |       0 |    0 |    857 |      0 |      0 |    0 |          2 |
+|       (g_lane[3].lane_i)     |               vfu_lane_2 |      52462 |      52462 |       0 |    0 |    585 |      0 |      0 |    0 |          0 |
+|       fpu_i                  |    cv32e40p_fp_wrapper_3 |       3430 |       3430 |       0 |    0 |    272 |      0 |      0 |    0 |          2 |
+|     sum_i                    |      cv32e40p_fp_wrapper |        852 |        852 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
+|       (sum_i)                |      cv32e40p_fp_wrapper |        208 |        208 |       0 |    0 |      0 |      0 |      0 |    0 |          0 |
+|       i_fpnew_bulk           |                fpnew_top |        646 |        646 |       0 |    0 |      0 |      0 |      0 |    0 |          2 |
++------------------------------+--------------------------+------------+------------+---------+------+--------+--------+--------+------+------------+
+
+

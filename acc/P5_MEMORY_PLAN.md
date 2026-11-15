@@ -93,7 +93,26 @@ burst 4/16/64 → 7.55/9.19/9.28× · outstanding 4/8/16 → 7.93/8.83/9.26×. c
 - KV·activation on-chip 배치 가정 유지(ctx512에서 KV를 DDR로 보내는 경우는 미평가).
 - lane 4개 유지: 기본 조건에서 대역폭 여유 있음(평균 필요 ≈ 1.04 MB / 141,694 cycles ≈ 7.3 B/cycle).
 
+## 후속 (11-14~15, 사실)
+
+### 고 latency 대응: lane FIFO 깊이 (`acc/sweep/fdepth_ddr/fdepth.md`, 18 runs bit-exact)
+| ctx | DDR (L, B/cycle) | FIFO 128 | FIFO 256 | FIFO 512 |
+|---|---|---:|---:|---:|
+| 1 | L40, 12.8 | 10.27× | 10.27× | 10.27× |
+| 1 | L100, 16 | 8.71× | **10.99×** | 10.99× |
+| 1 | L100, 12.8 | 8.48× | **9.86×** | 9.86× |
+| 512 | L100, 16 | 9.52× | 9.93× | 9.93× |
+
+- 기본 조건 손실의 대부분은 latency가 아니라 대역폭(12.8 < 16 B/cycle). 고 latency 손실의 원인은 lane FIFO가
+  in-flight 데이터를 제한한 것 → FIFO 256 words/lane(4 lanes × 1 KB)이면 L=100 손실 ≈ L=40 수준.
+- **명령 간 prefetch는 구현하지 않음**: FIFO 256으로 latency가 숨겨져 추가 이득이 작고 구조가 복잡해짐.
+
+### 기본값 승격 (reference 재생성, tag `_l4v4r16`)
+- RTL 기본값: `ACC_RUN=16`, `ACC_FDEPTH=256`. 펌웨어 full 구성에 `RMS_SRAM`, `EMB_WORDS` 포함.
+- 이상 메모리: single step 121,501 / 284,733 / 779,756 (11.97× / 10.68× / 10.07×), E2E 512 step 231,415,107 (10.30×).
+- DDR 모델(기본 파라미터): single step 141,694 / 304,926 / 799,949, E2E 64 step 11,736,888 (10.09×),
+  **E2E 512 step 241,753,923 (9.86×)** — 모두 `-Os`/HOLD와 bit 동일.
+- `reproduce.sh`가 이 기본값과 DDR 모델 결과까지 검사(quick 26/26 OK).
+
 ## 남은 일
-- 명령 간 prefetch(다음 GEMV의 Weight를 현재 명령 중 미리 요청) — 고 latency 대응.
-- `ACC_RUN=16`, `RMS_SRAM`, `EMB_WORDS`를 기본으로 승격할지: 이상 모델 cycles가 바뀌므로(RUN=16: +1.4%) reproduce 기준값 재생성 필요.
 - ⑤에서 DDR latency·대역폭 실측 → 이 모델 보정.

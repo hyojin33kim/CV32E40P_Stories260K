@@ -8,8 +8,10 @@ GEN_ACC=1 builds with -DUSE_ACC (FFN GEMV on acc/gemv_acc.sv), GEN_ACC=attn adds
 -DUSE_ACC_ATTN (attention QK/AV too), GEN_ACC=all adds -DUSE_ACC_VFU (softmax and
 SwiGLU on acc/vfu.sv), GEN_ACC=full adds -DUSE_ACC_MM (Wq/Wk/Wv/Wo/LM head on
 gemv_acc) and -DUSE_ACC_VFU_DIV (QK /sqrt(8) fused into the VFU softmax); all run
-obj_soc/Vsoc_top. The accelerator tag carries GEN_HW (default '_l4v4' = the default
-obj_soc build: 4 MAC lanes, 4 VFU lanes); runs before the lanes have no GEN_HW part;
+obj_soc/Vsoc_top. The accelerator tag carries GEN_HW (default '_l4v4r16' = the default
+obj_soc build: 4 MAC lanes, 4 VFU lanes, RUN 16, FIFO 256; '_l4v4' = RUN 1/FIFO 128 history;
+runs before the lanes have no GEN_HW part). full also places the RMSNorm weights in SRAM
+and copies the embedding row by words. SIM_DDR=1 enables the DDR/SRAM memory model;
 SIM_ACC_LAT / SIM_ACC_GNT_EVERY set the accelerator memory latency / grant period
 (tag <flags>_acc_L<lat>_G<period>). Results must stay bit-exact vs the -Os run.
 Pass criteria (agreed 2026-11-13, host<->RISC is tolerance-based):
@@ -34,8 +36,9 @@ name = {'1': 'acc', 'attn': 'accattn', 'all': 'accall', 'full': 'accfull'}.get(m
 fwtag = tag + ('_' + name if acc else '') + extra.replace(' ', '').replace('-D', '_').lower()
 if acc:
     cflags += ' -DUSE_ACC' + {'1': '', 'attn': ' -DUSE_ACC_ATTN', 'all': ' -DUSE_ACC_ATTN -DUSE_ACC_VFU',
-                               'full': ' -DUSE_ACC_ATTN -DUSE_ACC_VFU -DUSE_ACC_MM -DUSE_ACC_VFU_DIV'}[mode]
-    tag += '_' + name + os.environ.get('GEN_HW', '_l4v4') + '_L%s_G%s' % (os.environ.get('SIM_ACC_LAT', '0'), os.environ.get('SIM_ACC_GNT_EVERY', '1'))
+                               'full': ' -DUSE_ACC_ATTN -DUSE_ACC_VFU -DUSE_ACC_MM -DUSE_ACC_VFU_DIV'
+                                       ' -DRMS_SRAM -DEMB_WORDS'}[mode]
+    tag += '_' + name + os.environ.get('GEN_HW', '_l4v4r16') + '_L%s_G%s' % (os.environ.get('SIM_ACC_LAT', '0'), os.environ.get('SIM_ACC_GNT_EVERY', '1'))
 OUTROOT = Path(os.environ.get('GEN_OUT', G))  # reproduce.sh points this at repro/gen
 OUTROOT.mkdir(parents=True, exist_ok=True)
 O = OUTROOT / f'out_{steps}_{tag}'; O.mkdir(exist_ok=True)

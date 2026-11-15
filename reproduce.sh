@@ -8,9 +8,10 @@
 #   ./reproduce.sh standard   (~30 min) quick + VFU unit test (328K) + 64-step E2E
 #   ./reproduce.sh full       (hours)   standard + VFU unit test (1.3M) + 512-step E2E + sweep
 #
-# The accelerator results are checked on the default SoC build (gemv_acc 4 MAC lanes,
-# vfu 4 lanes, tag _l4v4). Earlier single-lane results stay in the repo as history
-# (prof/acc_*_L0_G1, gen/out_*_acc*_L0_G1 without _l4v4) and are not re-checked.
+# The accelerator results are checked on the default SoC build (gemv_acc 4 MAC lanes, RUN 16,
+# FIFO 256; vfu 4 lanes; tag _l4v4r16), with the ideal memory and with the DDR/SRAM memory
+# model (SIM_DDR=1, default parameters). Earlier results stay in the repo as history
+# (tags _L0_G1 without lanes, _l4v4 = RUN 1/FIFO 128) and are not re-checked.
 #
 # Requires (Ubuntu 24.04): gcc-riscv64-unknown-elf picolibc-riscv64-unknown-elf
 # verilator (5.038 used) python3-numpy gcc. Override the RISC-V prefix with TC=<prefix>.
@@ -28,6 +29,7 @@ step "build simulators (CPU, CPU profiler, CPU + accelerator SoC)"
 LOG=$R/build_cpu.log ./build_sim.sh
 LOG=$R/build_prof.log MDIR=obj_prof ./build_sim.sh
 LOG=$R/build_soc.log TOP=soc_top ./build_sim.sh
+HW=_l4v4r16
 
 step "G0: HOLD regression (stored HOLD ELF, ctx 1/128/512) on CPU sim and SoC sim"
 python3 image.py firmware.elf "$R/hold/image.bin"
@@ -62,11 +64,12 @@ done
 step "single-step profiles: SW baseline, then each offload level on the accelerator"
 PROF_CFLAGS="$F" python3 prof/run_prof.py baseline/firmware.c O2u > "$R/prof_O2u.txt" 2>&1 &
 PROF_CFLAGS="$F" python3 prof/run_prof.py gen/firmware_gen.c gen_O2u > "$R/prof_gen_O2u.txt" 2>&1 &
-PROF_CFLAGS="$F" PROF_ACC=1 python3 prof/run_prof.py gen/firmware_gen.c acc_ffn_l4v4 > "$R/prof_ffn.txt" 2>&1 &
-PROF_CFLAGS="$F -DUSE_ACC_ATTN" PROF_ACC=1 python3 prof/run_prof.py gen/firmware_gen.c acc_attn_l4v4 > "$R/prof_attn.txt" 2>&1 &
-PROF_CFLAGS="$F -DUSE_ACC_ATTN -DUSE_ACC_VFU" PROF_ACC=1 python3 prof/run_prof.py gen/firmware_gen.c acc_all_l4v4 > "$R/prof_all.txt" 2>&1 &
-PROF_CFLAGS="$F -DUSE_ACC_ATTN -DUSE_ACC_VFU -DUSE_ACC_MM -DUSE_ACC_VFU_DIV" PROF_ACC=1 \
-  python3 prof/run_prof.py gen/firmware_gen.c acc_full_l4v4 > "$R/prof_full.txt" 2>&1 &
+FULL="$F -DUSE_ACC_ATTN -DUSE_ACC_VFU -DUSE_ACC_MM -DUSE_ACC_VFU_DIV -DRMS_SRAM -DEMB_WORDS"
+PROF_CFLAGS="$F" PROF_ACC=1 python3 prof/run_prof.py gen/firmware_gen.c acc_ffn$HW > "$R/prof_ffn.txt" 2>&1 &
+PROF_CFLAGS="$F -DUSE_ACC_ATTN" PROF_ACC=1 python3 prof/run_prof.py gen/firmware_gen.c acc_attn$HW > "$R/prof_attn.txt" 2>&1 &
+PROF_CFLAGS="$F -DUSE_ACC_ATTN -DUSE_ACC_VFU" PROF_ACC=1 python3 prof/run_prof.py gen/firmware_gen.c acc_all$HW > "$R/prof_all.txt" 2>&1 &
+PROF_CFLAGS="$FULL" PROF_ACC=1 python3 prof/run_prof.py gen/firmware_gen.c acc_full$HW > "$R/prof_full.txt" 2>&1 &
+SIM_DDR=1 PROF_CFLAGS="$FULL" PROF_ACC=1 python3 prof/run_prof.py gen/firmware_gen.c ddr_full$HW > "$R/prof_ddr_full.txt" 2>&1 &
 wait
 
 step "VFU unit test (expf / softmax / SiLU / divide / divide+softmax vs RISC-V software, bitwise)"
@@ -84,6 +87,7 @@ if [ "$MODE" != quick ]; then
   GEN_CFLAGS="" python3 gen/run_gen.py 64 > "$R/gen_64_Os.txt" 2>&1
   python3 gen/run_gen.py 64 > "$R/gen_64_O2u.txt" 2>&1 &
   for m in 1 attn all full; do GEN_ACC=$m python3 gen/run_gen.py 64 > "$R/gen_64_$m.txt" 2>&1 & done
+  SIM_DDR=1 GEN_HW=${HW}_ddr GEN_ACC=full python3 gen/run_gen.py 64 > "$R/gen_64_full_ddr.txt" 2>&1 &
   wait
 fi
 
@@ -92,7 +96,7 @@ if [ "$MODE" = full ]; then
   GEN_CFLAGS="" python3 gen/run_gen.py 512 > "$R/gen_512_Os.txt" 2>&1
   python3 gen/run_gen.py 512 > "$R/gen_512_O2u.txt" 2>&1 &
   GEN_ACC=full python3 gen/run_gen.py 512 > "$R/gen_512_full.txt" 2>&1 &
-  python3 acc/sweep_mem.py acc_full_l4v4 2 > "$R/sweep.txt" 2>&1 &
+  SIM_DDR=1 GEN_HW=${HW}_ddr GEN_ACC=full python3 gen/run_gen.py 512 > "$R/gen_512_full_ddr.txt" 2>&1 &
   wait
 fi
 
