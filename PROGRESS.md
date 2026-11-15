@@ -51,18 +51,25 @@ DDR 모델: Weight는 DDR(latency 40, burst 16, 12.8 B/cycle, outstanding 8), KV
 - Vivado: `~/bin/vivado`는 Windows Vivado 2026.1(`H:\2026.1\Vivado\bin\vivado.bat`) wrapper, `/mnt/<drive>` 아래에서만 실행.
   11-15 H: 연결 확인, `vivado v2026.1` 동작. 합성 작업 디렉토리 `E:\fpga_work\cv32e40p_stories` (`fpga/prepare.py`).
 
-## 남은 일 (권장 순서, 11-15 기준)
-1. **② FPGA 대응 RTL 수정** (`fpga/P6_FPGA_SYNTH.md`)
-   - CPU 단독 FPU_ADDMUL_LAT 0/1/2 합성으로 Fmax 확인.
-   - FPU 파이프라인(가속기 GEMV는 행 interleave로 1 MAC/cycle 유지), 버퍼 BRAM화(lane별 bank, 1R1W), VFU lane 면적 축소.
-   - sim bit-exact 재확인(단위 테스트·E2E) → 재합성 → place & route → timing·면적.
-   - 새 FPU 지연 기준으로 SW 기준선·가속비 재측정.
-2. **선택 최적화** — ctx512 softmax(VFU) 비중, CPU 잔여 작업 overlap.
-3. **검증 보강(선택)** — 다중 프롬프트, temperature·top-p sampling, expf 2³² 전수 비교.
-4. **⑤ ZCU104 통합** — 대기. DDR latency·대역폭 실측으로 메모리 모델 보정.
+## 기본 구성 (11-15 결정)
+| 이름 | CPU/ACC/VFU FPU latency | RUN | 용도 |
+|---|---|---|---|
+| **D2 `fpga` (기본)** | 4 / 4 / 4 | 8 | 150 MHz에서 합성·P&R timing 충족한 구성(v2, WNS +0.025 ns). 모든 신규 수치의 기준 |
+| D1 `ideal` | 0 / 0 / 0 | 16 | 이전 결과(~12×/10×) 재현·회귀용. FPGA 비실현 |
+
+## 남은 일 (권장 순서, 11-15 기준) — 작업 브랜치 `worktree-g0-repro`, ✔에서 main merge
+| 단계 | 내용 | merge |
+|---|---|---|
+| **S1** | v2 RTL D2 기준: CPU FPU lat4 sim, SW 기준선·전 offload 재측정(profile, E2E 64/512 ideal·DDR), bit-exact, D2 기본화, 기준값 재생성, reproduce | ✔ M1 |
+| **S2** | ZCU104 문서(UG1267/UG1085) 기반 PS DDR4·HP port 수치 → 150 MHz 기준 DDR 모델 설정, 재sweep (latency는 추정 명시) | S1/S3와 함께 |
+| **S3** | Option A: 고정소수점 exp2 C 모델+전수 정확도, 새 firmware 기준(4-way sum, deferred normalization, SiLU via exp2), host tolerance+512 token, VFU pipelined exp2 RTL+단위 테스트, E2E·profile·150 MHz 합성 | ✔ M2 |
+| **S4** | 프롬프트 1종, greedy decoding 유지(11-15 결정 — 다중 프롬프트·sampling은 범위 밖) | — |
+| **S5** | on-chip 메모리 RTL: CPU inst/data SRAM(BRAM/URAM), KV·activation SRAM(URAM), 가속기 SRAM port + weight용 DDR(AXI) port. sim은 DDR slave 모델만 | ✔ M4 |
+| **S6** | 메모리 포함 full SoC 합성+P&R @150 MHz, E2E 재확인 | ✔ M5 |
+| ⑤ | ZCU104 보드 통합 — 대기 | — |
 
 ## 미검증
-- place & route 후 timing(합성 단계만 수행), 실제 DDR 수치(현재 가정값), 다중 프롬프트·sampling.
+- 실제 DDR 수치(현재 가정값 → S2에서 문서값, 보드 실측은 ⑤), on-chip 메모리 포함 timing·면적(S6).
 
 ## 기록 위치
 - 이 파일(`PROGRESS.md`): 현재 상태의 단일 원본 — 단계가 끝날 때마다 갱신.
