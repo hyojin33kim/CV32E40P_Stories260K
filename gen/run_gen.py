@@ -68,9 +68,14 @@ prompt = np.fromfile(O / 'prompt.u32', dtype='<u4')
 assert steps >= np_, 'steps must cover the prompt'
 
 # firmware + image
+# built in the run's own directory (concurrent runs with the same firmware do not clobber each
+# other), then published as <OUTROOT>/firmware_gen_<fwtag>.* by atomic replace
 fw = OUTROOT / f'firmware_gen_{fwtag}'
-run('env', 'SRC=gen/firmware_gen.c', f'OUT={fw}', 'TC=/usr', f'CFLAGS_EXTRA={cflags}', W / 'build.sh', cwd=W)
-run('python3', W / 'image.py', f'{fw}.elf', O / 'image.bin')
+run('env', 'SRC=gen/firmware_gen.c', f'OUT={O / "fw"}', 'TC=/usr', f'CFLAGS_EXTRA={cflags}', W / 'build.sh', cwd=W)
+for ext in ('.elf', '.dis', '.map', '.su', '_size.txt'):
+    tmp = Path(f'{fw}{ext}.{os.getpid()}')
+    tmp.write_bytes((O / f'fw{ext}').read_bytes()); os.replace(tmp, f'{fw}{ext}')
+run('python3', W / 'image.py', O / 'fw.elf', O / 'image.bin')
 m = bytearray((O / 'image.bin').read_bytes())
 m[0x1ae000:0x1ae000 + 4 * np_] = prompt.tobytes()
 struct.pack_into('<II', m, 0x1afff0, np_, steps)

@@ -35,11 +35,11 @@ if os.environ.get('PIPE_DIST', '1') == '1':
     t = fw.read_text(); assert 'PipeConfig: fpnew_pkg::AFTER' in t
     fw.write_text(t.replace('PipeConfig: fpnew_pkg::AFTER', 'PipeConfig: fpnew_pkg::DISTRIBUTED'))
 (D / 'acc').mkdir(exist_ok=True); (D / 'fpga').mkdir(exist_ok=True)
-for f in ('gemv_acc.sv', 'vfu_lane.sv', 'vfu.sv', 'soc_top.sv'):
+for f in ('gemv_acc.sv', 'vfu_exp2.sv', 'vfu_lane.sv', 'vfu.sv', 'soc_top.sv', 'sram_dp.sv', 'soc_chip.sv'):
     shutil.copy(W / 'acc' / f, D / 'acc' / f)
 shutil.copy(W / 'fpga' / 'cv32e40p_clock_gate_fpga.sv', D / 'fpga')
 shutil.copy(W / 'fpga' / 'synth.tcl', D)
-files += ['fpga/cv32e40p_clock_gate_fpga.sv', 'acc/gemv_acc.sv', 'acc/vfu_lane.sv', 'acc/vfu.sv', 'acc/soc_top.sv']
+files += ['fpga/cv32e40p_clock_gate_fpga.sv', 'acc/gemv_acc.sv', 'acc/vfu_exp2.sv', 'acc/vfu_lane.sv', 'acc/vfu.sv', 'acc/soc_top.sv', 'acc/sram_dp.sv', 'acc/soc_chip.sv']
 for f in files:
     assert (D / f).exists(), f
 with open(D / 'files.tcl', 'w') as o:

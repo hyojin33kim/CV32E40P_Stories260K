@@ -6,14 +6,14 @@ usage: opta/compare_host.py [steps=512] [prompt]   -> opta/host_cmp_<steps>/resu
   - teacher-forced on the original model's tokens: per-step logits rel L2 and argmax agreement,
     KV-cache rel L2 at the end (shows how far the numerics move, independent of divergence)
 """
-import json, subprocess, sys
+import json, os, subprocess, sys
 from pathlib import Path
 import numpy as np
 
 W = Path(__file__).resolve().parent.parent
 steps = int(sys.argv[1]) if len(sys.argv) > 1 else 512
 text = sys.argv[2] if len(sys.argv) > 2 else 'Once upon a time'
-O = W / 'opta' / f'host_cmp_{steps}'; O.mkdir(parents=True, exist_ok=True)
+O = Path(os.environ.get('OPTA_OUT', W / 'opta')) / f'host_cmp_{steps}'; O.mkdir(parents=True, exist_ok=True)
 model, tok = W / 'stories260K.bin', W / 'gen' / 'tok512.bin'
 V = 512
 

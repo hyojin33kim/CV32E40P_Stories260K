@@ -4,6 +4,7 @@
 //   op 1 SUBEXP : res = expf(a - b)                        (softmax, b = max)
 //   op 2 SILU   : res = (a * (1 / (1 + expf(-a)))) * b      (b = gate)
 //   op 3 DIV    : res = a / b
+//   op 4 SILU2  : res = (a * (1 / (1 + exp2q(a * -log2e)))) * b   (Option A, vfu_exp2.sv)
 // expf = picolibc 1.8.6 newlib/libm/math/sf_exp.c (fdlibm) as linked: bit-pattern range
 // checks, k = (int)RTZ(x*invln2 +- 0.5), 5-term polynomial with the negative coefficients
 // applied as "a - |P|" (as compiled; identical bits to "a + P"), (x*c)/(2-c), exponent add,
@@ -16,14 +17,15 @@ module vfu_lane
     input  logic        clk_i,
     input  logic        rst_ni,
     input  logic        start_i,
-    input  logic [ 1:0] op_i,
+    input  logic [ 2:0] op_i,
     input  logic [31:0] a_i,
     input  logic [31:0] b_i,
     output logic        busy_o,
     output logic        done_o,      // one-cycle pulse with res_o
     output logic [31:0] res_o
 );
-  localparam logic [1:0] O_EXP = 2'd0, O_SUBEXP = 2'd1, O_SILU = 2'd2, O_DIV = 2'd3;
+  localparam logic [2:0] O_EXP = 3'd0, O_SUBEXP = 3'd1, O_SILU = 3'd2, O_DIV = 3'd3, O_SILU2 = 3'd4;
+  localparam logic [31:0] NLOG2E = 32'hbfb8_aa3b;   // fp32(-log2(e))
   localparam logic [31:0] ONE = 32'h3f80_0000, TWO = 32'h4000_0000, HALF = 32'h3f00_0000,
       LN2HI = 32'h3f31_7180, LN2LO = 32'h3717_f7d1, INVLN2 = 32'h3fb8_aa3b,
       P1 = 32'h3e2a_aaab, P2N = 32'h3b36_0b61, P3 = 32'h388a_b355, P4N = 32'h35dd_ea0e,
@@ -31,6 +33,7 @@ module vfu_lane
 
   typedef enum logic [5:0] {
     IDLE, DONE,
+    Q_MUL, Q_EXP,
     E_SUB, E_DIV, S_ADD, S_RCP, S_MUL1, S_MUL2,
     X_CLS, X_NAN, X_R1, X_R2A, X_R2B, X_R2C, X_R2D, X_R2E, X_R2F, X_R2G, X_XR, X_TINY,
     X_T, X_A1, X_A2, X_A3, X_A4, X_A5, X_A6, X_A7, X_A8, X_A9, X_C, X_XC,
@@ -38,7 +41,7 @@ module vfu_lane
   } st_e;
   st_e st_q;
 
-  logic [1:0]  op_q;
+  logic [2:0]  op_q;
   logic [31:0] a_q, b_q, v_q, s_q, res_q;
   logic [31:0] ex_q, ey_q, hi_q, lo_q, kf_q, t_q, ac_q, c_q, xc_q, q_q, r_q;
   logic signed [31:0] k_q;
@@ -59,6 +62,7 @@ module vfu_lane
   always_comb begin
     uop = 1'b1; fp_op = OP_ADD; fp_mod = 1'b0; fp_rm = RNE; opa = '0; opb = '0; opc = '0;
     unique case (st_q)
+      Q_MUL:   begin fp_op = OP_MUL; opa = a_q; opb = NLOG2E; end           // a * -log2e
       E_SUB:   begin fp_mod = 1; opb = a_q; opc = b_q; end                  // a - max
       E_DIV:   begin fp_op = OP_DIV; opa = a_q; opb = b_q; end
       S_ADD:   begin opb = ONE; opc = ey_q; end                             // 1 + e
@@ -112,6 +116,11 @@ module vfu_lane
       .apu_rvalid_o(fp_valid), .apu_rdata_o(fp_res), .apu_rflags_o()
   );
 
+  // Option A exp2q (5-cycle pipeline; one element at a time here)
+  logic        e2_in, e2_valid;
+  logic [31:0] e2_res;
+  vfu_exp2 exp2_i (.clk_i, .rst_ni, .valid_i(e2_in), .y_i(t_q), .valid_o(e2_valid), .res_o(e2_res));
+
   assign busy_o = st_q != IDLE;
   assign done_o = st_q == DONE;
   assign res_o  = res_q;
@@ -119,15 +128,16 @@ module vfu_lane
   // after expf: where the result goes
   st_e after_exp;
   always_comb unique case (op_q)
-    O_SILU:  after_exp = S_ADD;
+    O_SILU, O_SILU2: after_exp = S_ADD;
     default: after_exp = DONE;
   endcase
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      st_q <= IDLE; op_q <= '0; issued_q <= 1'b0; k_q <= '0;
+      st_q <= IDLE; op_q <= '0; issued_q <= 1'b0; k_q <= '0; e2_in <= 1'b0;
       {a_q, b_q, v_q, s_q, res_q, ex_q, ey_q, hi_q, lo_q, kf_q, t_q, ac_q, c_q, xc_q, q_q, r_q} <= '0;
     end else begin
+      e2_in <= 1'b0;
       if (uop) begin
         if (fp_done) issued_q <= 1'b0;
         else if (fp_req && fp_gnt) issued_q <= 1'b1;
@@ -139,10 +149,13 @@ module vfu_lane
             O_EXP:    begin ex_q <= a_i; st_q <= X_CLS; end
             O_SUBEXP: st_q <= E_SUB;
             O_SILU:   begin v_q <= a_i; ex_q <= a_i ^ 32'h8000_0000; st_q <= X_CLS; end
+            O_SILU2:  begin v_q <= a_i; st_q <= Q_MUL; end
             default:  st_q <= E_DIV;
           endcase
         end
         DONE: st_q <= IDLE;
+        Q_MUL:  if (fp_done) begin t_q <= fp_res; e2_in <= 1'b1; st_q <= Q_EXP; end
+        Q_EXP:  if (e2_valid) begin ey_q <= e2_res; st_q <= S_ADD; end
         E_SUB:  if (fp_done) begin ex_q <= fp_res; st_q <= X_CLS; end
         E_DIV:  if (fp_done) begin res_q <= fp_res; st_q <= DONE; end
         S_ADD:  if (fp_done) begin s_q <= fp_res; st_q <= S_RCP; end

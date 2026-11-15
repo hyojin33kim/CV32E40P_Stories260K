@@ -1,0 +1,23 @@
+{
+  "acc": null,
+  "cflags": "-O2 -funroll-loops -DOPTA",
+  "text_bytes": 11516,
+  "logits_kv_tokens_bitexact_vs_Os": true,
+  "steps": 64,
+  "prompt": "Once upon a time",
+  "n_prompt": 5,
+  "sim_wall_s": 596.1,
+  "cycles_total": 217872855,
+  "cycles_first": 2960330,
+  "cycles_last": 3847055,
+  "logits_rel_L2_max": 0.0,
+  "logits_bitexact_steps": 64,
+  "risc_token_is_own_argmax": true,
+  "argmax_mismatch_steps": [],
+  "min_host_top2_margin": 0.07106399536132812,
+  "kv_rel_L2_max": 0.0,
+  "kv_bitexact_positions": 64,
+  "kv_beyond_steps_zero": true,
+  "host_free_run_first_divergence": null,
+  "pass": true
+}

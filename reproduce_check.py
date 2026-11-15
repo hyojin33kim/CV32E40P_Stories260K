@@ -18,11 +18,16 @@ HW = '_d2'  # default configuration D2: FPU latency 4 everywhere, 4 MAC lanes RU
 EXPECT = [f'prof/O2u{HW}', f'prof/gen_O2u{HW}', f'prof/ddr_full{HW}'] + \
          [f'prof/acc_{t}{HW}' for t in ('ffn', 'attn', 'all', 'full')] + \
          [f'gen/out_8_Os{HW}'] + [f'gen/out_8_O2u_{m}{HW}_L0_G1' for m in ('accattn', 'accall', 'accfull')]
+EXPECT += [f'prof/gen_O2u_opta{HW}', f'prof/acc_full_opta{HW}', f'prof/ddr_full_opta{HW}', f'prof/chip_full_opta{HW}',
+           f'gen/out_8_Os_opta{HW}', f'gen/out_8_O2u_opta_accfull{HW}_L0_G1']
 if MODE in ('standard', 'full'):
+    EXPECT += [f'gen/out_64_Os_opta{HW}', f'gen/out_64_O2u_opta{HW}', f'gen/out_64_O2u_opta_accfull{HW}_L0_G1',
+               f'gen/out_64_O2u_opta_accfull{HW}_ddr_L0_G1']
     EXPECT += [f'gen/out_64_Os{HW}', f'gen/out_64_O2u{HW}'] + \
               [f'gen/out_64_O2u_{m}{HW}_L0_G1' for m in ('acc', 'accattn', 'accall', 'accfull')] + \
               [f'gen/out_64_O2u_accfull{HW}_ddr_L0_G1']
 if MODE == 'full':
+    EXPECT += [f'gen/out_512_O2u_opta_accfull{HW}_L0_G1', f'gen/out_512_O2u_opta_accfull{HW}_ddr_L0_G1']
     EXPECT += [f'gen/out_512_Os{HW}', f'gen/out_512_O2u{HW}', f'gen/out_512_O2u_accfull{HW}_L0_G1',
                f'gen/out_512_O2u_accfull{HW}_ddr_L0_G1']
 for e in EXPECT:  # a failed background run leaves no result file
@@ -41,9 +46,17 @@ for f in sorted((R / 'prof').glob('*/summary.json')):
     a, b = json.load(open(f)), json.load(open(ref))
     for t in ('1', '128', '512'):
         d, ok = cmp_cycles(a[t]['fw_measured_cycles'], b[t]['fw_measured_cycles'])
-        ok = ok and a[t]['logits_kv_bitexact_vs_hold'] is True
-        rows.append((f'prof/{tag} ctx{t}', f"cycles {a[t]['fw_measured_cycles']:,} (delta {d:+,}) "
-                     f"bit-exact vs HOLD {a[t]['logits_kv_bitexact_vs_hold']}", ok))
+        if '_opta' in tag:   # Option A numerics: KV + output region == the SW Option A profile
+            sw = R / 'prof' / f'gen_O2u_opta{HW}' / f'dump_{t}.bin'
+            x, y = (f.parent / f'dump_{t}.bin').read_bytes(), sw.read_bytes() if sw.exists() else b''
+            same = bool(y) and x[0x100000:0x1a0000] == y[0x100000:0x1a0000] and x[0x1a4a00:0x1a5200] == y[0x1a4a00:0x1a5200]
+            ok = ok and same
+            rows.append((f'prof/{tag} ctx{t}', f"cycles {a[t]['fw_measured_cycles']:,} (delta {d:+,}) "
+                         f"bit-exact vs SW Option A {same}", ok))
+        else:
+            ok = ok and a[t]['logits_kv_bitexact_vs_hold'] is True
+            rows.append((f'prof/{tag} ctx{t}', f"cycles {a[t]['fw_measured_cycles']:,} (delta {d:+,}) "
+                         f"bit-exact vs HOLD {a[t]['logits_kv_bitexact_vs_hold']}", ok))
         bad += not ok
 
 for f in sorted((R / 'gen').glob('out_*/result.json')):
@@ -61,6 +74,17 @@ for f in sorted((R / 'gen').glob('out_*/result.json')):
         note += ' (no committed reference)'
     rows.append((f'gen/{name}', note, ok)); bad += not ok
 
+oh = R / 'opta' / 'host_cmp_512' / 'result.json'   # Option A vs llama2.c on the host
+if not oh.exists():
+    rows.append(('opta host accuracy', 'missing (see repro/opta_host.txt)', False)); bad += 1
+else:
+    h = json.load(open(oh)); ok = h['free_token_match'] == 1.0 and h['tf_logits_rel_L2_max'] < 1e-5
+    rows.append(('opta host accuracy', f"512 tokens match {h['free_token_match']:.3f}, rel L2 max "
+                 f"{h['tf_logits_rel_L2_max']:.2e}", ok)); bad += not ok
+er = R / 'exp2_rtl.txt'   # vfu_exp2.sv vs opta/exp2q.h
+line = [l for l in er.read_text().splitlines() if l.startswith('vfu_exp2:')] if er.exists() else []
+ok = bool(line) and line[-1].endswith(' 0 mismatches')
+rows.append(('exp2 RTL vs C model', line[-1] if line else 'missing (see repro/exp2_rtl.txt)', ok)); bad += not ok
 vt = R / 'vfu' / 'results.json'  # VFU unit test: every element bit-identical
 if not vt.exists():
     rows.append(('vfu unit test', 'missing (see repro/vfu_test.txt)', False)); bad += 1

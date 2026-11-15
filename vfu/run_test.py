@@ -17,7 +17,8 @@ O = Path(os.environ.get('TEST_OUT', W / 'vfu' / 'out')); O.mkdir(parents=True, e
 SIM = os.environ.get('TEST_SIM', str(W / 'obj_soc/Vsoc_top'))
 SEEDS = int(sys.argv[1]) if len(sys.argv) > 1 else 4
 N = int(sys.argv[2]) if len(sys.argv) > 2 else 65536
-TESTS = {1: 'exp', 2: 'softmax', 3: 'silu', 4: 'divs', 5: 'divsoftmax'}
+TESTS = {1: 'exp', 2: 'softmax', 3: 'silu', 4: 'divs', 5: 'divsoftmax', 6: 'softmax2', 7: 'silu2'}
+if os.environ.get('TEST_ONLY'): TESTS = {int(k): TESTS[int(k)] for k in os.environ['TEST_ONLY'].split(',')}
 
 def f2u(a): return np.asarray(a, dtype='<f4').view('<u4')
 def u2f(a): return np.asarray(a, dtype='<u4').view('<f4')
@@ -43,7 +44,7 @@ def inputs(test, rng):
     aux = np.zeros(N, dtype=np.uint32)
     if test == 1:
         x = exp_inputs(rng)
-    elif test in (2, 5):  # softmax chunks with llama2.c-like scores, ties and +-0
+    elif test in (2, 5, 6):  # softmax chunks with llama2.c-like scores, ties and +-0
         x = f2u(rng.normal(0, 3, N).astype(np.float32) * rng.choice([1, 4, 0.01], N).astype(np.float32))
         x[rng.integers(0, N, N // 64)] = 0x80000000
         x[rng.integers(0, N, N // 64)] = 0
@@ -51,7 +52,7 @@ def inputs(test, rng):
         while j < N:
             ln = int(rng.choice([1, 2, 8, 512, int(rng.integers(1, 513))]))
             aux[j] = ln; j += ln
-    elif test == 3:  # silu: values seen in hb, gate in hb2
+    elif test in (3, 7):  # silu: values seen in hb, gate in hb2
         x = f2u(rng.normal(0, 4, N).astype(np.float32))
         x[:len(exp_inputs(rng)[:4096])] = exp_inputs(rng)[:4096] ^ 0x80000000  # exp corner cases via -val
         aux = f2u(rng.normal(0, 2, N).astype(np.float32))
@@ -81,8 +82,10 @@ def one(segs, test, seed):
     img.write_bytes(m)
     subprocess.run([SIM, str(img), str(dump), str(10 ** 10)], check=True, capture_output=True)
     d = dump.read_bytes()
-    bad, first, n, t, csw, chw = struct.unpack_from('<6I', d, 0x1aff00)
+    bad, first, n, t, csw, chw, sbad = struct.unpack_from('<7I', d, 0x1aff00)
     res = dict(test=TESTS[test], seed=seed, n=n, mismatches=bad, sw_cycles=csw, hw_cycles=chw)
+    if test == 6:   # softmax2: per-chunk sums returned by the VFU (SUM register) vs software
+        res['sum_mismatches'] = sbad; res['mismatches'] += sbad
     if bad:
         res['first'] = dict(index=first, input=hex(int(x[first])), sw=hex(struct.unpack_from('<I', d, 0x040000 + 4 * first)[0]),
                             hw=hex(struct.unpack_from('<I', d, 0x080000 + 4 * first)[0]))

@@ -13,6 +13,11 @@
 //   exp(x,n)    : x[i] = expf(x[i])                                  (lanes, unit test)
 //   divsoftmax(x,n,c): x[i] /= c (lanes), then softmax as above with the max scan done
 //                 sequentially over the divided values (= the CPU's '/=' loop + softmax())
+//   softmax2(x,n,K) (Option A, cmd 6): max during load; stream at 1 element/cycle
+//                 p[i] = exp2q((x[i] - max) * K)  (fsub, fmul, vfu_exp2 pipeline), x[i] = p[i]
+//                 S[i % 4] += p[i] on one pipelined adder (4 partial sums in rotation, forwarded
+//                 when FPU_LAT > 0), sum = (S0 + S1) + (S2 + S3) -> SUM register (0x1C)
+//   silu2(h,g,n)  (Option A, cmd 7): h[i] = (h[i] * (1/(1+exp2q(h[i]*-log2e)))) * g[i] (lanes)
 // '>' for the max scan is an integer compare of the IEEE bit patterns (finite inputs;
 // +0 and -0 compare equal), equivalent to flt.s for non-NaN values.
 //
@@ -23,10 +28,10 @@
 // based, so any latency is functionally the same.
 //
 // MMIO (byte offsets from the slave base):
-//   0x00 CMD (W: 1 softmax, 2 silu, 3 divs, 4 exp, 5 divsoftmax -> starts)
+//   0x00 CMD (W: 1 softmax, 2 silu, 3 divs, 4 exp, 5 divsoftmax, 6 softmax2, 7 silu2 -> starts)
 //   0x04 STATUS (R: bit0 busy)
 //   0x08 A_ADDR  0x0C B_ADDR (silu gate)  0x10 N (<= BUF)  0x14 SCALAR (divs divisor bits)
-//   0x18 LAST_CYCLES (R)
+//   0x18 LAST_CYCLES (R)  0x1C SUM (R: softmax2 sum)
 // Memory master: 128-bit read lines (the addressed word is taken from the line), in-order
 // responses, 32-bit writes complete on grant. Load A (and B) -> compute -> store A.
 module vfu
@@ -60,10 +65,11 @@ module vfu
   localparam int BI = $clog2(BW);
   localparam int PW = (LANES > 1) ? $clog2(LANES) : 1;
   localparam logic [2:0] C_SOFTMAX = 3'd1, C_SILU = 3'd2, C_DIVS = 3'd3, C_EXP = 3'd4,
-      C_DIVSM = 3'd5;
-  localparam logic [1:0] O_EXP = 2'd0, O_SUBEXP = 2'd1, O_SILU = 2'd2, O_DIV = 2'd3;
+      C_DIVSM = 3'd5, C_SM2 = 3'd6, C_SILU2 = 3'd7;
+  localparam logic [2:0] O_EXP = 3'd0, O_SUBEXP = 3'd1, O_SILU = 3'd2, O_DIV = 3'd3, O_SILU2 = 3'd4;
+  localparam int AF = 32;                                // softmax2: p values awaiting the adder
 
-  typedef enum logic [2:0] {IDLE, LOAD, PAR, MAX, SUM, STORE} st_e;
+  typedef enum logic [2:0] {IDLE, LOAD, PAR, MAX, SUM, STORE, XS, FIN} st_e;
   st_e st_q;
 
   logic [2:0]  cmd_q;
@@ -72,7 +78,7 @@ module vfu
   assign is_sm = cmd_q == C_SOFTMAX || cmd_q == C_DIVSM;
   logic [31:0] a_addr_q, b_addr_q, n_q, scalar_q, cyc_q;
   logic [31:0] iss_q, rsp_q, st_cnt_q, disp_q, done_q, sum_i_q, max_i_q;
-  logic [31:0] max_q, sum_q;
+  logic [31:0] max_q, sum_q, sum2_q;
   logic        sum_pend_q;
 
   // ---------------------------------------------------------------- banked buffers
@@ -104,19 +110,20 @@ module vfu
   // ---------------------------------------------------------------- lanes
   logic        l_start[LANES], l_busy[LANES], l_done[LANES];
   logic [31:0] l_res[LANES], l_idx_q[LANES];
-  logic [1:0]  l_op;
+  logic [2:0]  l_op;
   logic [31:0] l_b;
   logic        disp_go;                          // element disp_q starts on lane disp_q % LANES
   always_comb begin
     unique case (cmd_q)
       C_SOFTMAX, C_DIVSM: l_op = (pass_q == 1) ? O_SUBEXP : O_DIV;
       C_SILU:    l_op = O_SILU;
+      C_SILU2:   l_op = O_SILU2;
       C_DIVS:    l_op = O_DIV;
       default:   l_op = O_EXP;
     endcase
     unique case (cmd_q)
       C_SOFTMAX, C_DIVSM: l_b = (pass_q == 0) ? scalar_q : (pass_q == 1) ? max_q : sum_q;
-      C_SILU:    l_b = rdb;
+      C_SILU, C_SILU2: l_b = rdb;
       C_DIVS:    l_b = scalar_q;
       default:   l_b = '0;
     endcase
@@ -144,10 +151,83 @@ module vfu
       .apu_op_i(OP_ADD), .apu_flags_i(FLAGS),
       .apu_rvalid_o(sum_valid), .apu_rdata_o(sum_res), .apu_rflags_o());
 
+  // ---------------------------------------------------------------- softmax2 stream (cmd 6)
+  // source: element src_q read from the banks -> fsub (x - max) -> fmul (* K) -> vfu_exp2 ->
+  // p written back to the banks (element wr_q) and queued for the partial-sum adder.
+  // Issue is credit limited so that every p in flight fits in the adder queue (AF entries).
+  localparam logic [APU_WOP_CPU-1:0] OP_SUB = APU_WOP_CPU'({1'b0, 1'b1, 4'(fpnew_pkg::ADD)});
+  localparam logic [APU_WOP_CPU-1:0] OP_MUL = APU_WOP_CPU'({1'b0, 1'b0, 4'(fpnew_pkg::MUL)});
+  logic [31:0] src_q, wr_q, add_n_q;
+  logic [$clog2(AF):0] af_cnt_q;
+  logic        x_req, x_gnt, x_go, sub_valid, mul_gnt, mul_valid, e2_valid;
+  logic [31:0] sub_res, mul_res, e2_res;
+  assign x_req = st_q == XS && src_q < n_q && rd_ok(XS, src_q) &&
+                 (src_q - wr_q) + 32'(af_cnt_q) < AF;
+  assign x_go  = x_req && x_gnt;
+  cv32e40p_fp_wrapper #(.FPU_ADDMUL_LAT(FPU_LAT), .FPU_OTHERS_LAT(FPU_LAT)) xsub_i (
+      .clk_i, .rst_ni, .apu_req_i(x_req), .apu_gnt_o(x_gnt),
+      .apu_operands_i({max_q, rda, 32'h0}), .apu_op_i(OP_SUB), .apu_flags_i(FLAGS),   // x - max
+      .apu_rvalid_o(sub_valid), .apu_rdata_o(sub_res), .apu_rflags_o());
+  cv32e40p_fp_wrapper #(.FPU_ADDMUL_LAT(FPU_LAT), .FPU_OTHERS_LAT(FPU_LAT)) xmul_i (
+      .clk_i, .rst_ni, .apu_req_i(sub_valid), .apu_gnt_o(mul_gnt),
+      .apu_operands_i({32'h0, scalar_q, sub_res}), .apu_op_i(OP_MUL), .apu_flags_i(FLAGS),  // * K
+      .apu_rvalid_o(mul_valid), .apu_rdata_o(mul_res), .apu_rflags_o());
+  vfu_exp2 xexp2_i (.clk_i, .rst_ni, .valid_i(mul_valid), .y_i(mul_res), .valid_o(e2_valid), .res_o(e2_res));
+`ifndef SYNTHESIS
+  always_ff @(posedge clk_i) if (sub_valid && !mul_gnt) $error("vfu: softmax2 fmul not ready");
+`endif
+
+  // adder queue (p, partial index) and the 4 partial sums
+  logic [31:0] af_p[AF];
+  logic [1:0]  af_k[AF];
+  logic [$clog2(AF)-1:0] af_wp_q, af_rp_q;
+  logic [31:0] ps_q[4];
+  logic [2:0]  ps_n_q[4];                                // adds in flight per partial sum
+  logic [1:0]  tf_k[8];                                  // in-flight add tags (in order)
+  logic [2:0]  tf_wp_q, tf_rp_q;
+  logic [3:0]  tf_cnt_q;
+  logic        a_cand, a_req, a_gnt, a_valid, a_go;
+  logic [31:0] a_op1, a_op2, a_res;
+  logic [1:0]  hk, rk;
+  logic        ret;
+  logic [2:0]  fin_q;                                    // FIN: 0 S0+S1, 1 S2+S3, 2 T0+T1, 3 done
+  logic        fin_pend_q;
+  logic [31:0] t0_q, t1_q;
+  assign hk  = af_k[af_rp_q];
+  assign ret = st_q == XS && a_valid;
+  assign rk  = (tf_cnt_q == 0) ? hk : tf_k[tf_rp_q];     // same-cycle return only when FPU_LAT = 0
+  logic fwd;                                             // head's partial sum returns this cycle
+  assign fwd = (FPU_LAT > 0) && ret && rk == hk;
+  assign a_cand = st_q == XS && af_cnt_q != 0 &&
+                  (ps_n_q[hk] == 0 || (fwd && ps_n_q[hk] == 1));
+  always_comb begin
+    a_req = 1'b0; a_op1 = '0; a_op2 = '0;
+    if (st_q == XS) begin
+      a_req = a_cand; a_op1 = fwd ? a_res : ps_q[hk]; a_op2 = af_p[af_rp_q];
+    end else if (st_q == FIN && !fin_pend_q && fin_q < 3) begin
+      a_req = 1'b1;
+      unique case (fin_q)
+        3'd0: begin a_op1 = ps_q[0]; a_op2 = ps_q[1]; end
+        3'd1: begin a_op1 = ps_q[2]; a_op2 = ps_q[3]; end
+        default: begin a_op1 = t0_q; a_op2 = t1_q; end
+      endcase
+    end
+  end
+  assign a_go = a_req && a_gnt;
+  cv32e40p_fp_wrapper #(.FPU_ADDMUL_LAT(FPU_LAT), .FPU_OTHERS_LAT(FPU_LAT)) xadd_i (
+      .clk_i, .rst_ni, .apu_req_i(a_req), .apu_gnt_o(a_gnt),
+      .apu_operands_i({a_op2, a_op1, 32'h0}), .apu_op_i(OP_ADD), .apu_flags_i(FLAGS),
+      .apu_rvalid_o(a_valid), .apu_rdata_o(a_res), .apu_rflags_o());
+
+  always_ff @(posedge clk_i) begin
+    if (st_q == XS && e2_valid) begin af_p[af_wp_q] <= e2_res; af_k[af_wp_q] <= wr_q[1:0]; end
+    if (st_q == XS && a_go) tf_k[tf_wp_q] <= hk;
+  end
+
   // ---------------------------------------------------------------- master port
   logic [31:0] n_load, ld_addr, ld_word;
   logic        st_go;
-  assign n_load  = (cmd_q == C_SILU) ? 2 * n_q : n_q;
+  assign n_load  = (cmd_q == C_SILU || cmd_q == C_SILU2) ? 2 * n_q : n_q;
   assign ld_addr = (rsp_q < n_q) ? a_addr_q + (rsp_q << 2) : b_addr_q + ((rsp_q - n_q) << 2);
   assign ld_word = m_rdata_i[32*ld_addr[3:2] +: 32];
   always_comb begin
@@ -177,6 +257,7 @@ module vfu
       PAR:     ra_elem = disp_q + (disp_go ? 1 : 0);
       MAX:     ra_elem = max_i_q + (max_go ? 1 : 0);
       SUM:     ra_elem = sum_i_q + (sum_done ? 1 : 0);
+      XS:      ra_elem = src_q + (x_go ? 1 : 0);
       STORE:   ra_elem = st_cnt_q + (st_go ? 1 : 0);
       default: ra_elem = '0;
     endcase
@@ -193,6 +274,10 @@ module vfu
         end else if ((rsp_q - n_q) % LANES == p) begin
           bw_en[p] = 1'b1; bw_idx[p] = BI'((rsp_q - n_q) / LANES);
         end
+      end else if (st_q == XS) begin
+        if (e2_valid && PW'(wr_q % LANES) == PW'(p)) begin
+          aw_en[p] = 1'b1; aw_idx[p] = BI'(wr_q / LANES); aw_dat[p] = e2_res;
+        end
       end else if (l_done[p]) aw_en[p] = 1'b1;
     end
   end
@@ -205,6 +290,7 @@ module vfu
       4'h4: s_rdata_o <= n_q;
       4'h5: s_rdata_o <= scalar_q;
       4'h6: s_rdata_o <= cyc_q;
+      4'h7: s_rdata_o <= sum2_q;
       default: s_rdata_o <= '0;
     endcase
   end
@@ -214,7 +300,10 @@ module vfu
     if (!rst_ni) begin
       st_q <= IDLE; cmd_q <= '0; pass_q <= '0; sum_pend_q <= 1'b0;
       {a_addr_q, b_addr_q, n_q, scalar_q, cyc_q, iss_q, rsp_q, st_cnt_q, disp_q, done_q, sum_i_q, max_i_q} <= '0;
-      {max_q, sum_q, rd_elem_q} <= '0; rd_st_q <= IDLE; rd_v_q <= 1'b0; rd_bank_q <= '0;
+      {max_q, sum_q, sum2_q, rd_elem_q} <= '0;
+      {src_q, wr_q, add_n_q, t0_q, t1_q} <= '0; af_cnt_q <= '0; af_wp_q <= '0; af_rp_q <= '0;
+      tf_wp_q <= '0; tf_rp_q <= '0; tf_cnt_q <= '0; fin_q <= '0; fin_pend_q <= 1'b0;
+      for (int k = 0; k < 4; k++) begin ps_q[k] <= '0; ps_n_q[k] <= '0; end rd_st_q <= IDLE; rd_v_q <= 1'b0; rd_bank_q <= '0;
       for (int p = 0; p < LANES; p++) l_idx_q[p] <= '0;
     end else begin
       rd_elem_q <= ra_elem; rd_st_q <= st_q; rd_v_q <= st_q != IDLE; rd_bank_q <= PW'(ra_elem % LANES);
@@ -223,7 +312,9 @@ module vfu
           4'h0: if (s_wdata_i[2:0] != 0) begin
             cmd_q <= s_wdata_i[2:0]; st_q <= LOAD; cyc_q <= '0;
             pass_q <= (s_wdata_i[2:0] == C_DIVSM) ? 2'd0 : 2'd1;
-            {iss_q, rsp_q, st_cnt_q, disp_q, done_q, sum_i_q} <= '0; sum_q <= '0; sum_pend_q <= 1'b0;
+            // (disp_q / done_q are cleared when PAR is entered; not here: keeps the CPU store
+            //  address -> MMIO decode path off their enables, the 150 MHz critical path)
+            {iss_q, rsp_q, st_cnt_q, sum_i_q} <= '0; sum_q <= '0; sum_pend_q <= 1'b0;
           end
           4'h2: a_addr_q <= s_wdata_i;
           4'h3: b_addr_q <= s_wdata_i;
@@ -252,7 +343,13 @@ module vfu
           if (m_rvalid_i) begin
             if (rsp_q < n_q && (rsp_q == 0 || fgt(ld_word, max_q))) max_q <= ld_word;
             rsp_q <= rsp_q + 1;
-            if (rsp_q + 1 == n_load) begin st_q <= PAR; disp_q <= '0; done_q <= '0; end
+            if (rsp_q + 1 == n_load) begin
+              if (cmd_q == C_SM2) begin
+                st_q <= XS; {src_q, wr_q, add_n_q} <= '0; af_cnt_q <= '0; af_wp_q <= '0; af_rp_q <= '0;
+                tf_wp_q <= '0; tf_rp_q <= '0; tf_cnt_q <= '0;
+                for (int k = 0; k < 4; k++) begin ps_q[k] <= '0; ps_n_q[k] <= '0; end
+              end else begin st_q <= PAR; disp_q <= '0; done_q <= '0; end
+            end
           end
         end
         PAR: begin
@@ -278,6 +375,33 @@ module vfu
               st_q <= PAR; pass_q <= 2'd2; disp_q <= '0; done_q <= '0;
             end
           end else if (sum_in && sum_gnt) sum_pend_q <= 1'b1;
+        end
+        XS: begin
+          if (x_go) src_q <= src_q + 1;
+          if (e2_valid) begin wr_q <= wr_q + 1; af_wp_q <= af_wp_q + 1; end
+          if (a_go) af_rp_q <= af_rp_q + 1;
+          af_cnt_q <= af_cnt_q + (e2_valid ? 1 : 0) - (a_go ? 1 : 0);
+          // in-flight add tags (a same-cycle return, FPU_LAT = 0, bypasses the tag FIFO)
+          if (a_go && !(ret && tf_cnt_q == 0)) begin tf_wp_q <= tf_wp_q + 1; end
+          if (ret && tf_cnt_q != 0) tf_rp_q <= tf_rp_q + 1;
+          tf_cnt_q <= tf_cnt_q + ((a_go && !(ret && tf_cnt_q == 0)) ? 1 : 0) - ((ret && tf_cnt_q != 0) ? 1 : 0);
+          for (int k = 0; k < 4; k++)
+            ps_n_q[k] <= ps_n_q[k] + ((a_go && hk == 2'(k)) ? 1 : 0) - ((ret && rk == 2'(k)) ? 1 : 0);
+          if (ret) begin
+            ps_q[rk] <= a_res;
+            add_n_q <= add_n_q + 1;
+            if (add_n_q + 1 == n_q) begin st_q <= FIN; fin_q <= '0; fin_pend_q <= 1'b0; end
+          end
+        end
+        FIN: begin
+          if (a_valid && (fin_pend_q || a_go)) begin
+            fin_pend_q <= 1'b0; fin_q <= fin_q + 1;
+            unique case (fin_q)
+              3'd0: t0_q <= a_res;
+              3'd1: t1_q <= a_res;
+              default: begin sum2_q <= a_res; st_q <= STORE; st_cnt_q <= '0; end
+            endcase
+          end else if (a_go) fin_pend_q <= 1'b1;
         end
         STORE: if (st_go) begin
           st_cnt_q <= st_cnt_q + 1;

@@ -56,3 +56,8 @@ gen/ddr_sw/firmware_gen*
 # S3 Option A host comparison: keep the result only
 opta/host_cmp_*/*
 !opta/host_cmp_*/result.json
+gen/out_*/fw*
+acc/tb_exp2/obj/
+acc/tb_exp2/*.txt
+acc/tb_exp2/build.log
+obj_chip*/

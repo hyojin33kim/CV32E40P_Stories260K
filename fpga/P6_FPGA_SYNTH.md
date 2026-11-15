@@ -1,4 +1,24 @@
-# ② FPGA 합성 1차 — 현재 RTL은 ZCU104에 들어가지 않고 200 MHz도 못 맞춤 (2026-11-15)
+# FPGA 합성 기록 (ZCU104 XCZU7EV)
+
+## 2차 (2026-11-15) — v2 RTL / Option A, 150 MHz 합성+P&R timing 충족 (사실)
+조건: Vivado 2026.1, `xczu7ev-ffvc1156-2-e`, OOC, clock 6.667 ns(150 MHz), top `soc_top`,
+D2 구성(CPU/ACC/VFU FPU latency 4, ACC_RUN 8, FIFO 256, lanes 4/4), fp_wrapper PipeConfig DISTRIBUTED(작업 사본만,
+`fpga/prepare.py`). 스크립트 `fpga/run_soc_v2.sh [workdir] [EXPLORE]`.
+
+| RTL | impl flow | route WNS | 실패 endpoint | LUT | FF | LUTRAM | BRAM tile | DSP | 리포트 |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---|
+| v1 (FPU lat 0, FF 버퍼), 200 MHz 합성만 | — | −9.876 (synth) | 24,550 | 234,266 (101.7%) | 112,285 | — | 0 | 39 | `reports_v1_soc_top/` |
+| v2 (BRAM/LUTRAM 버퍼, pipelined FPU) | default | **+0.025** | 0 | 49,286 (21.4%) | 16,818 | 2,418 | 0.5 | 39 | `reports_v2_soc/` |
+| v2 + Option A (vfu_exp2 ×5, cmd 6/7) | default | −0.137 | 92 | 54,852 | 18,709 | — | 3 | 85 | (E:\fpga_work\soc_opta) |
+| 〃 + VFU start-reset 경로 수정 | **EXPLORE** | **+0.136** | 0 | 54,545 (23.7%) | 18,716 (4.1%) | 2,502 | 3 | 85 | `reports_opta_soc/` |
+
+- Option A 1차 실패 경로: CPU store 주소(ALU) → `soc_top` MMIO decode → VFU `disp_q` CE(명령 시작 시 clear). 이 clear는
+  PAR 진입 시 다시 하므로 중복 → 제거(동작·cycle 불변, VFU 단위 테스트 cycle 동일 확인). 남은 −0.13 ns는 CPU FPU 내부
+  FMA 경로(v2에서는 +0.025로 통과한 경로, 배치 영향) → `EXPLORE`(place/route Explore + phys_opt AggressiveExplore)로 해소.
+- DSP 39→85: exp2 pipeline(곱셈 4개 × 5 instance: VFU stream 1 + lane 4). BRAM 3 tile: exp2 table(추정).
+- 남은 것(S6): on-chip SRAM 1 MB(URAM) + imem 포함한 `soc_chip` 합성 — URAM read latency 1에서 150 MHz 여부 미확인.
+
+## 1차 — 현재 RTL은 ZCU104에 들어가지 않고 200 MHz도 못 맞춤 (2026-11-15)
 
 ## 결론
 - **현재 설계(시뮬레이션 기준으로 작성)는 FPGA용으로 재구성이 필요.** 합성 결과 LUT 101.7%(초과), BRAM 0, WNS −9.876 ns @ 5 ns.

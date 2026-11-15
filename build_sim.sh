@@ -2,6 +2,8 @@
 # Build the Verilator simulator.
 #   default            : cv32e40p_top (FPU=1)          -> obj/Vcv32e40p_top
 #   TOP=soc_top        : CPU + gemv_acc + vfu (acc/*.sv) -> obj_soc/Vsoc_top
+#   TOP=soc_chip       : soc_top + imem + 1 MB SRAM in RTL (S5)  -> obj_chip/Vsoc_chip
+#                        SRAM_RLAT=<1|2> SRAM read latency (default 1)
 #   CFG=d2 (default)   : FPGA-real configuration (synthesized at 150 MHz on ZCU104):
 #                        CPU/ACC/VFU FPU latency 4, ACC_RUN 8
 #   CFG=d1             : ideal / legacy (all FPU latency 0, ACC_RUN 16; not FPGA-realizable)
@@ -26,8 +28,12 @@ case "$CFG" in
 esac
 CPU_FPU_LAT=${CPU_FPU_LAT:-$L}; ACC_FPU_LAT=${ACC_FPU_LAT:-$L}; VFU_FPU_LAT=${VFU_FPU_LAT:-$L}
 ACC_RUN=${ACC_RUN:-$RUN}
-if [ "$TOP" = soc_top ]; then
-  EXTRA=(-CFLAGS -DSOC -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT "$PWD/acc/gemv_acc.sv" "$PWD/acc/vfu_lane.sv" "$PWD/acc/vfu.sv" "$PWD/acc/soc_top.sv")
+ACCSRC=("$PWD/acc/gemv_acc.sv" "$PWD/acc/vfu_exp2.sv" "$PWD/acc/vfu_lane.sv" "$PWD/acc/vfu.sv" "$PWD/acc/soc_top.sv")
+if [ "$TOP" = soc_chip ]; then
+  EXTRA=(-CFLAGS -DSOC -CFLAGS -DCHIP -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT -GSRAM_RLAT=${SRAM_RLAT:-1} "${ACCSRC[@]}" "$PWD/acc/sram_dp.sv" "$PWD/acc/soc_chip.sv")
+  MDIR=${MDIR:-obj_chip$SUF}; LOG=${LOG:-verilator_build_chip.log}
+elif [ "$TOP" = soc_top ]; then
+  EXTRA=(-CFLAGS -DSOC -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT "$PWD/acc/gemv_acc.sv" "$PWD/acc/vfu_exp2.sv" "$PWD/acc/vfu_lane.sv" "$PWD/acc/vfu.sv" "$PWD/acc/soc_top.sv")
   MDIR=${MDIR:-obj_soc$SUF}; LOG=${LOG:-verilator_build_soc.log}
 else
   EXTRA=(-GFPU=1 -GFPU_ADDMUL_LAT=$CPU_FPU_LAT -GFPU_OTHERS_LAT=$CPU_FPU_LAT)

@@ -9,14 +9,14 @@
 module soc_top #(
     parameter int ACC_LANES = 4,  // gemv_acc MAC lanes  (build_sim.sh: ACC_LANES=<n>)
     parameter int VFU_LANES = 4,  // vfu element engines (build_sim.sh: VFU_LANES=<n>)
-    parameter int ACC_RUN   = 16, // gemv_acc mode-A lines per lane run (build_sim.sh: ACC_RUN=<n>)
+    parameter int ACC_RUN   = 8,  // gemv_acc mode-A lines per lane run (build_sim.sh: ACC_RUN=<n>)
     parameter int ACC_FDEPTH = 256, // gemv_acc words per lane FIFO (build_sim.sh: ACC_FDEPTH=<n>)
-    // FPU pipeline registers (fpnew FPU_ADDMUL_LAT / FPU_OTHERS_LAT). 0 = combinational FPU, the
-    // configuration of every result before 11-15; FPGA timing needs >0 (with DISTRIBUTED
-    // register placement, applied in the FPGA work copy by fpga/prepare.py).
-    parameter int CPU_FPU_LAT = 0,  // build_sim.sh: CPU_FPU_LAT=<n>
-    parameter int ACC_FPU_LAT = 0,  // build_sim.sh: ACC_FPU_LAT=<n>
-    parameter int VFU_FPU_LAT = 0   // build_sim.sh: VFU_FPU_LAT=<n>
+    // FPU pipeline registers (fpnew FPU_ADDMUL_LAT / FPU_OTHERS_LAT). Defaults = configuration D2
+    // (11-15, 150 MHz on ZCU104 with DISTRIBUTED register placement, applied in the FPGA work copy
+    // by fpga/prepare.py); 0 = combinational FPU (D1, every result before 11-15, not FPGA-realizable).
+    parameter int CPU_FPU_LAT = 4,  // build_sim.sh: CPU_FPU_LAT=<n>
+    parameter int ACC_FPU_LAT = 4,  // build_sim.sh: ACC_FPU_LAT=<n>
+    parameter int VFU_FPU_LAT = 4   // build_sim.sh: VFU_FPU_LAT=<n>
 ) (
     input logic clk_i,
     input logic rst_ni,

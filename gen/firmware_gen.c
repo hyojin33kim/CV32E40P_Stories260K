@@ -43,7 +43,7 @@ static __attribute__((noinline)) float acc_vfu_sum(unsigned cmd, float* a, float
     r[2] = (unsigned)a; r[3] = (unsigned)b; r[4] = n; r[5] = c.u;
     r[0] = cmd;
     while (r[1] & 1) ;
-    c.u = r[6];
+    c.u = r[7];   // 0x1C SUM (0x18 is LAST_CYCLES)
     return c.f;
 }
 #endif
