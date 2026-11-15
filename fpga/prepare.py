@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Copy the synthesizable RTL to a Windows-visible work directory and write files.tcl.
 
-usage: fpga/prepare.py <work dir under /mnt/<drive>/...>
+usage: [PIPE_DIST=1] fpga/prepare.py <work dir under /mnt/<drive>/...>
+PIPE_DIST=1 (default) patches the work-dir copy of cv32e40p_fp_wrapper.sv to PipeConfig
+DISTRIBUTED (register placement only; the repo RTL and the simulator keep AFTER, which has
+the same latency).
 Source list = cv32e40p_fpu_manifest.flist minus simulation-only files (bhv/ tracer,
 tb wrapper, sim clock gate) + fpga/cv32e40p_clock_gate_fpga.sv + acc/*.sv.
 """
@@ -26,6 +29,11 @@ for line in (W / 'cv32e40p-master' / 'cv32e40p_fpu_manifest.flist').read_text().
 # copy the RTL tree (vendor included) and the accelerator / FPGA sources
 if (D / 'rtl').exists(): shutil.rmtree(D / 'rtl')
 shutil.copytree(rtl, D / 'rtl')
+import os
+if os.environ.get('PIPE_DIST', '1') == '1':
+    fw = D / 'rtl' / 'cv32e40p_fp_wrapper.sv'
+    t = fw.read_text(); assert 'PipeConfig: fpnew_pkg::AFTER' in t
+    fw.write_text(t.replace('PipeConfig: fpnew_pkg::AFTER', 'PipeConfig: fpnew_pkg::DISTRIBUTED'))
 (D / 'acc').mkdir(exist_ok=True); (D / 'fpga').mkdir(exist_ok=True)
 for f in ('gemv_acc.sv', 'vfu_lane.sv', 'vfu.sv', 'soc_top.sv'):
     shutil.copy(W / 'acc' / f, D / 'acc' / f)

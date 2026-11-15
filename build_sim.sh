@@ -8,13 +8,14 @@
 #   VFU_LANES=<n>      : vfu element engines for TOP=soc_top (default 4)
 #   ACC_RUN=<n>        : gemv_acc mode-A lines per lane run (default 16; 1 = pre-11-14 order)
 #   ACC_FDEPTH=<n>     : gemv_acc words per lane FIFO, power of two (default 256; was 128)
+#   CPU_FPU_LAT / ACC_FPU_LAT / VFU_FPU_LAT=<n> : FPU pipeline registers (default 0)
 set -eu
 cd "$(dirname "$0")"
 export DESIGN_RTL_DIR="$PWD/cv32e40p-master/rtl"
 VERILATOR=${VERILATOR:-verilator}
 TOP=${TOP:-cv32e40p_top}
 if [ "$TOP" = soc_top ]; then
-  EXTRA=(-CFLAGS -DSOC -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=${ACC_RUN:-16} -GACC_FDEPTH=${ACC_FDEPTH:-256} "$PWD/acc/gemv_acc.sv" "$PWD/acc/vfu_lane.sv" "$PWD/acc/vfu.sv" "$PWD/acc/soc_top.sv")
+  EXTRA=(-CFLAGS -DSOC -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=${ACC_RUN:-16} -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=${CPU_FPU_LAT:-0} -GACC_FPU_LAT=${ACC_FPU_LAT:-0} -GVFU_FPU_LAT=${VFU_FPU_LAT:-0} "$PWD/acc/gemv_acc.sv" "$PWD/acc/vfu_lane.sv" "$PWD/acc/vfu.sv" "$PWD/acc/soc_top.sv")
   MDIR=${MDIR:-obj_soc}; LOG=${LOG:-verilator_build_soc.log}
 else
   EXTRA=(-GFPU=1)

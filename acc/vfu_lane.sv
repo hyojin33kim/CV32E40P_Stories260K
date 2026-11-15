@@ -10,7 +10,9 @@
 // 2^-100 scaling below k = -125.
 module vfu_lane
   import cv32e40p_apu_core_pkg::*;
-(
+#(
+    parameter int FPU_LAT = 0   // FPU pipeline registers (all ops handshake, any latency works)
+) (
     input  logic        clk_i,
     input  logic        rst_ni,
     input  logic        start_i,
@@ -102,7 +104,7 @@ module vfu_lane
   assign fp_req  = uop && !issued_q;
   assign fp_done = uop && fp_valid && (issued_q || fp_gnt);
 
-  cv32e40p_fp_wrapper #(.FPU_ADDMUL_LAT(0), .FPU_OTHERS_LAT(0)) fpu_i (
+  cv32e40p_fp_wrapper #(.FPU_ADDMUL_LAT(FPU_LAT), .FPU_OTHERS_LAT(FPU_LAT)) fpu_i (
       .clk_i, .rst_ni,
       .apu_req_i(fp_req), .apu_gnt_o(fp_gnt),
       .apu_operands_i({opc, opb, opa}),
