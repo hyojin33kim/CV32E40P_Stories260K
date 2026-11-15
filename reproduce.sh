@@ -8,10 +8,13 @@
 #   ./reproduce.sh standard   (~30 min) quick + VFU unit test (328K) + 64-step E2E
 #   ./reproduce.sh full       (hours)   standard + VFU unit test (1.3M) + 512-step E2E + sweep
 #
-# The accelerator results are checked on the default SoC build (gemv_acc 4 MAC lanes, RUN 16,
-# FIFO 256; vfu 4 lanes; tag _l4v4r16), with the ideal memory and with the DDR/SRAM memory
-# model (SIM_DDR=1, default parameters). Earlier results stay in the repo as history
-# (tags _L0_G1 without lanes, _l4v4 = RUN 1/FIFO 128) and are not re-checked.
+# Results are checked on the default configuration D2 (FPGA-real, 11-15; tag _d2): CPU,
+# accelerator and VFU FPU latency 4, gemv_acc 4 MAC lanes RUN 8 FIFO 256, vfu 4 lanes, with
+# the ideal memory and with the DDR/SRAM memory model (SIM_DDR=1, default parameters).
+# Earlier results stay in the repo as history and are not re-checked: D1 ideal (all FPU
+# latency 0, RUN 16; tags without _d2, accelerator _l4v4r16), _l4v4, _L0_G1 without lanes.
+# The HOLD regression compares the whole dump except the firmware cycle word (0x1aff00),
+# which depends on the FPU latency.
 #
 # Requires (Ubuntu 24.04): gcc-riscv64-unknown-elf picolibc-riscv64-unknown-elf
 # verilator (5.038 used) python3-numpy gcc. Override the RISC-V prefix with TC=<prefix>.
@@ -29,7 +32,7 @@ step "build simulators (CPU, CPU profiler, CPU + accelerator SoC)"
 LOG=$R/build_cpu.log ./build_sim.sh
 LOG=$R/build_prof.log MDIR=obj_prof ./build_sim.sh
 LOG=$R/build_soc.log TOP=soc_top ./build_sim.sh
-HW=_l4v4r16
+HW=_d2
 
 step "G0: HOLD regression (stored HOLD ELF, ctx 1/128/512) on CPU sim and SoC sim"
 python3 image.py firmware.elf "$R/hold/image.bin"
@@ -49,7 +52,9 @@ EOF
 for sim in obj/Vcv32e40p_top obj_soc/Vsoc_top; do
   for t in 1 128 512; do
     "$sim" "$R/hold/image_$t.bin" "$R/hold/dump_$t.bin" > "$R/hold/$(basename $sim)_$t.log" 2>&1
-    cmp -s "$R/hold/dump_$t.bin" "base_$t.bin" && echo "OK   $(basename $sim) ctx$t HOLD dump byte-identical" \
+    python3 -c "import sys;a,b=(open(f,'rb').read() for f in sys.argv[1:]);m=lambda x:x[:0x1aff00]+x[0x1aff04:];sys.exit(m(a)!=m(b))" \
+        "$R/hold/dump_$t.bin" "base_$t.bin" \
+      && echo "OK   $(basename $sim) ctx$t HOLD dump byte-identical (except cycle word)" \
       || { echo "FAIL $(basename $sim) ctx$t HOLD dump differs"; exit 1; }
   done
 done
@@ -62,8 +67,8 @@ for f in ref_1 ref_128 ref_512 kv_1 kv_128 kv_512 after_kv_1 after_kv_128 after_
 done
 
 step "single-step profiles: SW baseline, then each offload level on the accelerator"
-PROF_CFLAGS="$F" python3 prof/run_prof.py baseline/firmware.c O2u > "$R/prof_O2u.txt" 2>&1 &
-PROF_CFLAGS="$F" python3 prof/run_prof.py gen/firmware_gen.c gen_O2u > "$R/prof_gen_O2u.txt" 2>&1 &
+PROF_CFLAGS="$F" python3 prof/run_prof.py baseline/firmware.c O2u$HW > "$R/prof_O2u.txt" 2>&1 &
+PROF_CFLAGS="$F" python3 prof/run_prof.py gen/firmware_gen.c gen_O2u$HW > "$R/prof_gen_O2u.txt" 2>&1 &
 FULL="$F -DUSE_ACC_ATTN -DUSE_ACC_VFU -DUSE_ACC_MM -DUSE_ACC_VFU_DIV -DRMS_SRAM -DEMB_WORDS"
 PROF_CFLAGS="$F" PROF_ACC=1 python3 prof/run_prof.py gen/firmware_gen.c acc_ffn$HW > "$R/prof_ffn.txt" 2>&1 &
 PROF_CFLAGS="$F -DUSE_ACC_ATTN" PROF_ACC=1 python3 prof/run_prof.py gen/firmware_gen.c acc_attn$HW > "$R/prof_attn.txt" 2>&1 &

@@ -1,5 +1,10 @@
 #include <stdint.h>
 #include <math.h>
+#ifdef OPTA
+// Option A numerics (S3, 11-15): exp2q softmax without normalization + deferred AV
+// normalization, SiLU via exp2q (opta/softmax2.h, opta/exp2q.h; host model opta/run_opta.c)
+#include "../opta/softmax2.h"
+#endif
 static inline unsigned cyc(void){unsigned v;__asm__ volatile("csrr %0, mcycle":"=r"(v)::"memory");return v;}
 volatile unsigned ec,sc,en,sn;
 #ifdef USE_ACC
@@ -29,6 +34,19 @@ static __attribute__((noinline)) void acc_vfu(unsigned cmd, float* a, float* b, 
     r[0] = cmd;
     while (r[1] & 1) ;
 }
+#ifdef OPTA
+// Option A commands: 6 softmax2(a,n) with K=s (returns the sum; a keeps the unnormalized p),
+// 7 a[i]=(a[i]*(1/(1+exp2q(a[i]*-log2e))))*b[i]
+static __attribute__((noinline)) float acc_vfu_sum(unsigned cmd, float* a, float* b, int n, float s) {
+    volatile unsigned *r = (volatile unsigned*)0x30000040;
+    union { float f; unsigned u; } c = { s };
+    r[2] = (unsigned)a; r[3] = (unsigned)b; r[4] = n; r[5] = c.u;
+    r[0] = cmd;
+    while (r[1] & 1) ;
+    c.u = r[6];
+    return c.f;
+}
+#endif
 #endif
 #define FFN_MATMUL acc_matmul
 #else
@@ -215,7 +233,7 @@ float* forward(Transformer* transformer, int token, int pos) {
             // on the CPU after the full dot product, exactly as below
             acc_gemv(att, q, s->key_cache + loff + (h / kv_mul) * head_size, head_size, pos + 1,
                      kv_dim * 4, 4);
-#ifndef USE_ACC_VFU_DIV
+#if !defined(USE_ACC_VFU_DIV) && !defined(OPTA)
             // (single-lane VFU: the divider latency dominates and the CPU loop measured 6%
             //  faster at ctx512, see acc/P4B_VFU.md; with VFU lanes use USE_ACC_VFU_DIV)
             for (int t = 0; t <= pos; t++) att[t] /= 0x1.6a09e6p+1f;
@@ -230,14 +248,20 @@ float* forward(Transformer* transformer, int token, int pos) {
                 for (int i = 0; i < head_size; i++) {
                     score += q[i] * k[i];
                 }
+#ifndef OPTA
                 score /= 0x1.6a09e6p+1f;
+#endif
                 // save the score to the attention buffer
                 att[t] = score;
             }
 #endif
 
             // softmax the scores to get attention weights, from 0..pos inclusively
-#if defined(USE_ACC_VFU_DIV)
+#if defined(OPTA) && defined(USE_ACC_VFU)
+            float sum = acc_vfu_sum(6, att, 0, pos + 1, OPTA_K);   // Option A softmax2
+#elif defined(OPTA)
+            float sum = softmax2(att, pos + 1);
+#elif defined(USE_ACC_VFU_DIV)
             acc_vfu(5, att, 0, pos + 1, 0x1.6a09e6p+1f);   // /sqrt(head_size), then softmax
 #elif defined(USE_ACC_VFU)
             acc_vfu(1, att, 0, pos + 1, 0);
@@ -265,6 +289,10 @@ float* forward(Transformer* transformer, int token, int pos) {
                 }
             }
 #endif
+#ifdef OPTA
+            // Option A: deferred normalization of the head's outputs
+            for (int i = 0; i < head_size; i++) xb[i] /= sum;
+#endif
         }
 
         // final matmul to get the output of the attention
@@ -285,12 +313,20 @@ float* forward(Transformer* transformer, int token, int pos) {
 
         // SwiGLU non-linearity
 #ifdef USE_ACC_VFU
+#ifdef OPTA
+        acc_vfu_sum(7, s->hb, s->hb2, hidden_dim, 0);
+#else
         acc_vfu(2, s->hb, s->hb2, hidden_dim, 0);
+#endif
 #else
         for (int i = 0; i < hidden_dim; i++) {
             float val = s->hb[i];
             // silu(x)=x*σ(x), where σ(x) is the logistic sigmoid
+#ifdef OPTA
+            val *= (1.0f / (1.0f + exp2q(val * OPTA_NLOG2E)));
+#else
             val *= (1.0f / (1.0f + expf(-val)));
+#endif
             // elementwise multiply with w3(x)
             val *= s->hb2[i];
             s->hb[i] = val;

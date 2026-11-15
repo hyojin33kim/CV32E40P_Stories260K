@@ -14,16 +14,16 @@ R = W / 'repro'
 TOL = 1e-4
 rows, bad = [], 0
 MODE = sys.argv[1] if len(sys.argv) > 1 else 'quick'
-HW = '_l4v4r16'  # default SoC build: 4 MAC lanes (RUN 16, FIFO 256), 4 VFU lanes
-EXPECT = ['prof/O2u', 'prof/gen_O2u', f'prof/ddr_full{HW}'] + \
+HW = '_d2'  # default configuration D2: FPU latency 4 everywhere, 4 MAC lanes RUN 8 FIFO 256, 4 VFU lanes
+EXPECT = [f'prof/O2u{HW}', f'prof/gen_O2u{HW}', f'prof/ddr_full{HW}'] + \
          [f'prof/acc_{t}{HW}' for t in ('ffn', 'attn', 'all', 'full')] + \
-         ['gen/out_8_Os'] + [f'gen/out_8_O2u_{m}{HW}_L0_G1' for m in ('accattn', 'accall', 'accfull')]
+         [f'gen/out_8_Os{HW}'] + [f'gen/out_8_O2u_{m}{HW}_L0_G1' for m in ('accattn', 'accall', 'accfull')]
 if MODE in ('standard', 'full'):
-    EXPECT += ['gen/out_64_Os', 'gen/out_64_O2u'] + \
+    EXPECT += [f'gen/out_64_Os{HW}', f'gen/out_64_O2u{HW}'] + \
               [f'gen/out_64_O2u_{m}{HW}_L0_G1' for m in ('acc', 'accattn', 'accall', 'accfull')] + \
               [f'gen/out_64_O2u_accfull{HW}_ddr_L0_G1']
 if MODE == 'full':
-    EXPECT += ['gen/out_512_Os', 'gen/out_512_O2u', f'gen/out_512_O2u_accfull{HW}_L0_G1',
+    EXPECT += [f'gen/out_512_Os{HW}', f'gen/out_512_O2u{HW}', f'gen/out_512_O2u_accfull{HW}_L0_G1',
                f'gen/out_512_O2u_accfull{HW}_ddr_L0_G1']
 for e in EXPECT:  # a failed background run leaves no result file
     if not ((R / e / 'summary.json').exists() or (R / e / 'result.json').exists()):

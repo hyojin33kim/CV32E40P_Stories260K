@@ -5,6 +5,10 @@ checked bit-exact (logits + KV) against the HOLD dump.
 usage: acc/sweep_ddr.py <prof tag> [workers]   images from prof/<tag>/ (built by run_prof.py
        with the same firmware flags); SWEEP_SIM = simulator (default obj_soc_ddr16/Vsoc_top)
 Grid: SIM_DDR_LAT x SIM_DDR_OUT x SIM_DDR_BURST x SIM_DDR_BW (SIM_DDR_OVH fixed at 4).
+SWEEP_GRID=zcu104: grid around the ZCU104 figures at 150 MHz (S2, 11-15): latency 30/40/60/100
+cycles (200-667 ns, no documented value), outstanding 4/8/16 (HP RDISSUE 1..16, reset 4), burst 16,
+12.8/14.4/16 B/cycle (one 128-bit HP port = 16 B/cycle = 2.4 GB/s). SWEEP_BASE = prof tag of
+the SW baseline for the speedup column (default gen_O2u; D2: gen_O2u_d2).
 """
 import itertools, json, os, struct, subprocess, sys
 from concurrent.futures import ThreadPoolExecutor
@@ -16,8 +20,11 @@ PROF = Path(os.environ.get('PROF_OUT', W / 'prof'))
 P = PROF / TAG
 O = Path(os.environ.get('SWEEP_OUT', W / 'acc' / 'sweep')) / f'ddr_{TAG}'; O.mkdir(parents=True, exist_ok=True)
 SIM = os.environ.get('SWEEP_SIM', str(W / 'obj_soc_ddr16/Vsoc_top'))
-base = json.load(open(PROF / 'gen_O2u' / 'summary.json'))          # ideal-memory SW baseline
+base = json.load(open(PROF / os.environ.get('SWEEP_BASE', 'gen_O2u') / 'summary.json'))          # ideal-memory SW baseline
 LATS, OUTS, BURSTS, BWS = (20, 40, 100), (4, 8, 16), (4, 16, 64), (8.0, 12.8, 16.0)
+if os.environ.get('SWEEP_GRID') == 'zcu104':
+    LATS, OUTS, BURSTS, BWS = (30, 40, 60, 100), (4, 8, 16), (16,), (12.8, 14.4, 16.0)
+    O = O.parent / f'zcu104_{TAG}'; O.mkdir(parents=True, exist_ok=True)
 
 def one(t, lat, out, burst, bw):
     d = O / f'dump_{t}_{lat}_{out}_{burst}_{bw}.bin'

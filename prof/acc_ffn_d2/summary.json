@@ -1,0 +1,1035 @@
+{
+ "1": {
+  "acc": "ACC reads=42780 writes=2040 lat=0 gnt_every=1",
+  "fw_measured_cycles": 1317111,
+  "logits_kv_bitexact_vs_hold": true,
+  "profiled_forward_cycles": 1317100,
+  "regions": {
+   "boot/argmax": {
+    "cycles": 7302,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 1026,
+    "rd_rope": 0,
+    "rd_ctrl": 13,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 9,
+    "wr_rope": 0,
+    "wr_ctrl": 44,
+    "wr_other": 2
+   },
+   "LM head": {
+    "cycles": 351253,
+    "rd_w": 32768,
+    "rd_kv": 0,
+    "rd_act": 32768,
+    "rd_rope": 0,
+    "rd_ctrl": 13,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 512,
+    "wr_rope": 0,
+    "wr_ctrl": 0,
+    "wr_other": 0
+   },
+   "rmsnorm": {
+    "cycles": 17778,
+    "rd_w": 704,
+    "rd_kv": 0,
+    "rd_act": 1408,
+    "rd_rope": 0,
+    "rd_ctrl": 59,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 704,
+    "wr_rope": 0,
+    "wr_ctrl": 1,
+    "wr_other": 0
+   },
+   "layer loop": {
+    "cycles": 1896,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 64,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 36,
+    "wr_other": 0
+   },
+   "residual": {
+    "cycles": 5505,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 1280,
+    "rd_rope": 0,
+    "rd_ctrl": 85,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 640,
+    "wr_rope": 0,
+    "wr_ctrl": 0,
+    "wr_other": 0
+   },
+   "FFN W2": {
+    "cycles": 16443,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 25,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 8,
+    "wr_other": 0
+   },
+   "SwiGLU": {
+    "cycles": 190475,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 1720,
+    "rd_rope": 0,
+    "rd_ctrl": 10837,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 860,
+    "wr_rope": 0,
+    "wr_ctrl": 3442,
+    "wr_other": 0
+   },
+   "FFN W1/W3": {
+    "cycles": 32205,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 30,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 5,
+    "wr_other": 0
+   },
+   "RoPE": {
+    "cycles": 15242,
+    "rd_w": 0,
+    "rd_kv": 160,
+    "rd_act": 320,
+    "rd_rope": 320,
+    "rd_ctrl": 45,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 160,
+    "wr_act": 320,
+    "wr_rope": 0,
+    "wr_ctrl": 2,
+    "wr_other": 0
+   },
+   "softmax": {
+    "cycles": 6390,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 120,
+    "rd_rope": 0,
+    "rd_ctrl": 560,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 80,
+    "wr_rope": 0,
+    "wr_ctrl": 440,
+    "wr_other": 0
+   },
+   "reset": {
+    "cycles": 267,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 0,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 39,
+    "wr_other": 0
+   },
+   "W_qkv": {
+    "cycles": 435465,
+    "rd_w": 40960,
+    "rd_kv": 0,
+    "rd_act": 40960,
+    "rd_rope": 0,
+    "rd_ctrl": 50,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 320,
+    "wr_act": 320,
+    "wr_rope": 0,
+    "wr_ctrl": 5,
+    "wr_other": 0
+   },
+   "W_o": {
+    "cycles": 219005,
+    "rd_w": 20480,
+    "rd_kv": 0,
+    "rd_act": 20480,
+    "rd_rope": 0,
+    "rd_ctrl": 40,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 320,
+    "wr_rope": 0,
+    "wr_ctrl": 0,
+    "wr_other": 0
+   },
+   "attn head loop": {
+    "cycles": 435,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 45,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 20,
+    "wr_other": 0
+   },
+   "attn AV": {
+    "cycles": 13521,
+    "rd_w": 0,
+    "rd_kv": 320,
+    "rd_act": 360,
+    "rd_rope": 0,
+    "rd_ctrl": 80,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 1600,
+    "wr_rope": 0,
+    "wr_ctrl": 1,
+    "wr_other": 0
+   },
+   "attn QK": {
+    "cycles": 9001,
+    "rd_w": 0,
+    "rd_kv": 320,
+    "rd_act": 320,
+    "rd_rope": 0,
+    "rd_ctrl": 266,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 40,
+    "wr_rope": 0,
+    "wr_ctrl": 2,
+    "wr_other": 0
+   },
+   "misc": {
+    "cycles": 83,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 25,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 8,
+    "wr_other": 0
+   },
+   "setup+embed": {
+    "cycles": 2403,
+    "rd_w": 256,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 7,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 256,
+    "wr_rope": 0,
+    "wr_ctrl": 11,
+    "wr_other": 0
+   }
+  },
+  "leaf_cycles": {
+   "boot/argmax": {
+    "boot": 7302
+   },
+   "LM head": {
+    "forward": 351253
+   },
+   "rmsnorm": {
+    "rmsnorm": 17528,
+    "forward": 250
+   },
+   "layer loop": {
+    "forward": 1896
+   },
+   "residual": {
+    "forward": 5505
+   },
+   "FFN W2": {
+    "acc_gemv.constprop.0": 15730,
+    "forward": 713
+   },
+   "SwiGLU": {
+    "expf": 137940,
+    "forward": 38775,
+    "save/restore": 13760
+   },
+   "FFN W1/W3": {
+    "acc_gemv.constprop.0": 32065,
+    "forward": 140
+   },
+   "RoPE": {
+    "forward": 15242
+   },
+   "softmax": {
+    "softmax": 3160,
+    "expf": 2240,
+    "save/restore": 640,
+    "forward": 350
+   },
+   "reset": {
+    "other": 267
+   },
+   "W_qkv": {
+    "forward": 435465
+   },
+   "W_o": {
+    "forward": 219005
+   },
+   "attn head loop": {
+    "forward": 435
+   },
+   "attn AV": {
+    "forward": 5761,
+    "memset": 7760
+   },
+   "attn QK": {
+    "forward": 9001
+   },
+   "misc": {
+    "forward": 83
+   },
+   "setup+embed": {
+    "forward": 96,
+    "memcpy": 2307
+   }
+  }
+ },
+ "128": {
+  "acc": "ACC reads=42780 writes=2040 lat=0 gnt_every=1",
+  "fw_measured_cycles": 3882654,
+  "logits_kv_bitexact_vs_hold": true,
+  "profiled_forward_cycles": 3882643,
+  "regions": {
+   "boot/argmax": {
+    "cycles": 7302,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 1026,
+    "rd_rope": 0,
+    "rd_ctrl": 13,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 9,
+    "wr_rope": 0,
+    "wr_ctrl": 44,
+    "wr_other": 2
+   },
+   "attn AV": {
+    "cycles": 612881,
+    "rd_w": 0,
+    "rd_kv": 40960,
+    "rd_act": 46080,
+    "rd_rope": 0,
+    "rd_ctrl": 80,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 42240,
+    "wr_rope": 0,
+    "wr_ctrl": 1,
+    "wr_other": 0
+   },
+   "softmax": {
+    "cycles": 1332493,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 15360,
+    "rd_rope": 0,
+    "rd_ctrl": 75580,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 10240,
+    "wr_rope": 0,
+    "wr_ctrl": 20760,
+    "wr_other": 0
+   },
+   "SwiGLU": {
+    "cycles": 190475,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 1720,
+    "rd_rope": 0,
+    "rd_ctrl": 10837,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 860,
+    "wr_rope": 0,
+    "wr_ctrl": 3442,
+    "wr_other": 0
+   },
+   "LM head": {
+    "cycles": 351253,
+    "rd_w": 32768,
+    "rd_kv": 0,
+    "rd_act": 32768,
+    "rd_rope": 0,
+    "rd_ctrl": 13,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 512,
+    "wr_rope": 0,
+    "wr_ctrl": 0,
+    "wr_other": 0
+   },
+   "attn QK": {
+    "cycles": 638921,
+    "rd_w": 0,
+    "rd_kv": 40960,
+    "rd_act": 40960,
+    "rd_rope": 0,
+    "rd_ctrl": 266,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 5120,
+    "wr_rope": 0,
+    "wr_ctrl": 2,
+    "wr_other": 0
+   },
+   "W_qkv": {
+    "cycles": 435465,
+    "rd_w": 40960,
+    "rd_kv": 0,
+    "rd_act": 40960,
+    "rd_rope": 0,
+    "rd_ctrl": 50,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 320,
+    "wr_act": 320,
+    "wr_rope": 0,
+    "wr_ctrl": 5,
+    "wr_other": 0
+   },
+   "rmsnorm": {
+    "cycles": 17778,
+    "rd_w": 704,
+    "rd_kv": 0,
+    "rd_act": 1408,
+    "rd_rope": 0,
+    "rd_ctrl": 59,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 704,
+    "wr_rope": 0,
+    "wr_ctrl": 1,
+    "wr_other": 0
+   },
+   "RoPE": {
+    "cycles": 15242,
+    "rd_w": 0,
+    "rd_kv": 160,
+    "rd_act": 320,
+    "rd_rope": 320,
+    "rd_ctrl": 45,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 160,
+    "wr_act": 320,
+    "wr_rope": 0,
+    "wr_ctrl": 2,
+    "wr_other": 0
+   },
+   "setup+embed": {
+    "cycles": 2403,
+    "rd_w": 256,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 7,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 256,
+    "wr_rope": 0,
+    "wr_ctrl": 11,
+    "wr_other": 0
+   },
+   "FFN W1/W3": {
+    "cycles": 32205,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 30,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 5,
+    "wr_other": 0
+   },
+   "residual": {
+    "cycles": 5505,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 1280,
+    "rd_rope": 0,
+    "rd_ctrl": 85,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 640,
+    "wr_rope": 0,
+    "wr_ctrl": 0,
+    "wr_other": 0
+   },
+   "layer loop": {
+    "cycles": 1896,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 64,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 36,
+    "wr_other": 0
+   },
+   "W_o": {
+    "cycles": 219005,
+    "rd_w": 20480,
+    "rd_kv": 0,
+    "rd_act": 20480,
+    "rd_rope": 0,
+    "rd_ctrl": 40,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 320,
+    "wr_rope": 0,
+    "wr_ctrl": 0,
+    "wr_other": 0
+   },
+   "FFN W2": {
+    "cycles": 16443,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 25,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 8,
+    "wr_other": 0
+   },
+   "attn head loop": {
+    "cycles": 10595,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 45,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 20,
+    "wr_other": 0
+   },
+   "misc": {
+    "cycles": 83,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 25,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 8,
+    "wr_other": 0
+   },
+   "reset": {
+    "cycles": 267,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 0,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 39,
+    "wr_other": 0
+   }
+  },
+  "leaf_cycles": {
+   "boot/argmax": {
+    "boot": 7302
+   },
+   "attn AV": {
+    "forward": 605121,
+    "memset": 7760
+   },
+   "softmax": {
+    "expf": 985890,
+    "softmax": 249093,
+    "forward": 15590,
+    "save/restore": 81920
+   },
+   "SwiGLU": {
+    "expf": 137940,
+    "forward": 38775,
+    "save/restore": 13760
+   },
+   "LM head": {
+    "forward": 351253
+   },
+   "attn QK": {
+    "forward": 638921
+   },
+   "W_qkv": {
+    "forward": 435465
+   },
+   "rmsnorm": {
+    "rmsnorm": 17528,
+    "forward": 250
+   },
+   "RoPE": {
+    "forward": 15242
+   },
+   "setup+embed": {
+    "forward": 96,
+    "memcpy": 2307
+   },
+   "FFN W1/W3": {
+    "acc_gemv.constprop.0": 32065,
+    "forward": 140
+   },
+   "residual": {
+    "forward": 5505
+   },
+   "layer loop": {
+    "forward": 1896
+   },
+   "W_o": {
+    "forward": 219005
+   },
+   "FFN W2": {
+    "forward": 713,
+    "acc_gemv.constprop.0": 15730
+   },
+   "attn head loop": {
+    "forward": 10595
+   },
+   "misc": {
+    "forward": 83
+   },
+   "reset": {
+    "other": 267
+   }
+  }
+ },
+ "512": {
+  "acc": "ACC reads=42780 writes=2040 lat=0 gnt_every=1",
+  "fw_measured_cycles": 11685010,
+  "logits_kv_bitexact_vs_hold": true,
+  "profiled_forward_cycles": 11684999,
+  "regions": {
+   "boot/argmax": {
+    "cycles": 7302,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 1026,
+    "rd_rope": 0,
+    "rd_ctrl": 13,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 9,
+    "wr_rope": 0,
+    "wr_ctrl": 44,
+    "wr_other": 2
+   },
+   "attn AV": {
+    "cycles": 2425361,
+    "rd_w": 0,
+    "rd_kv": 163840,
+    "rd_act": 184320,
+    "rd_rope": 0,
+    "rd_ctrl": 80,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 165120,
+    "wr_rope": 0,
+    "wr_ctrl": 1,
+    "wr_other": 0
+   },
+   "softmax": {
+    "cycles": 5387008,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 61440,
+    "rd_rope": 0,
+    "rd_ctrl": 305950,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 40960,
+    "wr_rope": 0,
+    "wr_ctrl": 82200,
+    "wr_other": 0
+   },
+   "SwiGLU": {
+    "cycles": 190475,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 1720,
+    "rd_rope": 0,
+    "rd_ctrl": 10837,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 860,
+    "wr_rope": 0,
+    "wr_ctrl": 3442,
+    "wr_other": 0
+   },
+   "LM head": {
+    "cycles": 351253,
+    "rd_w": 32768,
+    "rd_kv": 0,
+    "rd_act": 32768,
+    "rd_rope": 0,
+    "rd_ctrl": 13,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 512,
+    "wr_rope": 0,
+    "wr_ctrl": 0,
+    "wr_other": 0
+   },
+   "attn QK": {
+    "cycles": 2543561,
+    "rd_w": 0,
+    "rd_kv": 163840,
+    "rd_act": 163840,
+    "rd_rope": 0,
+    "rd_ctrl": 266,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 20480,
+    "wr_rope": 0,
+    "wr_ctrl": 2,
+    "wr_other": 0
+   },
+   "W_qkv": {
+    "cycles": 435465,
+    "rd_w": 40960,
+    "rd_kv": 0,
+    "rd_act": 40960,
+    "rd_rope": 0,
+    "rd_ctrl": 50,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 320,
+    "wr_act": 320,
+    "wr_rope": 0,
+    "wr_ctrl": 5,
+    "wr_other": 0
+   },
+   "rmsnorm": {
+    "cycles": 17779,
+    "rd_w": 704,
+    "rd_kv": 0,
+    "rd_act": 1408,
+    "rd_rope": 0,
+    "rd_ctrl": 59,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 704,
+    "wr_rope": 0,
+    "wr_ctrl": 1,
+    "wr_other": 0
+   },
+   "RoPE": {
+    "cycles": 15242,
+    "rd_w": 0,
+    "rd_kv": 160,
+    "rd_act": 320,
+    "rd_rope": 320,
+    "rd_ctrl": 45,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 160,
+    "wr_act": 320,
+    "wr_rope": 0,
+    "wr_ctrl": 2,
+    "wr_other": 0
+   },
+   "setup+embed": {
+    "cycles": 2403,
+    "rd_w": 256,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 7,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 256,
+    "wr_rope": 0,
+    "wr_ctrl": 11,
+    "wr_other": 0
+   },
+   "FFN W1/W3": {
+    "cycles": 32205,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 30,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 5,
+    "wr_other": 0
+   },
+   "residual": {
+    "cycles": 5505,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 1280,
+    "rd_rope": 0,
+    "rd_ctrl": 85,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 640,
+    "wr_rope": 0,
+    "wr_ctrl": 0,
+    "wr_other": 0
+   },
+   "layer loop": {
+    "cycles": 1896,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 64,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 36,
+    "wr_other": 0
+   },
+   "W_o": {
+    "cycles": 219005,
+    "rd_w": 20480,
+    "rd_kv": 0,
+    "rd_act": 20480,
+    "rd_rope": 0,
+    "rd_ctrl": 40,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 320,
+    "wr_rope": 0,
+    "wr_ctrl": 0,
+    "wr_other": 0
+   },
+   "FFN W2": {
+    "cycles": 16443,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 25,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 8,
+    "wr_other": 0
+   },
+   "attn head loop": {
+    "cycles": 41315,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 45,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 20,
+    "wr_other": 0
+   },
+   "misc": {
+    "cycles": 83,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 25,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 8,
+    "wr_other": 0
+   },
+   "reset": {
+    "cycles": 267,
+    "rd_w": 0,
+    "rd_kv": 0,
+    "rd_act": 0,
+    "rd_rope": 0,
+    "rd_ctrl": 0,
+    "rd_other": 0,
+    "wr_w": 0,
+    "wr_kv": 0,
+    "wr_act": 0,
+    "wr_rope": 0,
+    "wr_ctrl": 39,
+    "wr_other": 0
+   }
+  },
+  "leaf_cycles": {
+   "boot/argmax": {
+    "boot": 7302
+   },
+   "attn AV": {
+    "forward": 2417601,
+    "memset": 7760
+   },
+   "softmax": {
+    "expf": 4011360,
+    "softmax": 986298,
+    "forward": 61670,
+    "save/restore": 327680
+   },
+   "SwiGLU": {
+    "expf": 137940,
+    "forward": 38775,
+    "save/restore": 13760
+   },
+   "LM head": {
+    "forward": 351253
+   },
+   "attn QK": {
+    "forward": 2543561
+   },
+   "W_qkv": {
+    "forward": 435465
+   },
+   "rmsnorm": {
+    "rmsnorm": 17529,
+    "forward": 250
+   },
+   "RoPE": {
+    "forward": 15242
+   },
+   "setup+embed": {
+    "forward": 96,
+    "memcpy": 2307
+   },
+   "FFN W1/W3": {
+    "acc_gemv.constprop.0": 32065,
+    "forward": 140
+   },
+   "residual": {
+    "forward": 5505
+   },
+   "layer loop": {
+    "forward": 1896
+   },
+   "W_o": {
+    "forward": 219005
+   },
+   "FFN W2": {
+    "forward": 713,
+    "acc_gemv.constprop.0": 15730
+   },
+   "attn head loop": {
+    "forward": 41315
+   },
+   "misc": {
+    "forward": 83
+   },
+   "reset": {
+    "other": 267
+   }
+  }
+ },
+ "text_bytes": 9468
+}

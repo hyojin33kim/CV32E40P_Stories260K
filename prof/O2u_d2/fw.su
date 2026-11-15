@@ -1,0 +1,5 @@
+baseline/firmware.c:64:6:rmsnorm	0	static
+baseline/firmware.c:79:6:softmax	48	static
+baseline/firmware.c:99:6:matmul	0	static
+baseline/firmware.c:113:8:forward	176	static
+baseline/firmware.c:249:6:boot	32	static

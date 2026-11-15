@@ -12,7 +12,11 @@ obj_soc/Vsoc_top. The accelerator tag carries GEN_HW (default '_l4v4r16' = the d
 obj_soc build: 4 MAC lanes, 4 VFU lanes, RUN 16, FIFO 256; '_l4v4' = RUN 1/FIFO 128 history;
 runs before the lanes have no GEN_HW part). full also places the RMSNorm weights in SRAM
 and copies the embedding row by words. SIM_DDR=1 enables the DDR/SRAM memory model;
-SIM_ACC_LAT / SIM_ACC_GNT_EVERY set the accelerator memory latency / grant period
+CFG=d2 (default; FPGA-real: CPU/ACC/VFU FPU latency 4, RUN 8, sims obj*/) tags SW runs
+'<flags>_d2' and accelerator runs GEN_HW default '_d2'; CFG=d1 (ideal/legacy, sims obj*_d1/)
+keeps the historical tags. OPTA=1 selects the Option A numerics (S3: -DOPTA firmware,
+host model opta/run_opta.c; tags get '_opta' after the flags part, reference out_<N>_Os_opta[_d2])
+and ('<flags>', GEN_HW '_l4v4r16'). SIM_ACC_LAT / SIM_ACC_GNT_EVERY set the accelerator memory latency / grant period
 (tag <flags>_acc_L<lat>_G<period>). Results must stay bit-exact vs the -Os run.
 Pass criteria (agreed 2026-11-13, host<->RISC is tolerance-based):
   per step: logits rel L2 < 1e-5, RISC token == argmax(RISC logits),
@@ -28,6 +32,12 @@ G = W / 'gen'
 steps = int(sys.argv[1]); text = sys.argv[2] if len(sys.argv) > 2 else 'Once upon a time'
 cflags = os.environ.get('GEN_CFLAGS', '-O2 -funroll-loops')
 tag = {'-O2 -funroll-loops': 'O2u', '': 'Os'}.get(cflags, cflags.replace(' ', '').replace('-', '_'))
+OPTA = os.environ.get('OPTA') == '1'
+if OPTA: cflags += ' -DOPTA'; tag += '_opta'
+CFG = os.environ.get('CFG', 'd2'); assert CFG in ('d1', 'd2')
+SUF = '_d1' if CFG == 'd1' else ''
+NUM = '_opta' if OPTA else ''
+os_tag = 'Os' + NUM + ('' if CFG == 'd1' else '_d2')
 extra = os.environ.get('GEN_EXTRA', '')   # extra -D flags (memory-model study); name them in GEN_HW
 if extra: cflags += ' ' + extra
 mode = os.environ.get('GEN_ACC', '')
@@ -38,7 +48,9 @@ if acc:
     cflags += ' -DUSE_ACC' + {'1': '', 'attn': ' -DUSE_ACC_ATTN', 'all': ' -DUSE_ACC_ATTN -DUSE_ACC_VFU',
                                'full': ' -DUSE_ACC_ATTN -DUSE_ACC_VFU -DUSE_ACC_MM -DUSE_ACC_VFU_DIV'
                                        ' -DRMS_SRAM -DEMB_WORDS'}[mode]
-    tag += '_' + name + os.environ.get('GEN_HW', '_l4v4r16') + '_L%s_G%s' % (os.environ.get('SIM_ACC_LAT', '0'), os.environ.get('SIM_ACC_GNT_EVERY', '1'))
+    tag += '_' + name + os.environ.get('GEN_HW', '_l4v4r16' if CFG == 'd1' else '_d2') + '_L%s_G%s' % (os.environ.get('SIM_ACC_LAT', '0'), os.environ.get('SIM_ACC_GNT_EVERY', '1'))
+elif CFG == 'd2':
+    tag += '_d2'
 OUTROOT = Path(os.environ.get('GEN_OUT', G))  # reproduce.sh points this at repro/gen
 OUTROOT.mkdir(parents=True, exist_ok=True)
 O = OUTROOT / f'out_{steps}_{tag}'; O.mkdir(exist_ok=True)
@@ -50,7 +62,7 @@ def run(*a, **k):
 
 # host tool
 hg = O / 'host_gen'  # per-run copy so concurrent runs don't race on the binary
-run('cc', '-O2', '-ffp-contract=off', '-w', G / 'host_gen.c', '-lm', '-o', hg)
+run('cc', '-O2', '-ffp-contract=off', '-w', *(['-DOPTA'] if OPTA else []), G / 'host_gen.c', '-lm', '-o', hg)
 np_ = int(run(hg, 'encode', model, tok, text, O / 'prompt.u32'))
 prompt = np.fromfile(O / 'prompt.u32', dtype='<u4')
 assert steps >= np_, 'steps must cover the prompt'
@@ -66,7 +78,7 @@ struct.pack_into('<II', m, 0x1afff0, np_, steps)
 
 # RTL sim
 t0 = time.time()
-sim = os.environ.get('GEN_SIM') or W / ('obj_soc/Vsoc_top' if acc else 'obj/Vcv32e40p_top')
+sim = os.environ.get('GEN_SIM') or W / (f'obj_soc{SUF}/Vsoc_top' if acc else f'obj{SUF}/Vcv32e40p_top')
 log = run(sim, O / 'image.bin', O / 'dump.bin', str(10**11), O / 'steps.bin')
 wall = time.time() - t0
 (O / 'sim.log').write_text(log)
@@ -100,8 +112,10 @@ div = np.nonzero(free[gen_from:] != toks[gen_from:])[0]
 argmax_mm = np.nonzero(ra != ha)[0]
 
 # RISC-SW numerics must not depend on compiler flags: compare with the -Os run if present
-ref = OUTROOT / f'out_{steps}_Os' if (OUTROOT / f'out_{steps}_Os' / 'steps.bin').exists() else G / f'out_{steps}_Os'
-if tag != 'Os' and (ref / 'steps.bin').exists() and (ref / 'dump.bin').exists():
+# (numerics do not depend on the FPU latency either: an Os run of either CFG is a valid reference)
+cands = [r / f'out_{steps}_{x}' for r in (OUTROOT, G) for x in (os_tag, 'Os' + NUM, 'Os' + NUM + '_d2')]
+ref = next((c for c in cands if (c / 'steps.bin').exists() and (c / 'dump.bin').exists() and c != O), cands[0])
+if tag not in ('Os' + NUM, 'Os' + NUM + '_d2') and (ref / 'steps.bin').exists() and (ref / 'dump.bin').exists():
     rd = (ref / 'dump.bin').read_bytes()
     bitexact_vs_Os = bool((O / 'steps.bin').read_bytes() == (ref / 'steps.bin').read_bytes()
                           and d[0x100000:0x1a0000] == rd[0x100000:0x1a0000] and d[0x1ae800:0x1aec00] == rd[0x1ae800:0x1aec00])

@@ -1,5 +1,5 @@
 
-gen/firmware_gen_Os.elf:     file format elf32-littleriscv
+/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/gen/firmware_gen_Os.elf:     file format elf32-littleriscv
 
 
 Disassembly of section .text:
