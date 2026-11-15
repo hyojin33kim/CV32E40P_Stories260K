@@ -35,8 +35,8 @@ module gemv_acc
     parameter int XBUF   = 512,
     parameter int YBUF   = 512,
     parameter int LANES  = 4,
-    parameter int RUN    = 1,               // mode A lines per lane before switching lanes
-    parameter int FDEPTH = 128              // words per lane FIFO (power of two); covers
+    parameter int RUN    = 16,              // mode A lines per lane before switching lanes
+    parameter int FDEPTH = 256              // words per lane FIFO (power of two); covers
                                             // ~FDEPTH cycles of memory latency per lane
 ) (
     input logic clk_i,

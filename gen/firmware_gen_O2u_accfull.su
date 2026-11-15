@@ -4,4 +4,4 @@ gen/firmware_gen.c:102:6:rmsnorm	0	static
 gen/firmware_gen.c:117:6:softmax	48	static
 gen/firmware_gen.c:137:6:matmul	0	static
 gen/firmware_gen.c:151:8:forward	176	static
-gen/firmware_gen.c:316:6:boot	80	static
+gen/firmware_gen.c:321:6:boot	80	static

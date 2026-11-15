@@ -1,0 +1,20 @@
+/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/ddr_full_l4v4r16/fw_g.elf  :
+section              size       addr
+.text                6920   16777344
+.rodata               124    1785856
+.eh_frame             248    1785980
+.bss                  156    1786228
+.riscv.attributes      65          0
+.comment               34          0
+.debug_line         18047          0
+.debug_line_str       726          0
+.debug_info          6020          0
+.debug_abbrev        1664          0
+.debug_aranges        192          0
+.debug_str           1850          0
+.debug_loclists      3815          0
+.debug_rnglists       817          0
+.debug_frame          468          0
+Total               41146
+
+

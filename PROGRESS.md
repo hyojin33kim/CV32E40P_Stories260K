@@ -18,24 +18,20 @@
 | ④-b VFU | 11-14 | softmax·SiLU·expf HW(picolibc sf_exp 연산 순서), 1M 원소 불일치 0 | `acc/P4B_VFU.md` | `prof/acc_all_L0_G1`, `vfu/` |
 | 범위 확대 + lanes | 11-14 | 모든 GEMV, MAC 4 lanes, VFU 4 lanes, ÷√8 융합 → **11.93×/10.67×/10.07×**, E2E 512 step **10.29×** | `acc/P4C_LANES.md` | `prof/acc_full_l4v4`, `gen/out_512_O2u_accfull_l4v4_L0_G1` |
 | 메모리 모델 현실화 | 11-14 | DDR/SRAM sim 모델, burst run fetch, RMS·embedding 최적화 → DDR에서도 **10.27×/9.97×/9.82×**, E2E 64 step **10.09×**, 스윕 162 조건 bit-exact | `acc/P5_MEMORY_PLAN.md` | `prof/ddr_full_opt`, `acc/sweep/ddr_ddr_full_opt`, `gen/out_64_O2u_accfull_l4v4r16_ddr_opt_L0_G1` |
+| 메모리 후속 + 기본값 승격 | 11-15 | FIFO 256으로 고 latency 손실 해소(명령 간 prefetch 불필요), RUN16·FIFO256·RMS_SRAM·EMB_WORDS 기본화, reference 재생성(`_l4v4r16`) | `acc/P5_MEMORY_PLAN.md` | `prof/*_l4v4r16`, `gen/out_*_l4v4r16*`, `acc/sweep/fdepth_ddr` |
+| ② FPGA 합성 1차 | 11-15 | Vivado 2026.1, ZCU104: **LUT 101.7%(초과), BRAM 0, WNS −9.9 ns @200 MHz** → FPU 파이프라인·BRAM화 필요 | `fpga/P6_FPGA_SYNTH.md` | `fpga/reports_v1_soc_top` |
 
-## 현재 성능 (사실, SW 기준선 대비, 가속기 포트 16 B/cycle, latency 0)
-| | SW 기준선 cycles | 최종 가속 cycles | 배율 | bit-exact |
-|---|---:|---:|---:|---|
-| single step ctx1 | 1,454,871 | 121,958 | 11.93× | HOLD와 동일 |
-| single step ctx128 | 3,039,674 | 284,910 | 10.67× | HOLD와 동일 |
-| single step ctx512 | 7,854,556 | 780,213 | 10.07× | HOLD와 동일 |
-| E2E 512 step | 2,383,853,770 | 231,588,051 | 10.29× | `-Os`와 동일 |
+## 현재 성능 (sim, 기본 빌드 `_l4v4r16`, SW 기준선 `-O2 -funroll-loops` 이상 메모리 대비, 전부 bit-exact)
+| | SW 기준선 cycles | 이상 메모리 | 배율 | DDR 모델 | 배율 |
+|---|---:|---:|---:|---:|---:|
+| single step ctx1 | 1,454,871 | 121,501 | 11.97× | 141,694 | 10.27× |
+| single step ctx128 | 3,039,674 | 284,733 | 10.68× | 304,926 | 9.97× |
+| single step ctx512 | 7,854,556 | 779,756 | 10.07× | 799,949 | 9.82× |
+| E2E 64 step | 118,431,746 | 10,444,536 | 11.34× | 11,736,888 | 10.09× |
+| E2E 512 step | 2,383,853,770 | 231,415,107 | 10.30× | 241,753,923 | 9.86× |
 
-DDR 모델(Weight는 DDR: latency 40, burst 16, 12.8 B/cycle, outstanding 8 / KV·activation은 SRAM) 적용 시:
-
-| | 이상 SW cycles | DDR 가속 cycles | 배율 | bit-exact |
-|---|---:|---:|---:|---|
-| single step ctx1 | 1,454,871 | 141,694 | 10.27× | HOLD와 동일 |
-| single step ctx512 | 7,854,556 | 799,949 | 9.82× | HOLD와 동일 |
-| E2E 64 step | 118,431,746 | 11,736,888 | 10.09× | `-Os`와 동일 |
-
-DDR 조건 스윕 범위: ctx1 2.82×(latency 100·outstanding 4·burst 4·8 B/c) ~ 11.77×. 최대 미지수는 실제 DDR latency(⑤ 실측).
+DDR 모델: Weight는 DDR(latency 40, burst 16, 12.8 B/cycle, outstanding 8), KV·activation은 SRAM. 스윕 범위 ctx1 2.82×~11.77×.
+**주의: FPU 지연 0(조합) 가정의 cycle 수.** FPGA 합성 결과 이 구성은 ~68 MHz(추정)이며, FPU 파이프라인화 후 cycle 수가 바뀜.
 
 ## 사용자 결정 이력
 | 날짜 | 결정 |
@@ -53,23 +49,20 @@ DDR 조건 스윕 범위: ctx1 2.82×(latency 100·outstanding 4·burst 4·8 B/c
 ## 환경 메모
 - RISC-V: apt gcc-riscv64-unknown-elf 13.2 + picolibc 1.8.6, Verilator 5.038 (WSL2 Ubuntu 24.04).
 - Vivado: `~/bin/vivado`는 Windows Vivado 2026.1(`H:\2026.1\Vivado\bin\vivado.bat`) wrapper, `/mnt/<drive>` 아래에서만 실행.
-  11-14 확인 시 Windows에 **H: 드라이브 없음**(C:, E:, F:만 연결) → 현재 사용 불가.
-  `C:\Xilinx`에는 Vivado_Lab(Lab Edition)과 설치기(xic)만 있음. H: 연결 후 `cd /mnt/c && vivado -version`으로 확인.
+  11-15 H: 연결 확인, `vivado v2026.1` 동작. 합성 작업 디렉토리 `E:\fpga_work\cv32e40p_stories` (`fpga/prepare.py`).
 
-## 남은 일 (권장 순서, 11-14 기준)
-1. **메모리 모델 후속**
-   - 명령 간 Weight prefetch — 고 latency 대응(스윕: latency 100 cycles에서 ctx1 ≈7×).
-   - `ACC_RUN=16`·`RMS_SRAM`·`EMB_WORDS` 기본 승격(권고). 이상 모델 cycles +1.4% → reproduce 기준값 재생성 필요.
-   - DDR 조건 E2E 512 step 측정.
-2. **FPGA 합성·타이밍·면적 (Vivado)** — FPU 지연 0(조합) 가정의 200 MHz 검증, 실패 시 FPU 파이프라인 + 행 interleave로
-   bit-exact 유지. FPU 13개(나눗셈기 포함) XCZU7EV 면적 확인. **필요: Windows H: 드라이브 연결.**
-3. **선택 최적화** — ctx512 softmax 66~69%(VFU lane 8개 또는 exp 파이프라인), CPU 잔여(rmsnorm·RoPE·residual, ctx1 ≈15%) overlap.
-4. **검증 보강(선택)** — 다중 프롬프트, temperature·top-p sampling, expf 2³² 전수 비교.
-5. **⑤ ZCU104 통합** — 대기. DDR latency·대역폭 실측으로 메모리 모델 보정.
+## 남은 일 (권장 순서, 11-15 기준)
+1. **② FPGA 대응 RTL 수정** (`fpga/P6_FPGA_SYNTH.md`)
+   - CPU 단독 FPU_ADDMUL_LAT 0/1/2 합성으로 Fmax 확인.
+   - FPU 파이프라인(가속기 GEMV는 행 interleave로 1 MAC/cycle 유지), 버퍼 BRAM화(lane별 bank, 1R1W), VFU lane 면적 축소.
+   - sim bit-exact 재확인(단위 테스트·E2E) → 재합성 → place & route → timing·면적.
+   - 새 FPU 지연 기준으로 SW 기준선·가속비 재측정.
+2. **선택 최적화** — ctx512 softmax(VFU) 비중, CPU 잔여 작업 overlap.
+3. **검증 보강(선택)** — 다중 프롬프트, temperature·top-p sampling, expf 2³² 전수 비교.
+4. **⑤ ZCU104 통합** — 대기. DDR latency·대역폭 실측으로 메모리 모델 보정.
 
 ## 미검증
-- FPGA 타이밍·면적(합성 안 함), 실제 DDR 수치(현재 가정값), 다중 프롬프트·sampling.
-- E2E 512 step은 이상 메모리 조건만 측정(DDR 조건 미측정).
+- place & route 후 timing(합성 단계만 수행), 실제 DDR 수치(현재 가정값), 다중 프롬프트·sampling.
 
 ## 기록 위치
 - 이 파일(`PROGRESS.md`): 현재 상태의 단일 원본 — 단계가 끝날 때마다 갱신.
