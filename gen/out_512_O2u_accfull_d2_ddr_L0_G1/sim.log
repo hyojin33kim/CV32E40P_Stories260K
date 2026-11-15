@@ -1,0 +1,4 @@
+DONE cycles=430495141 min_stack_write=0x1fff04
+ACC reads=67213312 writes=12908544 lat=0 gnt_every=1
+DDR acc_lines=33193984 bursts=4155905 lat=40 ovh=4 burst=16 bw=12.8 out=8
+DDR cpu_loads=33472 cpu_lat=40

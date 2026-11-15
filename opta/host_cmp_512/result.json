@@ -1,0 +1,11 @@
+{
+  "steps": 512,
+  "prompt": "Once upon a time",
+  "n_prompt": 5,
+  "free_first_divergence": null,
+  "free_token_match": 1.0,
+  "tf_logits_rel_L2_max": 3.4242068522871705e-06,
+  "tf_logits_rel_L2_mean": 4.083737792370812e-07,
+  "tf_argmax_mismatch": [],
+  "tf_kv_rel_L2": 1.9594583022808365e-07
+}

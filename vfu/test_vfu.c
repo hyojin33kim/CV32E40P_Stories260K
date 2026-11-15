@@ -7,9 +7,14 @@
 //   3 silu    : (v*(1/(1+expf(-v))))*g          HW cmd SILU, g = AUX
 //   4 divs    : IN[i] / 0x1.6a09e6p+1f            HW cmd DIVS
 //   5 divsoftmax: chunks (len from AUX): IN[i] /= 0x1.6a09e6p+1f, then softmax
-// Results: 0x1aff00 = {mismatches, first mismatch index, N, test, cycles sw, cycles hw}
+//   6 softmax2  : Option A, chunks (len from AUX): p = exp2q((x - max) * K), 4-way sum
+//                 (opta/softmax2.h); the per-chunk sums are compared too (out[6])
+//   7 silu2     : Option A (v*(1/(1+exp2q(v*-log2e))))*g, g = AUX
+// Results: 0x1aff00 = {mismatches, first mismatch index, N, test, cycles sw, cycles hw,
+//                      sum mismatches (test 6)}
 #include <math.h>
 #include <string.h>
+#include "../opta/softmax2.h"
 static inline unsigned cyc(void){unsigned v;__asm__ volatile("csrr %0, mcycle":"=r"(v)::"memory");return v;}
 
 #define IN  ((float*)0x000000)
@@ -23,6 +28,10 @@ static void vfu(unsigned cmd, float* a, float* b, unsigned n, float s) {
     r[2] = (unsigned)a; r[3] = (unsigned)b; r[4] = n; r[5] = c.u;
     r[0] = cmd;
     while (r[1] & 1) ;
+}
+static unsigned vfu_sum(float* a, unsigned n, float s) {   // cmd 6, returns the SUM bits
+    vfu(6, a, 0, n, s);
+    return ((volatile unsigned*)0x30000040)[7];
 }
 
 // software reference: same code as gen/firmware_gen.c (softmax) and the SwiGLU loop
@@ -52,6 +61,19 @@ void boot(void) {
         SW[i] = val;
     }
     if (test == 4) for (unsigned i = 0; i < n; i++) SW[i] /= 0x1.6a09e6p+1f;
+    unsigned sbad = 0, nch = 0;
+    unsigned *sws = (unsigned*)0x100000;   // per-chunk SW sums (free in this test image)
+    if (test == 6) for (unsigned j = 0; j < n;) {
+        unsigned len = ((unsigned*)AUX)[j]; if (len > n - j) len = n - j;
+        union { float f; unsigned u; } s = { softmax2(SW + j, len) };
+        sws[nch++] = s.u; j += len;
+    }
+    if (test == 7) for (unsigned i = 0; i < n; i++) {
+        float val = SW[i];
+        val *= (1.0f / (1.0f + exp2q(val * OPTA_NLOG2E)));
+        val *= AUX[i];
+        SW[i] = val;
+    }
     if (test == 5) for (unsigned j = 0; j < n;) {
         unsigned len = ((unsigned*)AUX)[j]; if (len > n - j) len = n - j;
         for (unsigned i = 0; i < len; i++) SW[j + i] /= 0x1.6a09e6p+1f;
@@ -60,21 +82,23 @@ void boot(void) {
     unsigned c1 = cyc();
     // hardware
     memcpy(HW, IN, n * 4);
-    if (test == 2 || test == 5) for (unsigned j = 0; j < n;) {
+    if (test == 2 || test == 5 || test == 6) for (unsigned j = 0, c = 0; j < n;) {
         unsigned len = ((unsigned*)AUX)[j]; if (len > n - j) len = n - j;
-        if (test == 2) vfu(1, HW + j, 0, len, 0);
+        if (test == 6) { if (vfu_sum(HW + j, len, OPTA_K) != sws[c++]) sbad++; }
+        else if (test == 2) vfu(1, HW + j, 0, len, 0);
         else vfu(5, HW + j, 0, len, 0x1.6a09e6p+1f);
         j += len;
     } else for (unsigned j = 0; j < n; j += 512) {
         unsigned len = n - j < 512 ? n - j : 512;
         if (test == 1) vfu(4, HW + j, 0, len, 0);
         if (test == 3) vfu(2, HW + j, AUX + j, len, 0);
+        if (test == 7) vfu(7, HW + j, AUX + j, len, 0);
         if (test == 4) vfu(3, HW + j, 0, len, 0x1.6a09e6p+1f);
     }
     unsigned c2 = cyc();
     unsigned bad = 0, first = 0xffffffff;
     for (unsigned i = 0; i < n; i++)
         if (((unsigned*)SW)[i] != ((unsigned*)HW)[i]) { if (!bad) first = i; bad++; }
-    out[0] = bad; out[1] = first; out[2] = n; out[3] = test; out[4] = c1 - c0; out[5] = c2 - c1;
+    out[0] = bad; out[1] = first; out[2] = n; out[3] = test; out[4] = c1 - c0; out[5] = c2 - c1; out[6] = sbad;
     *(volatile unsigned*)0x20000000 = 1; for (;;);
 }

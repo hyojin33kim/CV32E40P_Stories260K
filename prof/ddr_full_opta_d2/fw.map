@@ -1,0 +1,221 @@
+Archive member included to satisfy reference by file (symbol)
+
+/usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+                              /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/ddr_full_opta_d2/fw.o (expf)
+/usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+                              /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o) (__math_uflowf)
+/usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+                              /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o) (__math_oflowf)
+/usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
+                              /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o) (__riscv_save_0)
+
+There are no discarded input sections
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+INST             0x01000080         0x00003f80         xr
+CTRL             0x001b4000         0x0004c000         rw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD /tmp/ccdNGrn6.o
+LOAD /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/ddr_full_opta_d2/fw.o
+LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libm.a
+LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a
+LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
+
+.text           0x01000080     0x1c24
+ *(.text.start)
+ .text.start    0x01000080       0x38 /tmp/ccdNGrn6.o
+                0x01000080                _start
+ *(.text*)
+ .text          0x010000b8        0x0 /tmp/ccdNGrn6.o
+ .text          0x010000b8     0x18cc /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/ddr_full_opta_d2/fw.o
+                0x01000154                rmsnorm
+                0x01000442                softmax
+                0x010008a0                matmul
+                0x01000a1c                forward
+                0x01001510                boot
+ .text          0x01001984        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .text.expf     0x01001984      0x21c /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+                0x01001984                expf
+ .text          0x01001ba0        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .text.__math_uflowf
+                0x01001ba0       0x24 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+                0x01001ba0                __math_uflowf
+ .text          0x01001bc4        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+ .text.__math_oflowf
+                0x01001bc4       0x24 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+                0x01001bc4                __math_oflowf
+ .text          0x01001be8       0xbc /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
+                0x01001be8                __riscv_save_12
+                0x01001bf8                __riscv_save_8
+                0x01001bf8                __riscv_save_11
+                0x01001bf8                __riscv_save_9
+                0x01001bf8                __riscv_save_10
+                0x01001c14                __riscv_save_7
+                0x01001c14                __riscv_save_4
+                0x01001c14                __riscv_save_6
+                0x01001c14                __riscv_save_5
+                0x01001c44                __riscv_save_1
+                0x01001c44                __riscv_save_3
+                0x01001c44                __riscv_save_2
+                0x01001c44                __riscv_save_0
+                0x01001c5c                __riscv_restore_12
+                0x01001c64                __riscv_restore_10
+                0x01001c64                __riscv_restore_11
+                0x01001c64                __riscv_restore_8
+                0x01001c64                __riscv_restore_9
+                0x01001c78                __riscv_restore_5
+                0x01001c78                __riscv_restore_6
+                0x01001c78                __riscv_restore_4
+                0x01001c78                __riscv_restore_7
+                0x01001c8c                __riscv_restore_3
+                0x01001c8c                __riscv_restore_2
+                0x01001c8c                __riscv_restore_0
+                0x01001c8c                __riscv_restore_1
+
+.rodata         0x001b4000       0x7c
+ *(.rodata*)
+ .rodata.cst4   0x001b4000       0x48 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/ddr_full_opta_d2/fw.o
+                                  0xc (size before relaxing)
+ .rodata        0x001b4048       0x1c /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/ddr_full_opta_d2/fw.o
+ *(.srodata*)
+ .srodata.cst4  0x001b4064       0x30 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .srodata       0x001b4064       0x18 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .srodata.cst4  0x001b407c        0x8 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .srodata.cst4  0x001b407c        0x8 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+
+.eh_frame       0x001b407c       0xf8
+ .eh_frame      0x001b407c       0xf8 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
+
+.rela.dyn       0x001b4174        0x0
+ .rela.text.start
+                0x001b4174        0x0 /tmp/ccdNGrn6.o
+
+.data           0x001b4174        0x0
+ *(.data*)
+ .data          0x001b4174        0x0 /tmp/ccdNGrn6.o
+ .data          0x001b4174        0x0 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/ddr_full_opta_d2/fw.o
+ .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+ .data          0x001b4174        0x0 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
+ *(.sdata*)
+
+.bss            0x001b4174       0x9c
+                0x001b4174                        . = ALIGN (0x4)
+                0x001b4174                        __bss_start = .
+ *(.bss*)
+ .bss           0x001b4174        0x0 /tmp/ccdNGrn6.o
+ .bss           0x001b4174       0x9c /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/ddr_full_opta_d2/fw.o
+                0x001b41fc                result_token
+                0x001b4200                ec
+                0x001b4204                sc
+                0x001b4208                en
+                0x001b420c                sn
+ .bss           0x001b4210        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .bss           0x001b4210        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .bss           0x001b4210        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+ .bss           0x001b4210        0x0 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
+ *(.sbss*)
+ *(COMMON)
+                0x001b4210                        . = ALIGN (0x4)
+                0x001b4210                        __bss_end = .
+                0x00200000                        __stack_top = (ORIGIN (CTRL) + LENGTH (CTRL))
+                0x00000001                        ASSERT ((__bss_end <= (__stack_top - 0x1000)), control SRAM overflow)
+OUTPUT(/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/ddr_full_opta_d2/fw.elf elf32-littleriscv)
+
+.riscv.attributes
+                0x00000000       0x41
+ .riscv.attributes
+                0x00000000       0x3f /tmp/ccdNGrn6.o
+ .riscv.attributes
+                0x0000003f       0x41 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/ddr_full_opta_d2/fw.o
+ .riscv.attributes
+                0x00000080       0x38 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .riscv.attributes
+                0x000000b8       0x38 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .riscv.attributes
+                0x000000f0       0x38 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+ .riscv.attributes
+                0x00000128       0x36 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
+
+.comment        0x00000000       0x22
+ .comment       0x00000000       0x22 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/ddr_full_opta_d2/fw.o
+                                 0x23 (size before relaxing)
+ .comment       0x00000022       0x23 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .comment       0x00000022       0x23 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .comment       0x00000022       0x23 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+
+.debug_info     0x00000000      0x6cb
+ .debug_info    0x00000000      0x398 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .debug_info    0x00000398       0xea /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .debug_info    0x00000482       0xea /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+ .debug_info    0x0000056c      0x15f /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
+
+.debug_abbrev   0x00000000      0x2f8
+ .debug_abbrev  0x00000000      0x1b4 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .debug_abbrev  0x000001b4       0x8e /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .debug_abbrev  0x00000242       0x8e /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+ .debug_abbrev  0x000002d0       0x28 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
+
+.debug_loclists
+                0x00000000      0x334
+ .debug_loclists
+                0x00000000      0x2e4 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .debug_loclists
+                0x000002e4       0x28 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .debug_loclists
+                0x0000030c       0x28 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+
+.debug_aranges  0x00000000       0x80
+ .debug_aranges
+                0x00000000       0x20 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .debug_aranges
+                0x00000020       0x20 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .debug_aranges
+                0x00000040       0x20 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+ .debug_aranges
+                0x00000060       0x20 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
+
+.debug_rnglists
+                0x00000000       0x6a
+ .debug_rnglists
+                0x00000000       0x44 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .debug_rnglists
+                0x00000044       0x13 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .debug_rnglists
+                0x00000057       0x13 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+
+.debug_line     0x00000000      0x7e9
+ .debug_line    0x00000000      0x544 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .debug_line    0x00000544       0xa3 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .debug_line    0x000005e7       0xa3 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+ .debug_line    0x0000068a      0x15f /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
+
+.debug_str      0x00000000      0x427
+ .debug_str     0x00000000      0x427 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+                                0x204 (size before relaxing)
+ .debug_str     0x00000427      0x1b1 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .debug_str     0x00000427      0x1b1 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+ .debug_str     0x00000427      0x26d /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
+
+.debug_line_str
+                0x00000000      0x1ea
+ .debug_line_str
+                0x00000000      0x1ea /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+                                0x106 (size before relaxing)
+ .debug_line_str
+                0x000001ea       0xfe /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .debug_line_str
+                0x000001ea       0xfe /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
+ .debug_line_str
+                0x000001ea       0xae /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
+
+.debug_frame    0x00000000       0x74
+ .debug_frame   0x00000000       0x34 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
+ .debug_frame   0x00000034       0x20 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
+ .debug_frame   0x00000054       0x20 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)

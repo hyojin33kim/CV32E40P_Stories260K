@@ -5,7 +5,7 @@ usage: [PROF_CFLAGS=..] [PROF_ACC=1 SIM_ACC_LAT=.. SIM_ACC_GNT_EVERY=..] prof/ru
        -> prof/<tag>/{prof_<t>.csv, summary.json, table.md}
 <firmware.c>: baseline/firmware.c (HOLD single-step boot) or gen/firmware_gen.c (run with
 n_steps=1 at pos0=t-1, token 1). PROF_ACC=1 (gen firmware only) builds with -DUSE_ACC and
-runs obj_soc/Vsoc_top; accelerator memory reads are taken from the sim's ACC line.
+runs obj_soc/Vsoc_top (CFG=d1: obj_soc_d1 / obj_prof_d1, the ideal FPU-latency-0 builds); accelerator memory reads are taken from the sim's ACC line.
 The firmware is built with -g (code bytes identical to the non -g build; checked
 here) and run on the CSR-free sim profiler (SIM_PROF). Each cycle is charged to the
 forward()/boot() source line that is the current call site, so callee cycles
@@ -32,7 +32,8 @@ src_text = (W / src).read_text()
 GEN = 'pos0=ctrl[2]' in src_text
 assert GEN or not ACC, 'PROF_ACC needs gen/firmware_gen.c'
 if ACC: OPT += ' -DUSE_ACC'
-SIM = Path(os.environ['PROF_SIM']) if os.environ.get('PROF_SIM') else W / ('obj_soc/Vsoc_top' if ACC else 'obj_prof/Vcv32e40p_top')
+SIM = Path(os.environ['PROF_SIM']) if os.environ.get('PROF_SIM') else W / (('obj_soc' if ACC else 'obj_prof') + ('_d1' if os.environ.get('CFG') == 'd1' else '')
+                                                            + ('/Vsoc_top' if ACC else '/Vcv32e40p_top'))
 FWD = next(i for i, l in enumerate(src_text.splitlines(), 1) if l.startswith('float* forward('))
 for name, extra in (('fw_g', '-g ' + OPT), ('fw', OPT)):
     sh('env', f'SRC={src}', f'OUT={O / name}', f'CFLAGS_EXTRA={extra}', W / 'build.sh', cwd=W)

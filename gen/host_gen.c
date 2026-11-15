@@ -5,7 +5,11 @@
 //   host_gen free   <model> <prompt.u32> <steps> <toks.u32>   independent greedy run
 //   host_gen decode <model> <tok> <prompt.u32> <toks.u32> <steps>
 #define main original_main
+#ifdef OPTA
+#include "../opta/run_opta.c"   // Option A numerics (S3): exp2q softmax/SiLU, deferred normalization
+#else
 #include "../run.c"
+#endif
 #undef main
 
 static int *read_u32(const char *path, int *n) {

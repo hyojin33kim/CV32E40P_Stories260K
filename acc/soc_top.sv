@@ -9,8 +9,14 @@
 module soc_top #(
     parameter int ACC_LANES = 4,  // gemv_acc MAC lanes  (build_sim.sh: ACC_LANES=<n>)
     parameter int VFU_LANES = 4,  // vfu element engines (build_sim.sh: VFU_LANES=<n>)
-    parameter int ACC_RUN   = 16, // gemv_acc mode-A lines per lane run (build_sim.sh: ACC_RUN=<n>)
-    parameter int ACC_FDEPTH = 256 // gemv_acc words per lane FIFO (build_sim.sh: ACC_FDEPTH=<n>)
+    parameter int ACC_RUN   = 8,  // gemv_acc mode-A lines per lane run (build_sim.sh: ACC_RUN=<n>)
+    parameter int ACC_FDEPTH = 256, // gemv_acc words per lane FIFO (build_sim.sh: ACC_FDEPTH=<n>)
+    // FPU pipeline registers (fpnew FPU_ADDMUL_LAT / FPU_OTHERS_LAT). Defaults = configuration D2
+    // (11-15, 150 MHz on ZCU104 with DISTRIBUTED register placement, applied in the FPGA work copy
+    // by fpga/prepare.py); 0 = combinational FPU (D1, every result before 11-15, not FPGA-realizable).
+    parameter int CPU_FPU_LAT = 4,  // build_sim.sh: CPU_FPU_LAT=<n>
+    parameter int ACC_FPU_LAT = 4,  // build_sim.sh: ACC_FPU_LAT=<n>
+    parameter int VFU_FPU_LAT = 4   // build_sim.sh: VFU_FPU_LAT=<n>
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -52,7 +58,7 @@ module soc_top #(
   logic        g_req, g_we, v_req, v_we;
   logic [31:0] g_addr, g_wdata, v_addr, v_wdata;
 
-  cv32e40p_top #(.FPU(1)) cpu_i (
+  cv32e40p_top #(.FPU(1), .FPU_ADDMUL_LAT(CPU_FPU_LAT), .FPU_OTHERS_LAT(CPU_FPU_LAT)) cpu_i (
       .clk_i, .rst_ni, .pulp_clock_en_i, .scan_cg_en_i,
       .boot_addr_i, .mtvec_addr_i,
       .dm_halt_addr_i(32'h0), .hart_id_i(32'h0), .dm_exception_addr_i(32'h0),
@@ -88,7 +94,7 @@ module soc_top #(
   assign acc_addr_o  = vfu_busy ? v_addr : g_addr;
   assign acc_wdata_o = vfu_busy ? v_wdata : g_wdata;
 
-  gemv_acc #(.LANES(ACC_LANES), .RUN(ACC_RUN), .FDEPTH(ACC_FDEPTH)) acc_i (
+  gemv_acc #(.LANES(ACC_LANES), .RUN(ACC_RUN), .FDEPTH(ACC_FDEPTH), .FPU_LAT(ACC_FPU_LAT)) acc_i (
       .clk_i, .rst_ni,
       .s_req_i(c_req && is_mmio && !is_vfu), .s_we_i(c_we), .s_addr_i(c_addr[5:0]),
       .s_wdata_i(c_wdata), .s_rdata_o(g_rdata),
@@ -96,7 +102,7 @@ module soc_top #(
       .m_gnt_i(acc_gnt_i && !vfu_busy), .m_rvalid_i(acc_rvalid_i && !vfu_busy), .m_rdata_i(acc_rdata_i)
   );
 
-  vfu #(.LANES(VFU_LANES)) vfu_i (
+  vfu #(.LANES(VFU_LANES), .FPU_LAT(VFU_FPU_LAT)) vfu_i (
       .clk_i, .rst_ni,
       .s_req_i(c_req && is_mmio && is_vfu), .s_we_i(c_we), .s_addr_i(c_addr[5:0]),
       .s_wdata_i(c_wdata), .s_rdata_o(v_rdata),
