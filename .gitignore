@@ -61,3 +61,4 @@ acc/tb_exp2/obj/
 acc/tb_exp2/*.txt
 acc/tb_exp2/build.log
 obj_chip*/
+obj_axi*/

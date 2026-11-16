@@ -8,6 +8,10 @@
 #define VTOP Vsoc_chip
 #define CORE(x) rootp->soc_chip__DOT__soc_i__DOT__cpu_i__DOT__core_i__DOT__##x
 #define SRAM(i) rootp->soc_chip__DOT__sram_i__DOT__mem[i]
+#ifndef CHIP_SRAM_BASE   // build_sim.sh CHIP_WEIGHTS=onchip (default): 0x0, 131072 lines; ddr: 0x100000, 65536
+#define CHIP_SRAM_BASE 0x0u
+#define CHIP_SRAM_LINES 131072u
+#endif
 #define IMEM(i) rootp->soc_chip__DOT__imem[i]
 #define IREQ t.dbg_instr_req_o
 #define IADDR t.dbg_instr_addr_o
@@ -58,9 +62,9 @@ int main(int argc,char**argv){Verilated::commandArgs(argc,argv); std::ifstream f
 #ifdef CHIP
 auto rootp=t.rootp;
 for(unsigned i=0;i<4096;i++)memcpy(&IMEM(i),&mem[0x1000000+4*i],4);
-for(unsigned i=0;i<65536;i++)for(int k=0;k<4;k++)memcpy(&SRAM(i)[k],&mem[0x100000+16*i+4*k],4);
-auto sram_out=[&](unsigned a,unsigned n){for(unsigned i=a;i<a+n;i+=4){unsigned l=(i-0x100000)/16,k=((i-0x100000)/4)%4;unsigned v=SRAM(l)[k];memcpy(&mem[i],&v,4);}};
-t.fetch_enable_i=1;t.rst_ni=0;t.imem_we_i=0;t.imem_waddr_i=0;t.imem_wdata_i=0;
+for(unsigned i=0;i<CHIP_SRAM_LINES;i++)for(int k=0;k<4;k++)memcpy(&SRAM(i)[k],&mem[CHIP_SRAM_BASE+16*i+4*k],4);
+auto sram_out=[&](unsigned a,unsigned n){for(unsigned i=a;i<a+n;i+=4){unsigned l=(i-CHIP_SRAM_BASE)/16,k=((i-CHIP_SRAM_BASE)/4)%4;unsigned v=SRAM(l)[k];memcpy(&mem[i],&v,4);}};
+t.fetch_enable_i=1;t.rst_ni=0;t.ld_req_i=0;t.ld_we_i=0;t.ld_addr_i=0;t.ld_wdata_i=0;
 #else
 t.boot_addr_i=0x1000080;t.mtvec_addr_i=0x1000000;t.fetch_enable_i=1;t.pulp_clock_en_i=1;t.scan_cg_en_i=1;t.rst_ni=0;
 #endif
@@ -139,7 +143,7 @@ if(ddr_on)std::cout<<"DDR acc_lines="<<ddr_rd<<" bursts="<<ddr_bursts<<" lat="<<
 if(ddr_on)std::cout<<"DDR cpu_loads="<<cpu_ddr_rd<<" cpu_lat="<<cpu_ddr_lat<<"\n";
 
 #ifdef CHIP
-sram_out(0x100000,0x100000);
+sram_out(CHIP_SRAM_BASE,16*CHIP_SRAM_LINES);
 #endif
 std::ofstream out(argv[2],std::ios::binary);out.write((char*)mem.data(),0x200000);dumpprof();return 0;}
 if(a==0x20000004&&t.data_we_o){if(steplog.is_open()){

@@ -2,8 +2,11 @@
 # Build the Verilator simulator.
 #   default            : cv32e40p_top (FPU=1)          -> obj/Vcv32e40p_top
 #   TOP=soc_top        : CPU + gemv_acc + vfu (acc/*.sv) -> obj_soc/Vsoc_top
-#   TOP=soc_chip       : soc_top + imem + 1 MB SRAM in RTL (S5)  -> obj_chip/Vsoc_chip
+#   TOP=soc_chip       : soc_top + imem + SRAM in RTL (S5)        -> obj_chip/Vsoc_chip
+#   TOP=chip_axi_top   : board top, AXI4-Lite loading (sim_axi.cpp) -> obj_axi/Vchip_axi_top
 #                        SRAM_RLAT=<1|2> SRAM read latency (default 1)
+#                        CHIP_WEIGHTS=onchip (default, weights in the 2 MiB SRAM) | ddr (S5a layout,
+#                        weights through the external port and the sim DDR model)
 #   CFG=d2 (default)   : FPGA-real configuration (synthesized at 150 MHz on ZCU104):
 #                        CPU/ACC/VFU FPU latency 4, ACC_RUN 8
 #   CFG=d1             : ideal / legacy (all FPU latency 0, ACC_RUN 16; not FPGA-realizable)
@@ -29,8 +32,16 @@ esac
 CPU_FPU_LAT=${CPU_FPU_LAT:-$L}; ACC_FPU_LAT=${ACC_FPU_LAT:-$L}; VFU_FPU_LAT=${VFU_FPU_LAT:-$L}
 ACC_RUN=${ACC_RUN:-$RUN}
 ACCSRC=("$PWD/acc/gemv_acc.sv" "$PWD/acc/vfu_exp2.sv" "$PWD/acc/vfu_lane.sv" "$PWD/acc/vfu.sv" "$PWD/acc/soc_top.sv")
-if [ "$TOP" = soc_chip ]; then
-  EXTRA=(-CFLAGS -DSOC -CFLAGS -DCHIP -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT -GSRAM_RLAT=${SRAM_RLAT:-1} "${ACCSRC[@]}" "$PWD/acc/sram_dp.sv" "$PWD/acc/soc_chip.sv")
+case "${CHIP_WEIGHTS:-onchip}" in
+  onchip) WOPT=(-GWEIGHTS_ONCHIP=1 -CFLAGS -DCHIP_SRAM_BASE=0x0u -CFLAGS -DCHIP_SRAM_LINES=131072u);;
+  ddr)    WOPT=(-GWEIGHTS_ONCHIP=0 -CFLAGS -DCHIP_SRAM_BASE=0x100000u -CFLAGS -DCHIP_SRAM_LINES=65536u);;
+  *) echo "CHIP_WEIGHTS must be onchip or ddr"; exit 2;;
+esac
+if [ "$TOP" = chip_axi_top ]; then   # board flow (S5): AXI4-Lite loading, sim_axi.cpp, weights on chip
+  "$VERILATOR" --cc --exe --build -j 4 -Wno-fatal -Wno-BLKANDNBLK --top-module chip_axi_top -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT -GSRAM_RLAT=${SRAM_RLAT:-1} "${ACCSRC[@]}" "$PWD/acc/sram_dp.sv" "$PWD/acc/soc_chip.sv" "$PWD/acc/chip_axi_top.sv" -f cv32e40p-master/cv32e40p_fpu_manifest.flist "$PWD/sim_axi.cpp" --Mdir "$PWD/${MDIR:-obj_axi$SUF}" > "${LOG:-verilator_build_axi.log}" 2>&1
+  exit
+elif [ "$TOP" = soc_chip ]; then
+  EXTRA=(-CFLAGS -DSOC -CFLAGS -DCHIP -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT -GSRAM_RLAT=${SRAM_RLAT:-1} "${WOPT[@]}" "${ACCSRC[@]}" "$PWD/acc/sram_dp.sv" "$PWD/acc/soc_chip.sv")
   MDIR=${MDIR:-obj_chip$SUF}; LOG=${LOG:-verilator_build_chip.log}
 elif [ "$TOP" = soc_top ]; then
   EXTRA=(-CFLAGS -DSOC -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT "$PWD/acc/gemv_acc.sv" "$PWD/acc/vfu_exp2.sv" "$PWD/acc/vfu_lane.sv" "$PWD/acc/vfu.sv" "$PWD/acc/soc_top.sv")
