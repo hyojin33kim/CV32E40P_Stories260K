@@ -69,6 +69,11 @@ module soc_chip #(
   localparam logic [31:0] SRAM_END = SRAM_BASE + 32'(SRAM_LINES) * 16;
   localparam int          SAW = $clog2(SRAM_LINES) + 4;          // SRAM byte address bits
   localparam logic [31:0] IMEM_BASE = 32'h0100_0000;
+  // imem read port: CPU fetch, or the loader while the core is in reset
+  logic        im_ren;
+  logic [11:0] im_raddr;
+  assign im_ren   = i_req || (ld_imem && !ld_we_i);
+  assign im_raddr = i_req ? i_addr[13:2] : ld_addr_i[13:2];
   // loader decode (core in reset only)
   logic        ld_imem, ld_sram;
   logic [31:0] ld_off;
@@ -105,7 +110,9 @@ module soc_chip #(
   assign dbg_data_req_o = d_req; assign dbg_data_we_o = d_we; assign dbg_data_addr_o = d_addr;
 
   // ---------------------------------------------------------------- instruction memory
-  logic [31:0] imem[IMEM_WORDS] /*verilator public_flat_rw*/;
+  // BRAM, not URAM: the fetch address comes straight from the core's prefetcher, and URAM's
+  // EN/ADDR setup missed 150 MHz by 1.58 ns (11-16 synthesis)
+  (* ram_style = "block" *) logic [31:0] imem[IMEM_WORDS] /*verilator public_flat_rw*/;
   if (IMEM_INIT != "") begin : g_init
     initial $readmemh(IMEM_INIT, imem);
   end
@@ -114,8 +121,7 @@ module soc_chip #(
     if (!rst_ni) i_rvalid <= 1'b0; else i_rvalid <= i_req;
   always_ff @(posedge clk_i) begin
     if (ld_imem && ld_we_i) imem[ld_addr_i[13:2]] <= ld_wdata_i;
-    if (i_req) i_rdata <= imem[i_addr[13:2]];
-    else if (ld_imem && !ld_we_i) i_rdata <= imem[ld_addr_i[13:2]];
+    if (im_ren) i_rdata <= imem[im_raddr];      // one read port (BRAM inference needs a single read)
   end
 `ifndef SYNTHESIS
   always_ff @(posedge clk_i) if (rst_ni && i_req && (i_addr & ~32'h3fff) != IMEM_BASE)
@@ -144,7 +150,7 @@ module soc_chip #(
   logic [1:0]  e_pend_q;                       // external responses pending
   logic        s_busy, e_busy;
   assign d_sram = d_addr >= SRAM_BASE && d_addr < SRAM_END;
-  assign s_busy = (SRAM_RLAT > 1) ? |s_pipe_q[SRAM_RLAT-1:1] : 1'b0;   // beyond this cycle
+  assign s_busy = |(s_pipe_q >> 1);            // SRAM responses due after this cycle
   assign e_busy = (e_pend_q - (data_rvalid_i ? 2'd1 : 2'd0)) != 0;
   assign sa_en  = d_req && d_sram && !e_busy;
   assign data_req_o   = d_req && !d_sram && !s_busy;
@@ -155,8 +161,7 @@ module soc_chip #(
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) begin s_pipe_q <= '0; e_pend_q <= '0; end
     else begin
-      if (SRAM_RLAT > 1) s_pipe_q <= {sa_en, s_pipe_q[SRAM_RLAT-1:1]};
-      else s_pipe_q <= sa_en;
+      s_pipe_q <= SRAM_RLAT'({sa_en, s_pipe_q} >> 1);   // bit 0 = due this cycle
       e_pend_q <= e_pend_q + ((data_req_o && data_gnt_i) ? 2'd1 : 2'd0) - (data_rvalid_i ? 2'd1 : 2'd0);
     end
 
@@ -208,8 +213,7 @@ module soc_chip #(
     if (!rst_ni) begin
       {tq_wp_q, tq_rp_q, tq_n_q, sq_wp_q, sq_rp_q, sq_n_q, eq_wp_q, eq_rp_q, eq_n_q} <= '0; b_pipe_q <= '0;
     end else begin
-      if (SRAM_RLAT > 1) b_pipe_q <= {sb_en && !a_we, b_pipe_q[SRAM_RLAT-1:1]};
-      else b_pipe_q <= sb_en && !a_we;
+      b_pipe_q <= SRAM_RLAT'({sb_en && !a_we, b_pipe_q} >> 1);
       if (a_go) tq_wp_q <= tq_wp_q + 1;
       if (a_rvalid) tq_rp_q <= tq_rp_q + 1;
       tq_n_q <= tq_n_q + (a_go ? 1 : 0) - (a_rvalid ? 1 : 0);
@@ -235,7 +239,7 @@ module soc_chip #(
   logic [SRAM_RLAT-1:0] ld_s_q;
   always_ff @(posedge clk_i) begin
     ld_i_q <= ld_imem && !ld_we_i;
-    ld_s_q <= {ld_sram && !ld_we_i, ld_s_q} >> 1;
+    ld_s_q <= SRAM_RLAT'({ld_sram && !ld_we_i, ld_s_q} >> 1);
   end
   assign ld_rvalid_o = ld_i_q || ld_s_q[0];
   assign ld_rdata_o  = ld_i_q ? i_rdata : sa_rdata;
