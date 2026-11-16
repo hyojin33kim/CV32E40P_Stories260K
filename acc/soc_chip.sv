@@ -19,6 +19,7 @@ module soc_chip #(
     parameter int    ACC_FPU_LAT = 4,
     parameter int    VFU_FPU_LAT = 4,
     parameter int    SRAM_RLAT   = 1,
+    parameter int    SRAM_CASCADE = 0,   // URAM cascade height in synthesis (0 = Vivado's choice)
     // 1 (default, Decision 11-14 "260K all on-chip"): weights in the on-chip SRAM too, SRAM =
     //   0x0000_0000 .. 0x0020_0000 (2 MiB); the external acc_* port is unused.
     // 0: weights outside (< 0x0010_0000) through the external acc_*/data_* ports (DDR), SRAM =
@@ -135,7 +136,7 @@ module soc_chip #(
   logic [31:0] d_off, a_off;
   assign d_off = d_addr - SRAM_BASE;
   assign a_off = a_addr - SRAM_BASE;
-  sram_dp #(.LINES(SRAM_LINES), .RLAT(SRAM_RLAT)) sram_i (
+  sram_dp #(.LINES(SRAM_LINES), .RLAT(SRAM_RLAT), .CASCADE(SRAM_CASCADE)) sram_i (
       .clk_i,
       .a_en_i(sa_en || ld_sram), .a_we_i(ld_sram ? ld_we_i : d_we), .a_be_i(ld_sram ? 4'hf : d_be),
       .a_addr_i(ld_sram ? ld_off[SAW-1:0] : d_off[SAW-1:0]), .a_wdata_i(ld_sram ? ld_wdata_i : d_wdata),

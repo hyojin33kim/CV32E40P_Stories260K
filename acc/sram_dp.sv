@@ -9,7 +9,8 @@
 // array below, public for the simulator's preload / dump. Both have the same port behaviour.
 module sram_dp #(
     parameter int LINES = 131072,     // 2 MiB
-    parameter int RLAT  = 1
+    parameter int RLAT  = 1,
+    parameter int CASCADE = 0         // XPM CASCADE_HEIGHT (0 = Vivado's choice; synthesis only)
 ) (
     input  logic                     clk_i,
     // port A (CPU)
@@ -48,7 +49,7 @@ module sram_dp #(
 
 `ifdef SYNTHESIS
   xpm_memory_tdpram #(
-      .ADDR_WIDTH_A(LW), .ADDR_WIDTH_B(LW),
+      .ADDR_WIDTH_A(LW), .ADDR_WIDTH_B(LW), .CASCADE_HEIGHT(CASCADE),
       .BYTE_WRITE_WIDTH_A(8), .BYTE_WRITE_WIDTH_B(8),
       .CLOCKING_MODE("common_clock"),
       .ECC_MODE("no_ecc"),
