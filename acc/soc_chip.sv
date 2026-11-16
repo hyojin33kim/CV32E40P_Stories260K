@@ -20,6 +20,10 @@ module soc_chip #(
     parameter int    VFU_FPU_LAT = 4,
     parameter int    SRAM_RLAT   = 1,
     parameter int    SRAM_CASCADE = 0,   // URAM cascade height in synthesis (0 = Vivado's choice)
+    // 1: register the accelerator request (enable, write, address, data) in front of the SRAM's
+    //    port B. Cuts the path accelerator address arithmetic -> URAM cascade address (150 MHz,
+    //    11-17); accelerator reads take one more cycle. 0: request goes straight to the SRAM.
+    parameter bit    SRAM_BREG = 1'b1,
     // 1 (default, Decision 11-14 "260K all on-chip"): weights in the on-chip SRAM too, SRAM =
     //   0x0000_0000 .. 0x0020_0000 (2 MiB); the external acc_* port is unused.
     // 0: weights outside (< 0x0010_0000) through the external acc_*/data_* ports (DDR), SRAM =
@@ -131,6 +135,10 @@ module soc_chip #(
 
   // ---------------------------------------------------------------- SRAM
   logic        sa_en, sb_en;
+  // port B as seen by the SRAM (registered when SRAM_BREG)
+  logic           b_en_x, b_we_x, b_rd_x;
+  logic [SAW-1:0] b_addr_x;
+  logic [31:0]    b_wdata_x;
   logic [31:0] sa_rdata;
   logic [127:0] sb_rdata;
   logic [31:0] d_off, a_off;
@@ -141,7 +149,16 @@ module soc_chip #(
       .a_en_i(sa_en || ld_sram), .a_we_i(ld_sram ? ld_we_i : d_we), .a_be_i(ld_sram ? 4'hf : d_be),
       .a_addr_i(ld_sram ? ld_off[SAW-1:0] : d_off[SAW-1:0]), .a_wdata_i(ld_sram ? ld_wdata_i : d_wdata),
       .a_rdata_o(sa_rdata),
-      .b_en_i(sb_en), .b_we_i(a_we), .b_addr_i(a_off[SAW-1:0]), .b_wdata_i(a_wdata), .b_rdata_o(sb_rdata));
+      .b_en_i(b_en_x), .b_we_i(b_we_x), .b_addr_i(b_addr_x), .b_wdata_i(b_wdata_x), .b_rdata_o(sb_rdata));
+  if (SRAM_BREG) begin : g_breg
+    always_ff @(posedge clk_i or negedge rst_ni)
+      if (!rst_ni) begin b_en_x <= 1'b0; b_we_x <= 1'b0; end
+      else begin b_en_x <= sb_en; b_we_x <= a_we; end
+    always_ff @(posedge clk_i) begin b_addr_x <= a_off[SAW-1:0]; b_wdata_x <= a_wdata; end
+  end else begin : g_nobreg
+    assign b_en_x = sb_en; assign b_we_x = a_we; assign b_addr_x = a_off[SAW-1:0]; assign b_wdata_x = a_wdata;
+  end
+  assign b_rd_x = b_en_x && !b_we_x;           // a line read enters the SRAM this cycle
 
   // ---------------------------------------------------------------- CPU data port
   // responses in order: an SRAM request is granted only when no external response is
@@ -186,6 +203,7 @@ module soc_chip #(
   always_comb begin
     s_fly_n = '0;
     for (int i = 0; i < SRAM_RLAT; i++) s_fly_n = s_fly_n + b_pipe_q[i];
+    if (SRAM_BREG) s_fly_n = s_fly_n + b_rd_x;   // read in the input register
   end
   assign t_full = tq_n_q >= TQ - 1;
   assign s_room = sq_n_q + s_fly_n < SQ - 1;
@@ -214,7 +232,7 @@ module soc_chip #(
     if (!rst_ni) begin
       {tq_wp_q, tq_rp_q, tq_n_q, sq_wp_q, sq_rp_q, sq_n_q, eq_wp_q, eq_rp_q, eq_n_q} <= '0; b_pipe_q <= '0;
     end else begin
-      b_pipe_q <= SRAM_RLAT'({sb_en && !a_we, b_pipe_q} >> 1);
+      b_pipe_q <= SRAM_RLAT'({b_rd_x, b_pipe_q} >> 1);
       if (a_go) tq_wp_q <= tq_wp_q + 1;
       if (a_rvalid) tq_rp_q <= tq_rp_q + 1;
       tq_n_q <= tq_n_q + (a_go ? 1 : 0) - (a_rvalid ? 1 : 0);
