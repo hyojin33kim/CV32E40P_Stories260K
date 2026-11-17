@@ -77,6 +77,8 @@ into the on-chip SRAM. The AXI4 master moves to the 15M scope.
 With the weights on chip there is no DDR latency: the 260K performance is the ideal-memory column
 (Option A ctx512 373,168 cycles = 36.0×, E2E 512 133,803,651 cycles = 31.5×).
 
-## Synthesis (in progress, `fpga/run_chip.sh`, top `chip_axi_top`, 150 MHz)
-- Synthesis stage: URAM 64 (SRAM 2 MiB), BRAM 7 tiles (imem 4 + exp2 tables 3), DSP 85.
-- Synthesis-stage estimate WNS −1.595 ns on CPU fetch address → imem BRAM address (route pending).
+## Synthesis (`fpga/run_chip.sh`, top `chip_axi_top`, 150 MHz) — met on 11-17
+- Final: SRAM port A (CPU) read latency 1, port B (accelerators) latency 2 + input register (`SRAM_BREG=1`).
+  Route WNS +0.005 ns, 0 failing endpoints; LUT 55,556 (24.1 %), BRAM 7, URAM 64, DSP 85 (`fpga/reports_chip_axi_top/`).
+- Cost in sim: Option A 148,232 / 204,772 / 373,765 cycles (+0.2–0.3 %), SW baseline unchanged, bit-exact.
+- Path history and the 125 MHz run: `fpga/P6_FPGA_SYNTH.md` (3rd).

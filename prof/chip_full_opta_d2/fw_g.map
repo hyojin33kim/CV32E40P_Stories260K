@@ -20,7 +20,7 @@ CTRL             0x001b4000         0x0004c000         rw
 
 Linker script and memory map
 
-LOAD /tmp/ccQ5o9Sp.o
+LOAD /tmp/ccWckctc.o
 LOAD /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/chip_full_opta_d2/fw_g.o
 LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libm.a
 LOAD /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a
@@ -28,10 +28,10 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
 
 .text           0x01000080     0x1c24
  *(.text.start)
- .text.start    0x01000080       0x38 /tmp/ccQ5o9Sp.o
+ .text.start    0x01000080       0x38 /tmp/ccWckctc.o
                 0x01000080                _start
  *(.text*)
- .text          0x010000b8        0x0 /tmp/ccQ5o9Sp.o
+ .text          0x010000b8        0x0 /tmp/ccWckctc.o
  .text          0x010000b8     0x18cc /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/chip_full_opta_d2/fw_g.o
                 0x01000154                rmsnorm
                 0x01000442                softmax
@@ -93,11 +93,11 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
 
 .rela.dyn       0x001b4174        0x0
  .rela.text.start
-                0x001b4174        0x0 /tmp/ccQ5o9Sp.o
+                0x001b4174        0x0 /tmp/ccWckctc.o
 
 .data           0x001b4174        0x0
  *(.data*)
- .data          0x001b4174        0x0 /tmp/ccQ5o9Sp.o
+ .data          0x001b4174        0x0 /tmp/ccWckctc.o
  .data          0x001b4174        0x0 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/chip_full_opta_d2/fw_g.o
  .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
  .data          0x001b4174        0x0 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
@@ -109,7 +109,7 @@ LOAD /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a
                 0x001b4174                        . = ALIGN (0x4)
                 0x001b4174                        __bss_start = .
  *(.bss*)
- .bss           0x001b4174        0x0 /tmp/ccQ5o9Sp.o
+ .bss           0x001b4174        0x0 /tmp/ccWckctc.o
  .bss           0x001b4174       0x9c /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/chip_full_opta_d2/fw_g.o
                 0x001b41fc                result_token
                 0x001b4200                ec
@@ -131,7 +131,7 @@ OUTPUT(/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.c
 .riscv.attributes
                 0x00000000       0x41
  .riscv.attributes
-                0x00000000       0x3f /tmp/ccQ5o9Sp.o
+                0x00000000       0x3f /tmp/ccWckctc.o
  .riscv.attributes
                 0x0000003f       0x41 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/chip_full_opta_d2/fw_g.o
  .riscv.attributes
@@ -151,7 +151,7 @@ OUTPUT(/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.c
  .comment       0x00000022       0x23 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_oflowf.c.o)
 
 .debug_line     0x00000000     0x4ab6
- .debug_line    0x00000000       0x86 /tmp/ccQ5o9Sp.o
+ .debug_line    0x00000000       0x86 /tmp/ccWckctc.o
  .debug_line    0x00000086     0x4247 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/chip_full_opta_d2/fw_g.o
  .debug_line    0x000042cd      0x544 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
  .debug_line    0x00004811       0xa3 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
@@ -161,7 +161,7 @@ OUTPUT(/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.c
 .debug_line_str
                 0x00000000      0x31c
  .debug_line_str
-                0x00000000      0x31c /tmp/ccQ5o9Sp.o
+                0x00000000      0x31c /tmp/ccWckctc.o
                                  0x6a (size before relaxing)
  .debug_line_str
                 0x0000031c      0x1cc /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/chip_full_opta_d2/fw_g.o
@@ -175,7 +175,7 @@ OUTPUT(/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.c
                 0x0000031c       0xae /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
 
 .debug_info     0x00000000     0x1914
- .debug_info    0x00000000       0x24 /tmp/ccQ5o9Sp.o
+ .debug_info    0x00000000       0x24 /tmp/ccWckctc.o
  .debug_info    0x00000024     0x1225 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/chip_full_opta_d2/fw_g.o
  .debug_info    0x00001249      0x398 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
  .debug_info    0x000015e1       0xea /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
@@ -183,7 +183,7 @@ OUTPUT(/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.c
  .debug_info    0x000017b5      0x15f /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
 
 .debug_abbrev   0x00000000      0x6b4
- .debug_abbrev  0x00000000       0x14 /tmp/ccQ5o9Sp.o
+ .debug_abbrev  0x00000000       0x14 /tmp/ccWckctc.o
  .debug_abbrev  0x00000014      0x3a8 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/chip_full_opta_d2/fw_g.o
  .debug_abbrev  0x000003bc      0x1b4 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)
  .debug_abbrev  0x00000570       0x8e /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_common_math_errf_uflowf.c.o)
@@ -192,7 +192,7 @@ OUTPUT(/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.c
 
 .debug_aranges  0x00000000       0xc0
  .debug_aranges
-                0x00000000       0x20 /tmp/ccQ5o9Sp.o
+                0x00000000       0x20 /tmp/ccWckctc.o
  .debug_aranges
                 0x00000020       0x20 /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/chip_full_opta_d2/fw_g.o
  .debug_aranges
@@ -205,7 +205,7 @@ OUTPUT(/home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.c
                 0x000000a0       0x20 /usr/lib/gcc/riscv64-unknown-elf/13.2.0/rv32imf/ilp32f/libgcc.a(save-restore.o)
 
 .debug_str      0x00000000      0x746
- .debug_str     0x00000000      0x746 /tmp/ccQ5o9Sp.o
+ .debug_str     0x00000000      0x746 /tmp/ccWckctc.o
                                  0x76 (size before relaxing)
  .debug_str     0x00000746      0x38b /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/prof/chip_full_opta_d2/fw_g.o
  .debug_str     0x00000746      0x204 /usr/lib/picolibc/riscv64-unknown-elf/lib/rv32imf/ilp32f/libc.a(libm_math_sf_exp.c.o)

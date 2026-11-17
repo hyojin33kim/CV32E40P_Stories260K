@@ -27,6 +27,8 @@
 | S2 ZCU104 DDR 수치 | 11-15 | UG1267/PG201/UG1085 기반 모델 파라미터, 72조건 sweep bit-exact, 기본값 유지(RDISSUE ≥ 8 필요) | `acc/S2_ZCU104_DDR.md` | `acc/sweep/zcu104_acc_full_d2` |
 | S3 Option A | 11-15 | exp2q(정수, 최대 1.34 ulp) softmax·SiLU + deferred normalization, RTL exp2 2³² 전수 일치, host 대비 512 토큰 동일. ctx512 **36.0×**, E2E 512 **31.5×**(DDR 29.2×), 150 MHz WNS +0.136 ns | `opta/S3_OPTA.md` | `prof/*_opta_d2`, `gen/out_*_opta*`, `fpga/reports_opta_soc` |
 | S5a on-chip 메모리 RTL | 11-15 | imem 16 KB + SRAM 1 MB(KV·activation·control) RTL화(`soc_chip`), soc_top sim과 byte·cycle 동일 | `acc/S5_ONCHIP_MEM.md` | `prof/chip_*` |
+| S5/S6 가중치 온칩 + 보드 top | 11-16~17 | 11-14 Decision대로 가중치 포함 2 MiB URAM, AXI4-Lite 보드 top(보드 흐름 sim byte 동일), **150 MHz P&R 충족(WNS +0.005 ns)**, Option A +0.2–0.3 % | `acc/S5_ONCHIP_MEM.md`, `fpga/P6_FPGA_SYNTH.md` | `fpga/reports_chip_axi_top`, `prof/chip_full_opta_d2` |
+| 플레이북 | 11-17 | 15M 이후 적용용 정리 | `docs/PLAYBOOK.md` | — |
 
 ## 현재 성능 (D2 = 150 MHz 실현 구성, 11-15; SW 기준선 = 같은 CPU(FPU lat 4)의 llama2.c `-O2 -funroll-loops`)
 | | SW 기준선 cycles | full offload (원 수치) | 배율 | **Option A** | 배율 | Option A + DDR 모델 | 배율 |

@@ -345,9 +345,9 @@
  },
  "128": {
   "acc": "ACC reads=0 writes=0 lat=0 gnt_every=1",
-  "fw_measured_cycles": 204532,
+  "fw_measured_cycles": 204772,
   "logits_kv_bitexact_vs_hold": false,
-  "profiled_forward_cycles": 204521,
+  "profiled_forward_cycles": 204761,
   "regions": {
    "boot/argmax": {
     "cycles": 8920,
@@ -515,7 +515,7 @@
     "wr_other": 0
    },
    "softmax": {
-    "cycles": 18203,
+    "cycles": 18443,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -662,7 +662,7 @@
     "acc_gemv": 32110
    },
    "softmax": {
-    "acc_vfu_sum": 17720,
+    "acc_vfu_sum": 17960,
     "forward": 483
    },
    "setup+embed": {
@@ -689,9 +689,9 @@
  },
  "512": {
   "acc": "ACC reads=0 writes=0 lat=0 gnt_every=1",
-  "fw_measured_cycles": 373525,
+  "fw_measured_cycles": 373765,
   "logits_kv_bitexact_vs_hold": false,
-  "profiled_forward_cycles": 373514,
+  "profiled_forward_cycles": 373754,
   "regions": {
    "boot/argmax": {
     "cycles": 8920,
@@ -859,7 +859,7 @@
     "wr_other": 0
    },
    "softmax": {
-    "cycles": 64283,
+    "cycles": 64523,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -1006,7 +1006,7 @@
     "acc_gemv": 32110
    },
    "softmax": {
-    "acc_vfu_sum": 63800,
+    "acc_vfu_sum": 64040,
     "forward": 483
    },
    "setup+embed": {

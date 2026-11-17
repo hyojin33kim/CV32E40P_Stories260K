@@ -9,7 +9,8 @@
 // array below, public for the simulator's preload / dump. Both have the same port behaviour.
 module sram_dp #(
     parameter int LINES = 131072,     // 2 MiB
-    parameter int RLAT  = 1,
+    parameter int RLAT  = 1,          // port A (CPU) read latency
+    parameter int RLAT_B = RLAT,      // port B (accelerators) read latency
     parameter int CASCADE = 0         // XPM CASCADE_HEIGHT (0 = Vivado's choice; synthesis only)
 ) (
     input  logic                     clk_i,
@@ -37,7 +38,7 @@ module sram_dp #(
   assign a_bwe = (a_en_i && a_we_i) ? (16'(a_be_i) << (4 * a_w)) : '0;
   assign b_bwe = (b_en_i && b_we_i) ? (16'hf << (4 * b_w)) : '0;
 
-  logic [127:0] a_line_q, b_line_q;          // line read, RLAT cycles after the request
+  logic [127:0] a_line_q, b_line_q;          // line read, RLAT / RLAT_B cycles after the request
   logic [1:0]   a_w_p[RLAT];                 // word select, delayed with the read
 
   always_ff @(posedge clk_i) begin
@@ -59,7 +60,7 @@ module sram_dp #(
       .MEMORY_SIZE(LINES * 128),
       .READ_DATA_WIDTH_A(128), .READ_DATA_WIDTH_B(128),
       .WRITE_DATA_WIDTH_A(128), .WRITE_DATA_WIDTH_B(128),
-      .READ_LATENCY_A(RLAT), .READ_LATENCY_B(RLAT),
+      .READ_LATENCY_A(RLAT), .READ_LATENCY_B(RLAT_B),
       .READ_RESET_VALUE_A("0"), .READ_RESET_VALUE_B("0"),
       .WRITE_MODE_A("no_change"), .WRITE_MODE_B("no_change")
   ) xpm_i (
@@ -70,7 +71,7 @@ module sram_dp #(
       .sbiterra(), .dbiterra(), .sbiterrb(), .dbiterrb());
 `else
   logic [127:0] mem[LINES] /*verilator public_flat_rw*/;
-  logic [127:0] a_q[RLAT], b_q[RLAT];
+  logic [127:0] a_q[RLAT], b_q[RLAT_B];
   always_ff @(posedge clk_i) begin
     if (a_en_i) begin
       if (a_we_i) begin
@@ -82,9 +83,10 @@ module sram_dp #(
         for (int i = 0; i < 16; i++) if (b_bwe[i]) mem[b_line][8*i +: 8] <= b_wdata_i[8*(i%4) +: 8];
       end else b_q[0] <= mem[b_line];
     end
-    for (int i = 1; i < RLAT; i++) begin a_q[i] <= a_q[i-1]; b_q[i] <= b_q[i-1]; end
+    for (int i = 1; i < RLAT; i++) a_q[i] <= a_q[i-1];
+    for (int i = 1; i < RLAT_B; i++) b_q[i] <= b_q[i-1];
   end
   assign a_line_q = a_q[RLAT-1];
-  assign b_line_q = b_q[RLAT-1];
+  assign b_line_q = b_q[RLAT_B-1];
 `endif
 endmodule

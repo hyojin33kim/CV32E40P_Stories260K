@@ -18,7 +18,8 @@ module soc_chip #(
     parameter int    CPU_FPU_LAT = 4,
     parameter int    ACC_FPU_LAT = 4,
     parameter int    VFU_FPU_LAT = 4,
-    parameter int    SRAM_RLAT   = 1,
+    parameter int    SRAM_RLAT   = 1,             // SRAM read latency, CPU port A
+    parameter int    SRAM_RLAT_B = 2,             // SRAM read latency, accelerator port B (150 MHz: 2)
     parameter int    SRAM_CASCADE = 0,   // URAM cascade height in synthesis (0 = Vivado's choice)
     // 1: register the accelerator request (enable, write, address, data) in front of the SRAM's
     //    port B. Cuts the path accelerator address arithmetic -> URAM cascade address (150 MHz,
@@ -144,7 +145,7 @@ module soc_chip #(
   logic [31:0] d_off, a_off;
   assign d_off = d_addr - SRAM_BASE;
   assign a_off = a_addr - SRAM_BASE;
-  sram_dp #(.LINES(SRAM_LINES), .RLAT(SRAM_RLAT), .CASCADE(SRAM_CASCADE)) sram_i (
+  sram_dp #(.LINES(SRAM_LINES), .RLAT(SRAM_RLAT), .RLAT_B(SRAM_RLAT_B), .CASCADE(SRAM_CASCADE)) sram_i (
       .clk_i,
       .a_en_i(sa_en || ld_sram), .a_we_i(ld_sram ? ld_we_i : d_we), .a_be_i(ld_sram ? 4'hf : d_be),
       .a_addr_i(ld_sram ? ld_off[SAW-1:0] : d_off[SAW-1:0]), .a_wdata_i(ld_sram ? ld_wdata_i : d_wdata),
@@ -197,12 +198,12 @@ module soc_chip #(
   logic [$clog2(SQ):0]   sq_n_q, s_fly_n;
   logic [$clog2(EQ)-1:0] eq_wp_q, eq_rp_q;
   logic [$clog2(EQ):0]   eq_n_q;
-  logic [SRAM_RLAT-1:0]  b_pipe_q;                        // SRAM line reads in flight
+  logic [SRAM_RLAT_B-1:0] b_pipe_q;                        // SRAM line reads in flight
   logic        s_in, e_in, head_v, head_ext, pop_s, pop_e;
   logic [127:0] s_head, e_head;
   always_comb begin
     s_fly_n = '0;
-    for (int i = 0; i < SRAM_RLAT; i++) s_fly_n = s_fly_n + b_pipe_q[i];
+    for (int i = 0; i < SRAM_RLAT_B; i++) s_fly_n = s_fly_n + b_pipe_q[i];
     if (SRAM_BREG) s_fly_n = s_fly_n + b_rd_x;   // read in the input register
   end
   assign t_full = tq_n_q >= TQ - 1;
@@ -232,7 +233,7 @@ module soc_chip #(
     if (!rst_ni) begin
       {tq_wp_q, tq_rp_q, tq_n_q, sq_wp_q, sq_rp_q, sq_n_q, eq_wp_q, eq_rp_q, eq_n_q} <= '0; b_pipe_q <= '0;
     end else begin
-      b_pipe_q <= SRAM_RLAT'({b_rd_x, b_pipe_q} >> 1);
+      b_pipe_q <= SRAM_RLAT_B'({b_rd_x, b_pipe_q} >> 1);
       if (a_go) tq_wp_q <= tq_wp_q + 1;
       if (a_rvalid) tq_rp_q <= tq_rp_q + 1;
       tq_n_q <= tq_n_q + (a_go ? 1 : 0) - (a_rvalid ? 1 : 0);
