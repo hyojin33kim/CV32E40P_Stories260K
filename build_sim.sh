@@ -20,6 +20,11 @@
 #   CPU_FPU_LAT / ACC_FPU_LAT / VFU_FPU_LAT=<n> : FPU pipeline registers (CFG default)
 set -eu
 cd "$(dirname "$0")"
+# TRACE=1: waveform build (Verilator --trace, sim.cpp VTRACE). Run with
+#   SIM_VCD=<out.vcd> SIM_VCD_FROM=<first cycle> SIM_VCD_TO=<last cycle> <sim> <image> <dump> [max cycles]
+# and open the .vcd in GTKWave. Default directory gets a _trace suffix. (soc_top / soc_chip / CPU only)
+TRC=()
+if [ "${TRACE:-0}" = 1 ]; then TRC=(--trace -CFLAGS -DVTRACE); fi
 export DESIGN_RTL_DIR="$PWD/cv32e40p-master/rtl"
 VERILATOR=${VERILATOR:-verilator}
 TOP=${TOP:-cv32e40p_top}
@@ -50,4 +55,5 @@ else
   EXTRA=(-GFPU=1 -GFPU_ADDMUL_LAT=$CPU_FPU_LAT -GFPU_OTHERS_LAT=$CPU_FPU_LAT)
   MDIR=${MDIR:-obj$SUF}; LOG=${LOG:-verilator_build.log}
 fi
-"$VERILATOR" --cc --exe --build -j 4 -Wno-fatal -Wno-BLKANDNBLK --top-module "$TOP" "${EXTRA[@]}" -f cv32e40p-master/cv32e40p_fpu_manifest.flist "$PWD/sim.cpp" --Mdir "$PWD/$MDIR" > "$LOG" 2>&1
+if [ "${TRACE:-0}" = 1 ]; then MDIR=${MDIR}_trace; fi
+"$VERILATOR" --cc --exe --build -j 4 -Wno-fatal -Wno-BLKANDNBLK "${TRC[@]}" --top-module "$TOP" "${EXTRA[@]}" -f cv32e40p-master/cv32e40p_fpu_manifest.flist "$PWD/sim.cpp" --Mdir "$PWD/$MDIR" > "$LOG" 2>&1
