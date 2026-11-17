@@ -1,9 +1,9 @@
 {
  "1": {
-  "acc": "ACC reads=64832 writes=0 lat=0 gnt_every=1",
-  "fw_measured_cycles": 147875,
+  "acc": "ACC reads=0 writes=0 lat=0 gnt_every=1",
+  "fw_measured_cycles": 148232,
   "logits_kv_bitexact_vs_hold": false,
-  "profiled_forward_cycles": 147864,
+  "profiled_forward_cycles": 148221,
   "regions": {
    "boot/argmax": {
     "cycles": 8920,
@@ -21,7 +21,7 @@
     "wr_other": 2
    },
    "LM head": {
-    "cycles": 8946,
+    "cycles": 8953,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -126,7 +126,7 @@
     "wr_other": 0
    },
    "W_qkv": {
-    "cycles": 14429,
+    "cycles": 14464,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -141,7 +141,7 @@
     "wr_other": 0
    },
    "W_o": {
-    "cycles": 6610,
+    "cycles": 6645,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -216,7 +216,7 @@
     "wr_other": 0
    },
    "attn QK": {
-    "cycles": 5223,
+    "cycles": 5503,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -282,7 +282,7 @@
    },
    "LM head": {
     "forward": 24,
-    "acc_gemv": 8922
+    "acc_gemv": 8929
    },
    "rmsnorm": {
     "rmsnorm": 17612,
@@ -306,12 +306,12 @@
     "forward": 14961
    },
    "W_qkv": {
-    "acc_gemv": 14200,
+    "acc_gemv": 14235,
     "forward": 229
    },
    "W_o": {
     "forward": 75,
-    "acc_gemv": 6535
+    "acc_gemv": 6570
    },
    "FFN W1/W3": {
     "forward": 155,
@@ -328,7 +328,7 @@
     "forward": 84
    },
    "attn QK": {
-    "acc_gemv": 3000,
+    "acc_gemv": 3280,
     "forward": 2223
    },
    "attn AV": {
@@ -344,10 +344,10 @@
   }
  },
  "128": {
-  "acc": "ACC reads=64832 writes=0 lat=0 gnt_every=1",
-  "fw_measured_cycles": 204175,
+  "acc": "ACC reads=0 writes=0 lat=0 gnt_every=1",
+  "fw_measured_cycles": 204532,
   "logits_kv_bitexact_vs_hold": false,
-  "profiled_forward_cycles": 204164,
+  "profiled_forward_cycles": 204521,
   "regions": {
    "boot/argmax": {
     "cycles": 8920,
@@ -365,7 +365,7 @@
     "wr_other": 2
    },
    "LM head": {
-    "cycles": 8946,
+    "cycles": 8953,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -470,7 +470,7 @@
     "wr_other": 0
    },
    "W_qkv": {
-    "cycles": 14429,
+    "cycles": 14464,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -485,7 +485,7 @@
     "wr_other": 0
    },
    "W_o": {
-    "cycles": 6610,
+    "cycles": 6645,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -575,7 +575,7 @@
     "wr_other": 0
    },
    "attn AV": {
-    "cycles": 34760,
+    "cycles": 35040,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 320,
@@ -626,7 +626,7 @@
    },
    "LM head": {
     "forward": 24,
-    "acc_gemv": 8922
+    "acc_gemv": 8929
    },
    "rmsnorm": {
     "rmsnorm": 17610,
@@ -650,12 +650,12 @@
     "forward": 14961
    },
    "W_qkv": {
-    "acc_gemv": 14200,
+    "acc_gemv": 14235,
     "forward": 229
    },
    "W_o": {
     "forward": 75,
-    "acc_gemv": 6535
+    "acc_gemv": 6570
    },
    "FFN W1/W3": {
     "forward": 155,
@@ -677,7 +677,7 @@
    },
    "attn AV": {
     "forward": 7440,
-    "acc_gemv": 27320
+    "acc_gemv": 27600
    },
    "reset": {
     "other": 267
@@ -688,10 +688,10 @@
   }
  },
  "512": {
-  "acc": "ACC reads=64832 writes=0 lat=0 gnt_every=1",
-  "fw_measured_cycles": 373168,
+  "acc": "ACC reads=0 writes=0 lat=0 gnt_every=1",
+  "fw_measured_cycles": 373525,
   "logits_kv_bitexact_vs_hold": false,
-  "profiled_forward_cycles": 373157,
+  "profiled_forward_cycles": 373514,
   "regions": {
    "boot/argmax": {
     "cycles": 8920,
@@ -709,7 +709,7 @@
     "wr_other": 2
    },
    "LM head": {
-    "cycles": 8946,
+    "cycles": 8953,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -814,7 +814,7 @@
     "wr_other": 0
    },
    "W_qkv": {
-    "cycles": 14429,
+    "cycles": 14464,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -829,7 +829,7 @@
     "wr_other": 0
    },
    "W_o": {
-    "cycles": 6610,
+    "cycles": 6645,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -904,7 +904,7 @@
     "wr_other": 0
    },
    "attn QK": {
-    "cycles": 66543,
+    "cycles": 66823,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -970,7 +970,7 @@
    },
    "LM head": {
     "forward": 24,
-    "acc_gemv": 8922
+    "acc_gemv": 8929
    },
    "rmsnorm": {
     "rmsnorm": 17603,
@@ -994,12 +994,12 @@
     "forward": 14961
    },
    "W_qkv": {
-    "acc_gemv": 14200,
+    "acc_gemv": 14235,
     "forward": 229
    },
    "W_o": {
     "forward": 75,
-    "acc_gemv": 6535
+    "acc_gemv": 6570
    },
    "FFN W1/W3": {
     "forward": 155,
@@ -1016,7 +1016,7 @@
     "forward": 84
    },
    "attn QK": {
-    "acc_gemv": 64320,
+    "acc_gemv": 64600,
     "forward": 2223
    },
    "attn AV": {

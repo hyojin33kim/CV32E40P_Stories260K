@@ -183,9 +183,15 @@ host와 RISC가 bit 동일이 아닌 이유: host glibc `expf`/`sqrtf` vs RISC p
 | imem block + 로더 read 문장 추가 | imem이 LUT로(BRAM 추론 실패) −1.905 | **read 문장 하나**(주소 mux) |
 | imem BRAM 4, URAM 64, RLAT 1 | route WNS −0.913 (4,060) | 가속기 주소 → **URAM 32단 cascade 주소** |
 | RLAT 3 | route WNS −0.718 (881) | 읽기 latency는 출력 쪽만 파이프라인, 주소 cascade 경로 그대로 |
-| RLAT 2 + cascade 8 / RLAT 3 + cascade 4 | 진행 중 | XPM `CASCADE_HEIGHT`로 cascade 분할 |
+| RLAT 2 + cascade 8 | route WNS −0.665 (915) | 경로를 다시 보니 로직 4.3 ns = **가속기 주소 계산**(`is_i0_q` → 곱·덧셈) → URAM 주소가 한 cycle |
+| RLAT 3 + cascade 4 | Vivado crash (동시 실행) | — |
+| 125 MHz, RLAT 1 | route WNS −0.078 (65) | 같은 경로. 주파수만 낮춰서는 부족 |
+| 150 MHz, RLAT 1 + **SRAM 포트 B 입력 레지스터**(`SRAM_BREG=1`) | 진행 중 (11-17) | 주소 계산과 URAM 접근을 다른 cycle로 |
 
-sim cycle 영향(사실): RLAT 2 → Option A +4.7/+3.4/+1.9 %, SW +9.5 %; RLAT 3 → +7.0/+5.2/+2.8 %, SW +15 %. 모두 bit-exact.
+sim cycle 영향(사실): RLAT 2 → Option A +4.7/+3.4/+1.9 %, SW +9.5 %; RLAT 3 → +7.0/+5.2/+2.8 %, SW +15 %;
+**입력 레지스터 → Option A +0.1–0.2 %(148,232 / 204,532 / 373,525), SW 변화 없음**. 모두 bit-exact.
+교훈: 임계 경로의 **출발점**을 먼저 본다. 메모리 latency를 늘리는 것보다 요청 쪽 레지스터 한 단이 훨씬 싸다.
+선택 기준은 실제 시간(cycle ÷ 주파수): 예) Option A ctx512 RLAT1@125 MHz 2.99 ms vs RLAT2@150 MHz 2.53 ms.
 
 **대안(아직 안 함):** SRAM 앞에 주소 레지스터 1단(soc_chip) · 2 MiB를 1 MiB 두 뱅크로 나눠 주소 상위 bit로 선택 · 가속기 쪽 주소 레지스터 복제.
 
@@ -239,6 +245,10 @@ C 모델 → 입력 전수 정확도 → host 모델 vs 원본(토큰·rel L2) �
 | 19 | 대기 루프가 끝나지 않음 | `pgrep -f`가 자기 루프 명령줄을 매칭 | 결과 파일 존재·로그 문자열로 판정 | 환경 |
 | 20 | 합성 단계 WNS가 나쁨 | 배치 전 추정치(비관적), hold 값은 의미 없음 | route 결과로 판단(−1.05 → +0.14 사례) | 판단 |
 | 21 | CPU 단독 SW가 D2에서 2배 느림 | FPU lat 4 + 순차 누적 체인 | 같은 CPU 기준선과 비교(가속비는 오히려 커짐) | 해석 |
+| 22 | 합성이 3분 만에 죽었는데 3.5시간 동안 몰랐음 | Vivado `EXCEPTION_ACCESS_VIOLATION`(`hs_err_pid*.log` 생성), 대기 루프가 성공 문자열만 기다림 | 대기 조건에 `hs_err*` 존재와 로그 20분 정지 포함 | 절차 |
+| 23 | 단독 실행인데도 crash | 앞서 멈춘 Vivado(2.4 GB)가 계속 살아 있었음 | 시작 전 `tasklist.exe | grep vivado`, 남은 것은 `taskkill /PID` | 툴 |
+| 24 | `vivado.exe`가 여러 개로 보임 | 한 합성이 병렬 보조 프로세스를 띄움 | 실행 건수는 `run_chip.sh` 수로 판단 | 툴 |
+| 25 | 기본값 변경 후 reproduce 실패 위험 | 커밋된 reference cycle과 허용오차(0.01%) | 기본값 바꾸면 해당 reference 재생성 후 merge | 절차 |
 
 ---
 
@@ -332,6 +342,8 @@ python3 fpga/prepare.py <workdir>          # RTL 사본 + files.tcl (PIPE_DIST=1
 | soc_top Option A | 54,545 | 18,716 | 3 | 0 | 85 | +0.136 |
 | chip_axi_top RLAT1 | 56,479 | 18,923 | 7 | 64 | 85 | −0.913 |
 | chip_axi_top RLAT3 | 55,507 | — | 7 | 64 | 85 | −0.718 |
+| chip_axi_top RLAT2 + cascade 8 | 55,531 | — | 7 | 64 | 85 | −0.665 |
+| chip_axi_top RLAT1 @125 MHz | 56,272 | — | 7 | 64 | 85 | −0.078 |
 
 ### 7.3 사용자 결정 이력
 | 날짜 | 결정 |
