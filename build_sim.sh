@@ -38,10 +38,10 @@ case "${CHIP_WEIGHTS:-onchip}" in
   *) echo "CHIP_WEIGHTS must be onchip or ddr"; exit 2;;
 esac
 if [ "$TOP" = chip_axi_top ]; then   # board flow (S5): AXI4-Lite loading, sim_axi.cpp, weights on chip
-  "$VERILATOR" --cc --exe --build -j 4 -Wno-fatal -Wno-BLKANDNBLK --top-module chip_axi_top -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT -GSRAM_RLAT=${SRAM_RLAT:-1} -GSRAM_RLAT_B=${SRAM_RLAT_B:-${SRAM_RLAT:-1}} "${ACCSRC[@]}" "$PWD/acc/sram_dp.sv" "$PWD/acc/soc_chip.sv" "$PWD/acc/chip_axi_top.sv" -f cv32e40p-master/cv32e40p_fpu_manifest.flist "$PWD/sim_axi.cpp" --Mdir "$PWD/${MDIR:-obj_axi$SUF}" > "${LOG:-verilator_build_axi.log}" 2>&1
+  "$VERILATOR" --cc --exe --build -j 4 -Wno-fatal -Wno-BLKANDNBLK --top-module chip_axi_top -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT -GSRAM_RLAT=${SRAM_RLAT:-1} -GSRAM_RLAT_B=${SRAM_RLAT_B:-2} "${ACCSRC[@]}" "$PWD/acc/sram_dp.sv" "$PWD/acc/soc_chip.sv" "$PWD/acc/chip_axi_top.sv" -f cv32e40p-master/cv32e40p_fpu_manifest.flist "$PWD/sim_axi.cpp" --Mdir "$PWD/${MDIR:-obj_axi$SUF}" > "${LOG:-verilator_build_axi.log}" 2>&1
   exit
 elif [ "$TOP" = soc_chip ]; then
-  EXTRA=(-CFLAGS -DSOC -CFLAGS -DCHIP -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT -GSRAM_RLAT=${SRAM_RLAT:-1} -GSRAM_RLAT_B=${SRAM_RLAT_B:-${SRAM_RLAT:-1}} "${WOPT[@]}" "${ACCSRC[@]}" "$PWD/acc/sram_dp.sv" "$PWD/acc/soc_chip.sv")
+  EXTRA=(-CFLAGS -DSOC -CFLAGS -DCHIP -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT -GSRAM_RLAT=${SRAM_RLAT:-1} -GSRAM_RLAT_B=${SRAM_RLAT_B:-2} "${WOPT[@]}" "${ACCSRC[@]}" "$PWD/acc/sram_dp.sv" "$PWD/acc/soc_chip.sv")
   MDIR=${MDIR:-obj_chip$SUF}; LOG=${LOG:-verilator_build_chip.log}
 elif [ "$TOP" = soc_top ]; then
   EXTRA=(-CFLAGS -DSOC -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT "$PWD/acc/gemv_acc.sv" "$PWD/acc/vfu_exp2.sv" "$PWD/acc/vfu_lane.sv" "$PWD/acc/vfu.sv" "$PWD/acc/soc_top.sv")

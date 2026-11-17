@@ -25,7 +25,7 @@ llama2.c Stories260K를 CV32E40P(RV32IMFC + FPU) RTL에서 실행하고, 연산 
 | S2 DDR 수치 | ZCU104 문서값으로 모델 설정, 72조건 bit-exact | `acc/S2_ZCU104_DDR.md` |
 | S3 Option A | exp2q softmax/SiLU, ctx512 36×, E2E 31.5×, 150 MHz 충족 | `opta/S3_OPTA.md` |
 | S5 메모리 RTL | imem + SRAM 2 MiB(URAM) + AXI-Lite 보드 top, sim byte 동일 | `acc/S5_ONCHIP_MEM.md` |
-| S6 칩 합성 | URAM 64 매핑 성공, timing은 진행 중(아래 §10) | `fpga/P6_FPGA_SYNTH.md` |
+| S6 칩 합성 | URAM 64, **150 MHz P&R 충족(WNS +0.005 ns)**, Option A +0.2–0.3 % | `fpga/P6_FPGA_SYNTH.md` |
 
 ### 0.2 가장 중요한 교훈 7개 (15M에서 그대로 쓸 것)
 1. **기준선을 먼저 고정하고, 모든 변경을 그 기준선과 bit 비교한다.** 비교 대상이 흔들리면 가속비도 버그도 판단할 수 없다.
@@ -174,7 +174,7 @@ host와 RISC가 bit 동일이 아닌 이유: host glibc `expf`/`sqrtf` vs RISC p
   - `pkill -f <pattern>`이 자기 셸까지 죽임(명령줄에 pattern 포함). Windows Vivado는 `taskkill.exe /PID`.
 - **15M에서:** SRAM은 KV·activation·펌웨어만(가중치 DDR). `WEIGHTS_ONCHIP=0` 경로 + AXI4 master. 로더는 그대로(가중치는 PS가 DDR에 직접 두고, `DDR_BASE` 레지스터로 주소 이동 — 미구현).
 
-### 2.13 S6 칩 합성 (진행 중, 11-17)
+### 2.13 S6 칩 합성 (11-17, 150 MHz 충족)
 | 시도 | 결과 (사실) | 원인 → 조치 |
 |---|---|---|
 | `ram_style = RAM_STYLE`(파라미터) | Synth 에러 | 속성 값은 리터럴만 → `"ultra"` 고정 |
@@ -186,10 +186,13 @@ host와 RISC가 bit 동일이 아닌 이유: host glibc `expf`/`sqrtf` vs RISC p
 | RLAT 2 + cascade 8 | route WNS −0.665 (915) | 경로를 다시 보니 로직 4.3 ns = **가속기 주소 계산**(`is_i0_q` → 곱·덧셈) → URAM 주소가 한 cycle |
 | RLAT 3 + cascade 4 | Vivado crash (동시 실행) | — |
 | 125 MHz, RLAT 1 | route WNS −0.078 (65) | 같은 경로. 주파수만 낮춰서는 부족 |
-| 150 MHz, RLAT 1 + **SRAM 포트 B 입력 레지스터**(`SRAM_BREG=1`) | 진행 중 (11-17) | 주소 계산과 URAM 접근을 다른 cycle로 |
+| 150 MHz, RLAT 1 + **SRAM 포트 B 입력 레지스터**(`SRAM_BREG=1`) | route WNS −0.518 (3,088) | 주소 쪽 해결. 최악 경로가 **읽기 데이터**(URAM cascade 출력 → GEMV lane FIFO)로 이동 |
+| **150 MHz, 포트 A latency 1 / 포트 B latency 2 + 입력 레지스터** | **route WNS +0.005, 실패 0 (충족)** | 포트별 latency(`SRAM_RLAT_B`). 남은 최악 경로는 CPU ALU 주소 → URAM EN(포트 A), 여유 5 ps |
 
 sim cycle 영향(사실): RLAT 2 → Option A +4.7/+3.4/+1.9 %, SW +9.5 %; RLAT 3 → +7.0/+5.2/+2.8 %, SW +15 %;
-**입력 레지스터 → Option A +0.1–0.2 %(148,232 / 204,532 / 373,525), SW 변화 없음**. 모두 bit-exact.
+**입력 레지스터 → Option A +0.1–0.2 %(148,232 / 204,532 / 373,525), SW 변화 없음**; **+ 포트 B latency 2 → 148,232 / 204,772 / 373,765(+0.2–0.3 %), SW 변화 없음(최종 기본값)**. 모두 bit-exact.
+여유가 5 ps뿐이라 보드 통합(PS 연결) 후 다시 깨질 수 있음 → 그때는 포트 A에도 입력 레지스터(SW 약 +9 %, 추정).
+교훈: **주소 쪽과 데이터 쪽을 따로** 본다. 큰 URAM은 요청 쪽(주소) 레지스터와 응답 쪽(출력) 레지스터가 모두 필요했고, CPU처럼 latency에 민감한 포트는 따로 둔다.
 교훈: 임계 경로의 **출발점**을 먼저 본다. 메모리 latency를 늘리는 것보다 요청 쪽 레지스터 한 단이 훨씬 싸다.
 선택 기준은 실제 시간(cycle ÷ 주파수): 예) Option A ctx512 RLAT1@125 MHz 2.99 ms vs RLAT2@150 MHz 2.53 ms.
 
@@ -344,6 +347,8 @@ python3 fpga/prepare.py <workdir>          # RTL 사본 + files.tcl (PIPE_DIST=1
 | chip_axi_top RLAT3 | 55,507 | — | 7 | 64 | 85 | −0.718 |
 | chip_axi_top RLAT2 + cascade 8 | 55,531 | — | 7 | 64 | 85 | −0.665 |
 | chip_axi_top RLAT1 @125 MHz | 56,272 | — | 7 | 64 | 85 | −0.078 |
+| chip_axi_top RLAT1 + BREG | 55,732 | — | 7 | 64 | 85 | −0.518 |
+| **chip_axi_top A1/B2 + BREG (최종)** | **55,556** | — | **7** | **64** | **85** | **+0.005** |
 
 ### 7.3 사용자 결정 이력
 | 날짜 | 결정 |

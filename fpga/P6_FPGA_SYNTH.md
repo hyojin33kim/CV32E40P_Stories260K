@@ -1,5 +1,23 @@
 # FPGA 합성 기록 (ZCU104 XCZU7EV)
 
+## 3차 (2026-11-16~17) — 보드 top `chip_axi_top`(메모리 포함), 150 MHz 충족 (사실)
+top `chip_axi_top` = soc_top(D2) + imem 16 KB(BRAM) + SRAM 2 MiB(XPM URAM, 가중치 포함) + AXI4-Lite slave.
+스크립트 `fpga/run_chip.sh [workdir] EXPLORE [SRAM_RLAT:n SRAM_RLAT_B:n SRAM_BREG:0|1 SRAM_CASCADE:n]`, `PERIOD=8.0`(125 MHz).
+
+| 구성 | 주파수 | route WNS | 실패 | LUT | BRAM | URAM | 비고 |
+|---|---|---:|---:|---:|---:|---:|---|
+| RTL 추론 SRAM | 150 | −1.483 | 9,760 | — | 259 | 1 | URAM "invalid write mode" → BRAM |
+| XPM, RLAT 1 | 150 | −0.913 | 4,060 | 56,479 | 7 | 64 | 가속기 주소 계산 → URAM cascade 주소 |
+| RLAT 3 | 150 | −0.718 | 881 | 55,507 | 7 | 64 | 출력만 파이프라인 |
+| RLAT 2 + cascade 8 | 150 | −0.665 | 915 | 55,531 | 7 | 64 | 같은 주소 경로 |
+| RLAT 1 | 125 | −0.078 | 65 | 56,272 | 7 | 64 | 같은 주소 경로 |
+| RLAT 1 + 포트 B 입력 레지스터 | 150 | −0.518 | 3,088 | 55,732 | 7 | 64 | 읽기 데이터 → GEMV FIFO |
+| **포트 A 1 / 포트 B 2 + 입력 레지스터** | **150** | **+0.005** | **0** | **55,556 (24.1%)** | **7** | **64** | 최종, `reports_chip_axi_top/` |
+
+- 최종 구성 sim: Option A 148,232 / 204,772 / 373,765 cycles(+0.2–0.3 %), SW 기준선 불변, bit-exact.
+- 여유 5 ps(CPU ALU 주소 → URAM EN, 포트 A). PS 연결 후 재확인 필요.
+- 병렬 Vivado는 crash(`EXCEPTION_ACCESS_VIOLATION`) 위험 → 한 번에 하나.
+
 ## 2차 (2026-11-15) — v2 RTL / Option A, 150 MHz 합성+P&R timing 충족 (사실)
 조건: Vivado 2026.1, `xczu7ev-ffvc1156-2-e`, OOC, clock 6.667 ns(150 MHz), top `soc_top`,
 D2 구성(CPU/ACC/VFU FPU latency 4, ACC_RUN 8, FIFO 256, lanes 4/4), fp_wrapper PipeConfig DISTRIBUTED(작업 사본만,

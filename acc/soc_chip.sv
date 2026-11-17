@@ -19,7 +19,7 @@ module soc_chip #(
     parameter int    ACC_FPU_LAT = 4,
     parameter int    VFU_FPU_LAT = 4,
     parameter int    SRAM_RLAT   = 1,             // SRAM read latency, CPU port A
-    parameter int    SRAM_RLAT_B = SRAM_RLAT,     // SRAM read latency, accelerator port B
+    parameter int    SRAM_RLAT_B = 2,             // SRAM read latency, accelerator port B (150 MHz: 2)
     parameter int    SRAM_CASCADE = 0,   // URAM cascade height in synthesis (0 = Vivado's choice)
     // 1: register the accelerator request (enable, write, address, data) in front of the SRAM's
     //    port B. Cuts the path accelerator address arithmetic -> URAM cascade address (150 MHz,

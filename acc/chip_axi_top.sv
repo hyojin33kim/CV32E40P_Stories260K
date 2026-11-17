@@ -21,7 +21,7 @@ module chip_axi_top #(
     parameter int ACC_FPU_LAT = 4,
     parameter int VFU_FPU_LAT = 4,
     parameter int SRAM_RLAT   = 1,
-    parameter int SRAM_RLAT_B = SRAM_RLAT,
+    parameter int SRAM_RLAT_B = 2,
     parameter int SRAM_CASCADE = 0,
     parameter bit SRAM_BREG    = 1'b1
 ) (
