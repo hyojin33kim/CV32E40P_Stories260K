@@ -47,14 +47,18 @@ module soc_top #(
     output logic [31:0] acc_wdata_o,
     input  logic        acc_gnt_i,
     input  logic        acc_rvalid_i,
-    input  logic [127:0] acc_rdata_i
+    input  logic [127:0] acc_rdata_i,
+    // 1 while an accelerator write is still on its way into the memory (soc_chip SRAM_BREG input
+    // register). OR-ed into bit 0 (busy) of both accelerators' STATUS reads, so the CPU sees a
+    // command as finished only after its last write has reached the SRAM. Tie 0 without one.
+    input  logic        acc_wr_pend_i
 );
   localparam logic [31:0] ACC_BASE = 32'h3000_0000;
 
   logic        c_req, c_gnt, c_rvalid, c_we;
   logic [ 3:0] c_be;
   logic [31:0] c_addr, c_wdata, c_rdata, s_rdata, g_rdata, v_rdata;
-  logic        is_mmio, mmio_rvalid_q, mmio_vfu_q, is_vfu, vfu_busy;
+  logic        is_mmio, mmio_rvalid_q, mmio_vfu_q, is_vfu, vfu_busy, mmio_stat_q, wr_pend_q;
   logic        g_req, g_we, v_req, v_we;
   logic [31:0] g_addr, g_wdata, v_addr, v_wdata;
 
@@ -82,12 +86,14 @@ module soc_top #(
   assign c_rdata      = mmio_rvalid_q ? s_rdata : data_rdata_i;
 
   always_ff @(posedge clk_i or negedge rst_ni)
-    if (!rst_ni) {mmio_rvalid_q, mmio_vfu_q} <= '0;
+    if (!rst_ni) {mmio_rvalid_q, mmio_vfu_q, mmio_stat_q, wr_pend_q} <= '0;
     else begin
       mmio_rvalid_q <= c_req && is_mmio;
       mmio_vfu_q    <= is_vfu;
+      mmio_stat_q   <= c_addr[5:2] == 4'h1;      // STATUS (0x04) of gemv_acc or vfu
+      wr_pend_q     <= acc_wr_pend_i;           // sampled with the accelerators' registered read
     end
-  assign s_rdata = mmio_vfu_q ? v_rdata : g_rdata;
+  assign s_rdata = (mmio_vfu_q ? v_rdata : g_rdata) | {31'b0, mmio_stat_q && wr_pend_q};
 
   assign acc_req_o   = vfu_busy ? v_req : g_req;
   assign acc_we_o    = vfu_busy ? v_we : g_we;

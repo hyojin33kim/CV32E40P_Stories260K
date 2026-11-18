@@ -2,13 +2,13 @@
 |---|---:|---:|---:|---:|
 | W_qkv | 14,464 (9.8%) | 14,464 (7.1%) | 14,464 (3.9%) | 0 / 0 / 0 |
 | W_o | 6,645 (4.5%) | 6,645 (3.2%) | 6,645 (1.8%) | 0 / 0 / 0 |
-| FFN W1/W3 | 32,265 (21.8%) | 32,265 (15.8%) | 32,265 (8.6%) | 0 / 0 / 0 |
+| FFN W1/W3 | 32,265 (21.8%) | 32,265 (15.7%) | 32,265 (8.6%) | 0 / 0 / 0 |
 | FFN W2 | 15,831 (10.7%) | 15,831 (7.7%) | 15,831 (4.2%) | 0 / 0 / 0 |
 | LM head | 8,953 (6.0%) | 8,953 (4.4%) | 8,953 (2.4%) | 0 / 0 / 0 |
-| attn QK | 5,503 (3.7%) | 20,623 (10.1%) | 66,823 (17.9%) | 0 / 0 / 0 |
+| attn QK | 5,503 (3.7%) | 20,903 (10.2%) | 66,823 (17.9%) | 0 / 0 / 0 |
 | softmax | 3,083 (2.1%) | 18,443 (9.0%) | 64,523 (17.3%) | 0 / 0 / 0 |
 | attn AV | 8,978 (6.1%) | 35,040 (17.1%) | 111,760 (29.9%) | 0 / 0 / 320 |
-| SwiGLU | 12,895 (8.7%) | 12,895 (6.3%) | 12,895 (3.5%) | 0 / 0 / 0 |
+| SwiGLU | 12,925 (8.7%) | 12,925 (6.3%) | 12,925 (3.5%) | 0 / 0 / 0 |
 | rmsnorm | 17,819 (12.0%) | 17,817 (8.7%) | 17,810 (4.8%) | 0 / 0 / 2,112 |
 | RoPE | 14,961 (10.1%) | 14,961 (7.3%) | 14,961 (4.0%) | 0 / 160 / 320 |
 | residual | 5,545 (3.7%) | 5,545 (2.7%) | 5,545 (1.5%) | 0 / 0 / 1,280 |
@@ -16,10 +16,10 @@
 | layer loop | 257 (0.2%) | 257 (0.1%) | 257 (0.1%) | 0 / 0 / 0 |
 | setup+embed | 338 (0.2%) | 338 (0.2%) | 338 (0.1%) | 64 / 0 / 0 |
 | misc | 84 (0.1%) | 84 (0.0%) | 84 (0.0%) | 0 / 0 / 0 |
-| **forward total (profiled)** | 148,221 | 204,761 | 373,754 | |
+| **forward total (profiled)** | 148,251 | 205,071 | 373,784 | |
 | logits+KV bit-exact vs HOLD | False | False | False | |
 | .text bytes | 7204 | | | |
-| firmware mcycle window | 148,232 | 204,772 | 373,765 | |
-ctx1 leaf cycles in softmax: {'acc_vfu_sum': 2600, 'forward': 483}  SwiGLU: {'acc_vfu_sum': 12840, 'forward': 55}
-ctx128 leaf cycles in softmax: {'acc_vfu_sum': 17960, 'forward': 483}  SwiGLU: {'acc_vfu_sum': 12840, 'forward': 55}
-ctx512 leaf cycles in softmax: {'acc_vfu_sum': 64040, 'forward': 483}  SwiGLU: {'acc_vfu_sum': 12840, 'forward': 55}
+| firmware mcycle window | 148,262 | 205,082 | 373,795 | |
+ctx1 leaf cycles in softmax: {'acc_vfu_sum': 2600, 'forward': 483}  SwiGLU: {'acc_vfu_sum': 12870, 'forward': 55}
+ctx128 leaf cycles in softmax: {'acc_vfu_sum': 17960, 'forward': 483}  SwiGLU: {'acc_vfu_sum': 12870, 'forward': 55}
+ctx512 leaf cycles in softmax: {'acc_vfu_sum': 64040, 'forward': 483}  SwiGLU: {'acc_vfu_sum': 12870, 'forward': 55}

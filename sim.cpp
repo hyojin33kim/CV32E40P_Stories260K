@@ -67,6 +67,9 @@ auto sram_out=[&](unsigned a,unsigned n){for(unsigned i=a;i<a+n;i+=4){unsigned l
 t.fetch_enable_i=1;t.rst_ni=0;t.ld_req_i=0;t.ld_we_i=0;t.ld_addr_i=0;t.ld_wdata_i=0;
 #else
 t.boot_addr_i=0x1000080;t.mtvec_addr_i=0x1000000;t.fetch_enable_i=1;t.pulp_clock_en_i=1;t.scan_cg_en_i=1;t.rst_ni=0;
+#ifdef SOC
+t.acc_wr_pend_i=0;
+#endif
 #endif
 unsigned ir=0,dr=0;bool iv=0,dv=0;unsigned low=0x200000;
 #ifdef VTRACE

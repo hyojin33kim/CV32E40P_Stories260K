@@ -82,3 +82,17 @@ With the weights on chip there is no DDR latency: the 260K performance is the id
   Route WNS +0.005 ns, 0 failing endpoints; LUT 55,556 (24.1 %), BRAM 7, URAM 64, DSP 85 (`fpga/reports_chip_axi_top/`).
 - Cost in sim: Option A 148,232 / 204,772 / 373,765 cycles (+0.2–0.3 %), SW baseline unchanged, bit-exact.
 - Path history and the 125 MHz run: `fpga/P6_FPGA_SYNTH.md` (3rd).
+
+
+## 11-18 — pre-board hardening (sim, facts)
+1. **busy includes the pending SRAM write.** With `SRAM_BREG=1` the accelerator's last write reaches the SRAM one cycle
+   after its grant. `soc_chip` now drives `soc_top.acc_wr_pend_i = b_en_x && b_we_x` (a register output, no new
+   combinational path), and `soc_top` ORs it into bit 0 of both accelerators' STATUS reads. The CPU therefore sees a
+   command finished only after the write has landed. Before, safety relied on the CPU's polling taking >= 2 cycles.
+   Cost: Option A 148,262 / 205,082 / 373,795 cycles (+30 / +310 / +30 vs 148,232 / 204,772 / 373,765), SW unchanged,
+   bit-exact; HOLD identical; board-flow ctx512 dump identical to preload. `soc_top` alone (tie 0) is unchanged.
+2. **`SRAM_AREG` option (default 0):** registers the CPU / loader request in front of port A, for timing margin if the
+   board build loses the 5 ps. Measured with `SRAM_AREG=1`: Option A 154,889 / 211,709 / 380,422 (+4.7 / +3.7 / +1.9 %),
+   SW baseline 3,325,200 / 6,143,271 / 14,721,107 (+9.3 / +9.5 / +9.7 %), all bit-exact. HOLD results identical; the dump
+   differs only in two cycle values (the measured-cycle word and the firmware's saved start time on the stack).
+   Not synthesized yet.
