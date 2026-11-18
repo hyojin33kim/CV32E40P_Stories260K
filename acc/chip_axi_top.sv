@@ -23,7 +23,8 @@ module chip_axi_top #(
     parameter int SRAM_RLAT   = 1,
     parameter int SRAM_RLAT_B = 2,
     parameter int SRAM_CASCADE = 0,
-    parameter bit SRAM_BREG    = 1'b1
+    parameter bit SRAM_BREG    = 1'b1,
+    parameter bit SRAM_AREG    = 1'b0
 ) (
     input  logic        clk_i,
     input  logic        rst_ni,          // system reset (PS PL reset)
@@ -65,7 +66,7 @@ module chip_axi_top #(
 
   soc_chip #(.ACC_LANES(ACC_LANES), .VFU_LANES(VFU_LANES), .ACC_RUN(ACC_RUN), .ACC_FDEPTH(ACC_FDEPTH),
              .CPU_FPU_LAT(CPU_FPU_LAT), .ACC_FPU_LAT(ACC_FPU_LAT), .VFU_FPU_LAT(VFU_FPU_LAT),
-             .SRAM_RLAT(SRAM_RLAT), .SRAM_RLAT_B(SRAM_RLAT_B), .SRAM_CASCADE(SRAM_CASCADE), .SRAM_BREG(SRAM_BREG), .WEIGHTS_ONCHIP(1'b1)) chip_i (
+             .SRAM_RLAT(SRAM_RLAT), .SRAM_RLAT_B(SRAM_RLAT_B), .SRAM_CASCADE(SRAM_CASCADE), .SRAM_BREG(SRAM_BREG), .SRAM_AREG(SRAM_AREG), .WEIGHTS_ONCHIP(1'b1)) chip_i (
       .clk_i, .rst_ni(core_rst_n), .fetch_enable_i(1'b1),
       .ld_req_i(ld_req), .ld_we_i(ld_we), .ld_addr_i(ld_addr), .ld_wdata_i(ld_wdata),
       .ld_rdata_o(ld_rdata), .ld_rvalid_o(ld_rvalid),

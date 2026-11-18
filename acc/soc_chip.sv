@@ -25,6 +25,9 @@ module soc_chip #(
     //    port B. Cuts the path accelerator address arithmetic -> URAM cascade address (150 MHz,
     //    11-17); accelerator reads take one more cycle. 0: request goes straight to the SRAM.
     parameter bit    SRAM_BREG = 1'b1,
+    // 1: register the CPU / loader request in front of the SRAM's port A (timing margin option,
+    //    11-18); CPU SRAM loads take one more cycle. 0 (default): straight to the SRAM.
+    parameter bit    SRAM_AREG = 1'b0,
     // 1 (default, Decision 11-14 "260K all on-chip"): weights in the on-chip SRAM too, SRAM =
     //   0x0000_0000 .. 0x0020_0000 (2 MiB); the external acc_* port is unused.
     // 0: weights outside (< 0x0010_0000) through the external acc_*/data_* ports (DDR), SRAM =
@@ -110,7 +113,8 @@ module soc_chip #(
       .data_req_o(d_req), .data_gnt_i(d_gnt), .data_rvalid_i(d_rvalid), .data_we_o(d_we),
       .data_be_o(d_be), .data_addr_o(d_addr), .data_wdata_o(d_wdata), .data_rdata_i(d_rdata),
       .acc_req_o(a_req), .acc_we_o(a_we), .acc_addr_o(a_addr), .acc_wdata_o(a_wdata),
-      .acc_gnt_i(a_gnt), .acc_rvalid_i(a_rvalid), .acc_rdata_i(a_rdata));
+      .acc_gnt_i(a_gnt), .acc_rvalid_i(a_rvalid), .acc_rdata_i(a_rdata),
+      .acc_wr_pend_i(SRAM_BREG && b_en_x && b_we_x));
 
   assign dbg_instr_req_o = i_req; assign dbg_instr_addr_o = i_addr;
   assign dbg_data_req_o = d_req; assign dbg_data_we_o = d_we; assign dbg_data_addr_o = d_addr;
@@ -136,6 +140,11 @@ module soc_chip #(
 
   // ---------------------------------------------------------------- SRAM
   logic        sa_en, sb_en;
+  // port A as seen by the SRAM (registered when SRAM_AREG): CPU data or the loader
+  logic           a_en_c, a_we_c, a_en_x, a_we_x;
+  logic [3:0]     a_be_c, a_be_x;
+  logic [SAW-1:0] a_addr_c, a_addr_x;
+  logic [31:0]    a_wdata_c, a_wdata_x;
   // port B as seen by the SRAM (registered when SRAM_BREG)
   logic           b_en_x, b_we_x, b_rd_x;
   logic [SAW-1:0] b_addr_x;
@@ -147,8 +156,7 @@ module soc_chip #(
   assign a_off = a_addr - SRAM_BASE;
   sram_dp #(.LINES(SRAM_LINES), .RLAT(SRAM_RLAT), .RLAT_B(SRAM_RLAT_B), .CASCADE(SRAM_CASCADE)) sram_i (
       .clk_i,
-      .a_en_i(sa_en || ld_sram), .a_we_i(ld_sram ? ld_we_i : d_we), .a_be_i(ld_sram ? 4'hf : d_be),
-      .a_addr_i(ld_sram ? ld_off[SAW-1:0] : d_off[SAW-1:0]), .a_wdata_i(ld_sram ? ld_wdata_i : d_wdata),
+      .a_en_i(a_en_x), .a_we_i(a_we_x), .a_be_i(a_be_x), .a_addr_i(a_addr_x), .a_wdata_i(a_wdata_x),
       .a_rdata_o(sa_rdata),
       .b_en_i(b_en_x), .b_we_i(b_we_x), .b_addr_i(b_addr_x), .b_wdata_i(b_wdata_x), .b_rdata_o(sb_rdata));
   if (SRAM_BREG) begin : g_breg
@@ -160,12 +168,26 @@ module soc_chip #(
     assign b_en_x = sb_en; assign b_we_x = a_we; assign b_addr_x = a_off[SAW-1:0]; assign b_wdata_x = a_wdata;
   end
   assign b_rd_x = b_en_x && !b_we_x;           // a line read enters the SRAM this cycle
+  assign a_en_c    = sa_en || ld_sram;
+  assign a_we_c    = ld_sram ? ld_we_i : d_we;
+  assign a_be_c    = ld_sram ? 4'hf : d_be;
+  assign a_addr_c  = ld_sram ? ld_off[SAW-1:0] : d_off[SAW-1:0];
+  assign a_wdata_c = ld_sram ? ld_wdata_i : d_wdata;
+  if (SRAM_AREG) begin : g_areg
+    always_ff @(posedge clk_i) begin   // no reset: the loader uses this port while the core is in reset
+      a_en_x <= a_en_c; a_we_x <= a_we_c; a_be_x <= a_be_c; a_addr_x <= a_addr_c; a_wdata_x <= a_wdata_c;
+    end
+  end else begin : g_noareg
+    assign a_en_x = a_en_c; assign a_we_x = a_we_c; assign a_be_x = a_be_c;
+    assign a_addr_x = a_addr_c; assign a_wdata_x = a_wdata_c;
+  end
 
   // ---------------------------------------------------------------- CPU data port
   // responses in order: an SRAM request is granted only when no external response is
   // pending beyond this cycle, and vice versa
   logic        d_sram;
-  logic [SRAM_RLAT-1:0] s_pipe_q;              // SRAM responses in flight (shift register)
+  localparam int ALAT = SRAM_RLAT + (SRAM_AREG ? 1 : 0);   // port A request -> read data
+  logic [ALAT-1:0] s_pipe_q;                   // SRAM responses in flight (shift register)
   logic [1:0]  e_pend_q;                       // external responses pending
   logic        s_busy, e_busy;
   assign d_sram = d_addr >= SRAM_BASE && d_addr < SRAM_END;
@@ -180,7 +202,7 @@ module soc_chip #(
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) begin s_pipe_q <= '0; e_pend_q <= '0; end
     else begin
-      s_pipe_q <= SRAM_RLAT'({sa_en, s_pipe_q} >> 1);   // bit 0 = due this cycle
+      s_pipe_q <= ALAT'({sa_en, s_pipe_q} >> 1);   // bit 0 = due this cycle
       e_pend_q <= e_pend_q + ((data_req_o && data_gnt_i) ? 2'd1 : 2'd0) - (data_rvalid_i ? 2'd1 : 2'd0);
     end
 
@@ -256,10 +278,10 @@ module soc_chip #(
     end
   // loader read response: imem after 1 cycle (i_rdata), SRAM after SRAM_RLAT cycles (port A)
   logic             ld_i_q;
-  logic [SRAM_RLAT-1:0] ld_s_q;
+  logic [ALAT-1:0] ld_s_q;
   always_ff @(posedge clk_i) begin
     ld_i_q <= ld_imem && !ld_we_i;
-    ld_s_q <= SRAM_RLAT'({ld_sram && !ld_we_i, ld_s_q} >> 1);
+    ld_s_q <= ALAT'({ld_sram && !ld_we_i, ld_s_q} >> 1);
   end
   assign ld_rvalid_o = ld_i_q || ld_s_q[0];
   assign ld_rdata_o  = ld_i_q ? i_rdata : sa_rdata;

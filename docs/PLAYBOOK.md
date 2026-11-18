@@ -191,7 +191,9 @@ host와 RISC가 bit 동일이 아닌 이유: host glibc `expf`/`sqrtf` vs RISC p
 
 sim cycle 영향(사실): RLAT 2 → Option A +4.7/+3.4/+1.9 %, SW +9.5 %; RLAT 3 → +7.0/+5.2/+2.8 %, SW +15 %;
 **입력 레지스터 → Option A +0.1–0.2 %(148,232 / 204,532 / 373,525), SW 변화 없음**; **+ 포트 B latency 2 → 148,232 / 204,772 / 373,765(+0.2–0.3 %), SW 변화 없음(최종 기본값)**. 모두 bit-exact.
-여유가 5 ps뿐이라 보드 통합(PS 연결) 후 다시 깨질 수 있음 → 그때는 포트 A에도 입력 레지스터(SW 약 +9 %, 추정).
+여유가 5 ps뿐이라 보드 통합(PS 연결) 후 다시 깨질 수 있음 → 그때는 포트 A 입력 레지스터 `SRAM_AREG=1`
+(11-18 sim 실측: Option A +4.7/+3.7/+1.9 %, SW +9.3–9.7 %, bit-exact. 합성은 아직).
+11-18: busy가 포트 B 입력 레지스터에 남은 쓰기를 포함하도록 수정(암묵적 polling 시간 가정 제거, Option A +30~310 cycle).
 교훈: **주소 쪽과 데이터 쪽을 따로** 본다. 큰 URAM은 요청 쪽(주소) 레지스터와 응답 쪽(출력) 레지스터가 모두 필요했고, CPU처럼 latency에 민감한 포트는 따로 둔다.
 교훈: 임계 경로의 **출발점**을 먼저 본다. 메모리 latency를 늘리는 것보다 요청 쪽 레지스터 한 단이 훨씬 싸다.
 선택 기준은 실제 시간(cycle ÷ 주파수): 예) Option A ctx512 RLAT1@125 MHz 2.99 ms vs RLAT2@150 MHz 2.53 ms.
@@ -251,6 +253,7 @@ C 모델 → 입력 전수 정확도 → host 모델 vs 원본(토큰·rel L2) �
 | 22 | 합성이 3분 만에 죽었는데 3.5시간 동안 몰랐음 | Vivado `EXCEPTION_ACCESS_VIOLATION`(`hs_err_pid*.log` 생성), 대기 루프가 성공 문자열만 기다림 | 대기 조건에 `hs_err*` 존재와 로그 20분 정지 포함 | 절차 |
 | 23 | 단독 실행인데도 crash | 앞서 멈춘 Vivado(2.4 GB)가 계속 살아 있었음 | 시작 전 `tasklist.exe | grep vivado`, 남은 것은 `taskkill /PID` | 툴 |
 | 24 | `vivado.exe`가 여러 개로 보임 | 한 합성이 병렬 보조 프로세스를 띄움 | 실행 건수는 `run_chip.sh` 수로 판단 | 툴 |
+| 26 | 요청 레지스터를 넣으면 마지막 쓰기가 늦게 도착 | 가속기 busy가 내려간 뒤에도 쓰기가 레지스터에 남음 | busy(STATUS)에 남은 쓰기 OR | RTL |
 | 25 | 기본값 변경 후 reproduce 실패 위험 | 커밋된 reference cycle과 허용오차(0.01%) | 기본값 바꾸면 해당 reference 재생성 후 merge | 절차 |
 
 ---

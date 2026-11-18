@@ -1,9 +1,9 @@
 {
  "1": {
   "acc": "ACC reads=0 writes=0 lat=0 gnt_every=1",
-  "fw_measured_cycles": 148232,
+  "fw_measured_cycles": 148262,
   "logits_kv_bitexact_vs_hold": false,
-  "profiled_forward_cycles": 148221,
+  "profiled_forward_cycles": 148251,
   "regions": {
    "boot/argmax": {
     "cycles": 8920,
@@ -96,7 +96,7 @@
     "wr_other": 0
    },
    "SwiGLU": {
-    "cycles": 12895,
+    "cycles": 12925,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -299,7 +299,7 @@
     "acc_gemv": 15735
    },
    "SwiGLU": {
-    "acc_vfu_sum": 12840,
+    "acc_vfu_sum": 12870,
     "forward": 55
    },
    "RoPE": {
@@ -345,9 +345,9 @@
  },
  "128": {
   "acc": "ACC reads=0 writes=0 lat=0 gnt_every=1",
-  "fw_measured_cycles": 204772,
+  "fw_measured_cycles": 205082,
   "logits_kv_bitexact_vs_hold": false,
-  "profiled_forward_cycles": 204761,
+  "profiled_forward_cycles": 205071,
   "regions": {
    "boot/argmax": {
     "cycles": 8920,
@@ -440,7 +440,7 @@
     "wr_other": 0
    },
    "SwiGLU": {
-    "cycles": 12895,
+    "cycles": 12925,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -560,7 +560,7 @@
     "wr_other": 0
    },
    "attn QK": {
-    "cycles": 20623,
+    "cycles": 20903,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -643,7 +643,7 @@
     "acc_gemv": 15735
    },
    "SwiGLU": {
-    "acc_vfu_sum": 12840,
+    "acc_vfu_sum": 12870,
     "forward": 55
    },
    "RoPE": {
@@ -672,7 +672,7 @@
     "forward": 84
    },
    "attn QK": {
-    "acc_gemv": 18400,
+    "acc_gemv": 18680,
     "forward": 2223
    },
    "attn AV": {
@@ -689,9 +689,9 @@
  },
  "512": {
   "acc": "ACC reads=0 writes=0 lat=0 gnt_every=1",
-  "fw_measured_cycles": 373765,
+  "fw_measured_cycles": 373795,
   "logits_kv_bitexact_vs_hold": false,
-  "profiled_forward_cycles": 373754,
+  "profiled_forward_cycles": 373784,
   "regions": {
    "boot/argmax": {
     "cycles": 8920,
@@ -784,7 +784,7 @@
     "wr_other": 0
    },
    "SwiGLU": {
-    "cycles": 12895,
+    "cycles": 12925,
     "rd_w": 0,
     "rd_kv": 0,
     "rd_act": 0,
@@ -987,7 +987,7 @@
     "acc_gemv": 15735
    },
    "SwiGLU": {
-    "acc_vfu_sum": 12840,
+    "acc_vfu_sum": 12870,
     "forward": 55
    },
    "RoPE": {
