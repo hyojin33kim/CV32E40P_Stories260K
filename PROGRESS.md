@@ -29,6 +29,10 @@
 | S5a on-chip 메모리 RTL | 11-15 | imem 16 KB + SRAM 1 MB(KV·activation·control) RTL화(`soc_chip`), soc_top sim과 byte·cycle 동일 | `acc/S5_ONCHIP_MEM.md` | `prof/chip_*` |
 | S5/S6 가중치 온칩 + 보드 top | 11-16~17 | 11-14 Decision대로 가중치 포함 2 MiB URAM, AXI4-Lite 보드 top(보드 흐름 sim byte 동일), **150 MHz P&R 충족(WNS +0.005 ns)**, Option A +0.2–0.3 % | `acc/S5_ONCHIP_MEM.md`, `fpga/P6_FPGA_SYNTH.md` | `fpga/reports_chip_axi_top`, `prof/chip_full_opta_d2` |
 | 플레이북 | 11-17 | 15M 이후 적용용 정리 | `docs/PLAYBOOK.md` | — |
+| P1-2 정밀도 관문 | 11-20 | host 실측(4 prompt × 512 step): int8 W/A(+KV) ≤ +0.003 nats/token(행 단위 scale도 충분), 무보정 int4 +0.10~0.18·argmax 82~85 %, int4 KV 불가. **통과 기준은 미결정(사용자)** | `docs/P1_REPORT.md` §1 | `quant/results/gate_512.json` |
+| P1-3 DDR row/bank 모델 | 11-20 | 1차 모델(미검증): 단일 스트림 95.7 %(bank group 인터리브)/64 %(페이지 선형), 2 master 교대 128 B 24 %·8 KB 91 %·16 KB 94 %. sim.cpp DDR 모델은 변경 없음 | `docs/P1_REPORT.md` §2 | `ddr/ddr_model_results.md` |
+| P1-4 CPU 잔여 | 11-20 | 측정: rmsnorm+RoPE+residual+기타 = ctx1 26.7 % / ctx128 19.3 % / ctx512 10.6 %. rmsnorm·residual VFU 이전 상한 3~8 % → **구현하지 않기를 권고**(단기 문맥 위주면 재검토) | `docs/P1_REPORT.md` §3 | `prof/chip_full_opta_d2.txt` |
+| P1-1 보드 통합 | 11-20 | **진행 중, 미완료**: ZCU104 블록 디자인 validate까지 통과, 비트스트림·타이밍 결과 없음. 빌드 오류 4건 수정(헤더, 병렬 실행 리소스 부족, Tcl, 순차 IP 합성), 재실행 중 | `fpga/bd/`, `docs/P1_REPORT.md` §4 | — |
 
 ## 현재 성능 (D2 = 150 MHz 실현 구성, 11-15; SW 기준선 = 같은 CPU(FPU lat 4)의 llama2.c `-O2 -funroll-loops`)
 | | SW 기준선 cycles | full offload (원 수치) | 배율 | **Option A** | 배율 | Option A + DDR 모델 | 배율 |
@@ -91,10 +95,14 @@ DDR 모델: Weight는 DDR(latency 40, burst 16, 12.8 B/cycle, outstanding 8), KV
 | **S4** | 프롬프트 1종, greedy decoding 유지(11-15 결정 — 다중 프롬프트·sampling은 범위 밖) | — |
 | **S5** (a ✅, b 미착수) | on-chip 메모리 RTL: CPU inst/data SRAM(BRAM/URAM), KV·activation SRAM(URAM), 가속기 SRAM port + weight용 DDR(AXI) port. sim은 DDR slave 모델만 | ✔ M4 |
 | **S6** | 메모리 포함 full SoC 합성+P&R @150 MHz, E2E 재확인 | ✔ M5 |
-| ⑤ | ZCU104 보드 통합 — 대기 | — |
+| ⑤ | ZCU104 보드 통합 — 진행 중(위 P1-1: 블록 디자인 빌드 디버깅 단계, 보드 실행 전) | — |
 
 ## 미검증
 - 실제 DDR 수치(현재 가정값 → S2에서 문서값, 보드 실측은 ⑤), on-chip 메모리 포함 timing·면적(S6).
+- PS 연결 후 timing(OOC 마진 5 ps), 실제 보드 실행(블록 디자인·PYNQ 스크립트는 한 번도 실행되지 않음).
+- Vivado xsim 전체 칩이 Verilator와 불일치(run_cycles 4,347,318 vs 4,501,912, FPU 단독 xsim 671/1402), 원인 미발견. Verilator가 기준.
+- DDR row/bank 모델의 타이밍 값은 기억 기반이며 컨트롤러·보드와 대조하지 않음.
+- 정밀도 관문은 fake-quantization(fp32 연산)이며 실제 정수 lane RTL이 아님. 보정(GPTQ 등) int4는 미시험.
 
 ## 기록 위치
 - 이 파일(`PROGRESS.md`): 현재 상태의 단일 원본 — 단계가 끝날 때마다 갱신.
