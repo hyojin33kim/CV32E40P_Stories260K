@@ -108,4 +108,24 @@ Estimated gain of moving work into the VFU (estimate, not implemented):
   wider model range, the right step is a programmable VFU, not more fixed commands. This recommendation flips if
   the target workload is mostly short-context chat (ctx <= 128), where the residual is about 19 to 27 %.
 
-## 4. Board integration (see section below, updated when the build finished)
+## 4. Board integration (P1-1): blocked, no bitstream (measured attempts)
+
+`fpga/bd/run_board.sh 125` builds the ZCU104 block design (Zynq PS + `chip_axi_wrap`, PL clock 125 MHz).
+- **Passes:** block design creation, address assignment, `validate_bd_design`, PL0 clock = 125.000 MHz.
+- **Fixed on the way:** (1) `registers.svh` must be a project header for the module-reference elaboration;
+  (2) `launch_runs -jobs 4` and `-jobs 2` fail with "system resources" errors (zynq IP synthesis);
+  (3) a Tcl comment on the same line as a command broke the script.
+- **Not solved:** Vivado crashes with `EXCEPTION_ACCESS_VIOLATION` (hs_err_pid*.log) during the synthesis of the
+  `chip` module, 5 of 6 attempts with the same RTL and configuration (one out-of-context run at 19:29 completed;
+  later out-of-context runs at 20:43, 22:51 (twice) and the global top-level synthesis at 22:57 crashed, the last one
+  while sorting areas). The parent Vivado does not notice the dead child and waits indefinitely (a 2 h hang).
+  The same RTL (`chip_axi_top`) synthesizes and routes reliably through `fpga/run_chip.sh` (batch `synth_design`),
+  so the cause is in the project-run flow or the host environment, not in the RTL. Windows host memory was not
+  the limit (about 5.7 of 16 GB free at the last crash). Root cause not found.
+- **Result: no `board.bit`, no timing with the PS, nothing run on a board.** The 150 MHz OOC result (WNS +0.005 ns)
+  is unchanged and still the only timing evidence.
+- `fpga/bd/build_board.tcl` now uses global synthesis (`synth_checkpoint_mode None`) and one job; it is untested to
+  completion.
+- Options (not tried): build the block design interactively in the Vivado GUI on the host (`run_board.sh 125 <dir> gui`
+  opens it), or synthesize the module through the reliable batch flow and import the checkpoint, or retry on another
+  machine. A board run additionally needs the PYNQ image and `pynq/run_chip.py`, neither of which has been exercised.

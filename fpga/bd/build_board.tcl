@@ -59,15 +59,11 @@ update_compile_order -fileset sources_1
 if {$gui} { start_gui; return }
 
 set_property strategy Performance_Explore [get_runs impl_1]
-# Windows Vivado fails (system resources) with parallel child runs and hung with a queued single job:
-# run every out-of-context IP synthesis one at a time, then implement with one job.
+# Windows Vivado: parallel child runs fail ("system resources"), a queued single job hung once, and
+# the out-of-context synthesis of the chip module reference crashed (EXCEPTION_ACCESS_VIOLATION) twice.
+# Synthesize the whole block design inside the top-level run (no per-IP out-of-context runs).
+set_property synth_checkpoint_mode None [get_files board.bd]
 generate_target all [get_files board.bd]
-foreach r [get_runs -filter {IS_SYNTHESIS == 1 && NAME != synth_1}] {
-  puts "IP_RUN $r"
-  launch_runs $r -jobs 1
-  wait_on_run $r
-  if {[get_property PROGRESS [get_runs $r]] ne "100%"} { puts "ERROR: IP run $r not finished"; return -code error }
-}
 launch_runs impl_1 -to_step write_bitstream -jobs 1
 wait_on_run impl_1
 open_run impl_1
