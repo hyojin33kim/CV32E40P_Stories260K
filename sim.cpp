@@ -130,6 +130,14 @@ Prof*pp=nullptr;if(profpath){unsigned pc=t.CORE(pc_id);for(auto&r:sites)if(pc>=r
 #ifdef CHIP
 if(DREQ&&DWE&&t.rst_ni&&DADDR>=0x1ff000&&DADDR<low)low=DADDR&~3u;
 #endif
+#ifdef CHIP
+// SIM_TRACE_CPU=<n>: CPU data port trace for the first n cycles after reset (same format as fpga/xsim/tb_chip.sv)
+{static const long long tcn=getenv("SIM_TRACE_CPU")?atoll(getenv("SIM_TRACE_CPU")):0;static FILE*tf=tcn?fopen("trace_verilator.txt","w"):nullptr;
+ if(tf&&t.rst_ni&&(long long)(c-5)<tcn){auto r=t.rootp;
+  if(r->soc_chip__DOT__d_req&&r->soc_chip__DOT__d_gnt)fprintf(tf,"%lld REQ we=%d be=%x a=%08x wd=%08x\n",(long long)(c-5),(int)r->soc_chip__DOT__d_we,(unsigned)r->soc_chip__DOT__d_be,(unsigned)r->soc_chip__DOT__d_addr,(unsigned)r->soc_chip__DOT__d_wdata);
+  if(r->soc_chip__DOT__d_rvalid)fprintf(tf,"%lld RSP rd=%08x\n",(long long)(c-5),(unsigned)r->soc_chip__DOT__d_rdata);}
+ if(tf&&(long long)(c-5)==tcn){fclose(tf);tf=nullptr;}}
+#endif
 if(c>10 && IREQ && IADDR>=0x1000000 && IADDR<0x1000080){std::cerr<<"TRAP mepc="<<std::hex<<t.CORE(cs_registers_i__DOT__mepc_q)<<" cause="<<(unsigned)t.CORE(cs_registers_i__DOT__mcause_q)<<"\n";return 3;}
 #ifdef CHIP
 bool ni=false,nd=t.data_req_o&&t.rst_ni&&t.data_gnt_i;unsigned nr=0,ndr=0;bool cpu_delay=false;

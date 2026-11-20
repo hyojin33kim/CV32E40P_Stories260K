@@ -94,9 +94,15 @@ module soc_chip #(
   // ---------------------------------------------------------------- core + accelerators
   logic        i_req, i_gnt, i_rvalid;
   logic [31:0] i_addr, i_rdata;
-  logic        d_req, d_gnt, d_rvalid, d_we;
-  logic [ 3:0] d_be;
-  logic [31:0] d_addr, d_wdata, d_rdata;
+  // CPU data port (public for the simulator's SIM_TRACE_CPU trace; no effect on the hardware)
+  logic        d_req /*verilator public_flat_rd*/;
+  logic        d_gnt /*verilator public_flat_rd*/;
+  logic        d_rvalid /*verilator public_flat_rd*/;
+  logic        d_we /*verilator public_flat_rd*/;
+  logic [ 3:0] d_be /*verilator public_flat_rd*/;
+  logic [31:0] d_addr /*verilator public_flat_rd*/;
+  logic [31:0] d_wdata /*verilator public_flat_rd*/;
+  logic [31:0] d_rdata /*verilator public_flat_rd*/;
   logic        a_req, a_gnt, a_rvalid, a_we;
   logic [31:0] a_addr, a_wdata;
   logic [127:0] a_rdata;
