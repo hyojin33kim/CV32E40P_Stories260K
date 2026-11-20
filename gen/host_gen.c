@@ -7,6 +7,8 @@
 #define main original_main
 #ifdef OPTA
 #include "../opta/run_opta.c"   // Option A numerics (S3): exp2q softmax/SiLU, deferred normalization
+#elif defined(QUANT)
+#include "../quant/run_quant.c"  // precision gate (P1): fake-quantized weights/activations/KV
 #else
 #include "../run.c"
 #endif

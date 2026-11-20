@@ -1,0 +1,506 @@
+{
+ "fp32 (check)": [
+  {
+   "prompt": "Once upon a time",
+   "nll_f": 0.4892843284886404,
+   "nll_q": 0.4892843284886404,
+   "argmax_agree": 1.0,
+   "logit_relL2": 0.0,
+   "free_match": 1.0,
+   "first_div": null,
+   "gen_len": 508
+  },
+  {
+   "prompt": "One day, a little girl named Lily",
+   "nll_f": 0.5147014674607626,
+   "nll_q": 0.5147014674607626,
+   "argmax_agree": 1.0,
+   "logit_relL2": 0.0,
+   "free_match": 1.0,
+   "first_div": null,
+   "gen_len": 502
+  },
+  {
+   "prompt": "The dog and the cat were best friends",
+   "nll_f": 0.5057070216842046,
+   "nll_q": 0.5057070216842046,
+   "argmax_agree": 1.0,
+   "logit_relL2": 0.0,
+   "free_match": 1.0,
+   "first_div": null,
+   "gen_len": 499
+  },
+  {
+   "prompt": "Tom had a big red ball",
+   "nll_f": 0.5240480514105142,
+   "nll_q": 0.5240480514105142,
+   "argmax_agree": 1.0,
+   "logit_relL2": 0.0,
+   "free_match": 1.0,
+   "first_div": null,
+   "gen_len": 503
+  }
+ ],
+ "W8 g32": [
+  {
+   "prompt": "Once upon a time",
+   "nll_f": 0.4892843284886404,
+   "nll_q": 0.48990125969662507,
+   "argmax_agree": 0.9862204724409449,
+   "logit_relL2": 0.00780581247213559,
+   "free_match": 0.22244094488188976,
+   "first_div": 110,
+   "gen_len": 508
+  },
+  {
+   "prompt": "One day, a little girl named Lily",
+   "nll_f": 0.5147014674607626,
+   "nll_q": 0.5139239500617262,
+   "argmax_agree": 0.9880478087649402,
+   "logit_relL2": 0.0077397905582128265,
+   "free_match": 0.1952191235059761,
+   "first_div": 92,
+   "gen_len": 502
+  },
+  {
+   "prompt": "The dog and the cat were best friends",
+   "nll_f": 0.5057070216842046,
+   "nll_q": 0.5073263628562528,
+   "argmax_agree": 0.9919839679358717,
+   "logit_relL2": 0.0074087101526237875,
+   "free_match": 0.07615230460921844,
+   "first_div": 29,
+   "gen_len": 499
+  },
+  {
+   "prompt": "Tom had a big red ball",
+   "nll_f": 0.5240480514105142,
+   "nll_q": 0.5262497348026114,
+   "argmax_agree": 0.9920477137176938,
+   "logit_relL2": 0.0075581281435992366,
+   "free_match": 0.23658051689860835,
+   "first_div": 109,
+   "gen_len": 503
+  }
+ ],
+ "W8A8 g32": [
+  {
+   "prompt": "Once upon a time",
+   "nll_f": 0.4892843284886404,
+   "nll_q": 0.49037789698092554,
+   "argmax_agree": 0.9744094488188977,
+   "logit_relL2": 0.011540769753399144,
+   "free_match": 0.23818897637795275,
+   "first_div": 110,
+   "gen_len": 508
+  },
+  {
+   "prompt": "One day, a little girl named Lily",
+   "nll_f": 0.5147014674607626,
+   "nll_q": 0.5133066278871448,
+   "argmax_agree": 0.9880478087649402,
+   "logit_relL2": 0.01193287339900422,
+   "free_match": 0.3884462151394422,
+   "first_div": 192,
+   "gen_len": 502
+  },
+  {
+   "prompt": "The dog and the cat were best friends",
+   "nll_f": 0.5057070216842046,
+   "nll_q": 0.5045833500252783,
+   "argmax_agree": 0.9879759519038076,
+   "logit_relL2": 0.01138107259212184,
+   "free_match": 0.09218436873747494,
+   "first_div": 29,
+   "gen_len": 499
+  },
+  {
+   "prompt": "Tom had a big red ball",
+   "nll_f": 0.5240480514105142,
+   "nll_q": 0.5259330407646479,
+   "argmax_agree": 0.9880715705765407,
+   "logit_relL2": 0.011220173181898153,
+   "free_match": 0.08946322067594434,
+   "first_div": 41,
+   "gen_len": 503
+  }
+ ],
+ "W8A8 g128": [
+  {
+   "prompt": "Once upon a time",
+   "nll_f": 0.4892843284886404,
+   "nll_q": 0.4915410023428601,
+   "argmax_agree": 0.9783464566929134,
+   "logit_relL2": 0.01439191140423991,
+   "free_match": 0.12401574803149606,
+   "first_div": 57,
+   "gen_len": 508
+  },
+  {
+   "prompt": "One day, a little girl named Lily",
+   "nll_f": 0.5147014674607626,
+   "nll_q": 0.5161878699490534,
+   "argmax_agree": 0.9780876494023905,
+   "logit_relL2": 0.014323684854146049,
+   "free_match": 0.043824701195219126,
+   "first_div": 15,
+   "gen_len": 502
+  },
+  {
+   "prompt": "The dog and the cat were best friends",
+   "nll_f": 0.5057070216842046,
+   "nll_q": 0.5118701636628772,
+   "argmax_agree": 0.9739478957915831,
+   "logit_relL2": 0.014075073672966058,
+   "free_match": 0.08216432865731463,
+   "first_div": 6,
+   "gen_len": 499
+  },
+  {
+   "prompt": "Tom had a big red ball",
+   "nll_f": 0.5240480514105142,
+   "nll_q": 0.5268471856863362,
+   "argmax_agree": 0.9880715705765407,
+   "logit_relL2": 0.013520954336020415,
+   "free_match": 0.09940357852882704,
+   "first_div": 41,
+   "gen_len": 503
+  }
+ ],
+ "W8A8 per-row": [
+  {
+   "prompt": "Once upon a time",
+   "nll_f": 0.4892843284886404,
+   "nll_q": 0.48964218849653124,
+   "argmax_agree": 0.9822834645669292,
+   "logit_relL2": 0.016157553302352048,
+   "free_match": 0.13582677165354332,
+   "first_div": 57,
+   "gen_len": 508
+  },
+  {
+   "prompt": "One day, a little girl named Lily",
+   "nll_f": 0.5147014674607626,
+   "nll_q": 0.5160355709564475,
+   "argmax_agree": 0.9741035856573705,
+   "logit_relL2": 0.015032295196154462,
+   "free_match": 0.029880478087649404,
+   "first_div": 15,
+   "gen_len": 502
+  },
+  {
+   "prompt": "The dog and the cat were best friends",
+   "nll_f": 0.5057070216842046,
+   "nll_q": 0.5101718929444672,
+   "argmax_agree": 0.9879759519038076,
+   "logit_relL2": 0.014853444642953663,
+   "free_match": 0.08617234468937876,
+   "first_div": 27,
+   "gen_len": 499
+  },
+  {
+   "prompt": "Tom had a big red ball",
+   "nll_f": 0.5240480514105142,
+   "nll_q": 0.5268414105018147,
+   "argmax_agree": 0.9880715705765407,
+   "logit_relL2": 0.014498991655663263,
+   "free_match": 0.09542743538767395,
+   "first_div": 41,
+   "gen_len": 503
+  }
+ ],
+ "W8A8 g32 + KV8": [
+  {
+   "prompt": "Once upon a time",
+   "nll_f": 0.4892843284886404,
+   "nll_q": 0.49083595076326664,
+   "argmax_agree": 0.9803149606299213,
+   "logit_relL2": 0.018705403594807237,
+   "free_match": 0.13582677165354332,
+   "first_div": 67,
+   "gen_len": 508
+  },
+  {
+   "prompt": "One day, a little girl named Lily",
+   "nll_f": 0.5147014674607626,
+   "nll_q": 0.5176869161061188,
+   "argmax_agree": 0.9860557768924303,
+   "logit_relL2": 0.018880574623309145,
+   "free_match": 0.14940239043824702,
+   "first_div": 71,
+   "gen_len": 502
+  },
+  {
+   "prompt": "The dog and the cat were best friends",
+   "nll_f": 0.5057070216842046,
+   "nll_q": 0.5114719938743152,
+   "argmax_agree": 0.9719438877755511,
+   "logit_relL2": 0.018143927763699864,
+   "free_match": 0.16633266533066132,
+   "first_div": 33,
+   "gen_len": 499
+  },
+  {
+   "prompt": "Tom had a big red ball",
+   "nll_f": 0.5240480514105142,
+   "nll_q": 0.5267205440148804,
+   "argmax_agree": 0.9860834990059643,
+   "logit_relL2": 0.016955729595007657,
+   "free_match": 0.220675944333996,
+   "first_div": 104,
+   "gen_len": 503
+  }
+ ],
+ "W4 g16": [
+  {
+   "prompt": "Once upon a time",
+   "nll_f": 0.4892843284886404,
+   "nll_q": 0.5913687886006321,
+   "argmax_agree": 0.8503937007874016,
+   "logit_relL2": 0.123625283984116,
+   "free_match": 0.0531496062992126,
+   "first_div": 16,
+   "gen_len": 508
+  },
+  {
+   "prompt": "One day, a little girl named Lily",
+   "nll_f": 0.5147014674607626,
+   "nll_q": 0.6225516628407747,
+   "argmax_agree": 0.8426294820717132,
+   "logit_relL2": 0.12480244162493917,
+   "free_match": 0.043824701195219126,
+   "first_div": 20,
+   "gen_len": 502
+  },
+  {
+   "prompt": "The dog and the cat were best friends",
+   "nll_f": 0.5057070216842046,
+   "nll_q": 0.6002108066795456,
+   "argmax_agree": 0.8597194388777555,
+   "logit_relL2": 0.12395325766500828,
+   "free_match": 0.03006012024048096,
+   "first_div": 3,
+   "gen_len": 499
+  },
+  {
+   "prompt": "Tom had a big red ball",
+   "nll_f": 0.5240480514105142,
+   "nll_q": 0.624120691249773,
+   "argmax_agree": 0.8489065606361829,
+   "logit_relL2": 0.11152300854528559,
+   "free_match": 0.02385685884691849,
+   "first_div": 5,
+   "gen_len": 503
+  }
+ ],
+ "W4 g32": [
+  {
+   "prompt": "Once upon a time",
+   "nll_f": 0.4892843284886404,
+   "nll_q": 0.6240971538713602,
+   "argmax_agree": 0.8307086614173228,
+   "logit_relL2": 0.15157172890533138,
+   "free_match": 0.013779527559055118,
+   "first_div": 4,
+   "gen_len": 508
+  },
+  {
+   "prompt": "One day, a little girl named Lily",
+   "nll_f": 0.5147014674607626,
+   "nll_q": 0.6658335828678157,
+   "argmax_agree": 0.8167330677290837,
+   "logit_relL2": 0.14883889812320938,
+   "free_match": 0.049800796812749,
+   "first_div": 20,
+   "gen_len": 502
+  },
+  {
+   "prompt": "The dog and the cat were best friends",
+   "nll_f": 0.5057070216842046,
+   "nll_q": 0.6322296822986633,
+   "argmax_agree": 0.8517034068136272,
+   "logit_relL2": 0.15374176441028337,
+   "free_match": 0.028056112224448898,
+   "first_div": 10,
+   "gen_len": 499
+  },
+  {
+   "prompt": "Tom had a big red ball",
+   "nll_f": 0.5240480514105142,
+   "nll_q": 0.6328875477471237,
+   "argmax_agree": 0.8648111332007953,
+   "logit_relL2": 0.1451753531575794,
+   "free_match": 0.017892644135188866,
+   "first_div": 1,
+   "gen_len": 503
+  }
+ ],
+ "W4 g64": [
+  {
+   "prompt": "Once upon a time",
+   "nll_f": 0.4892843284886404,
+   "nll_q": 0.6527838761021939,
+   "argmax_agree": 0.8307086614173228,
+   "logit_relL2": 0.1579878438923737,
+   "free_match": 0.017716535433070866,
+   "first_div": 4,
+   "gen_len": 508
+  },
+  {
+   "prompt": "One day, a little girl named Lily",
+   "nll_f": 0.5147014674607626,
+   "nll_q": 0.687100940695071,
+   "argmax_agree": 0.8067729083665338,
+   "logit_relL2": 0.15167345717783803,
+   "free_match": 0.029880478087649404,
+   "first_div": 10,
+   "gen_len": 502
+  },
+  {
+   "prompt": "The dog and the cat were best friends",
+   "nll_f": 0.5057070216842046,
+   "nll_q": 0.714157552335923,
+   "argmax_agree": 0.8016032064128257,
+   "logit_relL2": 0.1564915596831853,
+   "free_match": 0.03206412825651302,
+   "first_div": 6,
+   "gen_len": 499
+  },
+  {
+   "prompt": "Tom had a big red ball",
+   "nll_f": 0.5240480514105142,
+   "nll_q": 0.688652419498813,
+   "argmax_agree": 0.8409542743538767,
+   "logit_relL2": 0.14607360822700996,
+   "free_match": 0.03578528827037773,
+   "first_div": 6,
+   "gen_len": 503
+  }
+ ],
+ "W4A8 g32": [
+  {
+   "prompt": "Once upon a time",
+   "nll_f": 0.4892843284886404,
+   "nll_q": 0.6254655225064581,
+   "argmax_agree": 0.8346456692913385,
+   "logit_relL2": 0.15171242097102824,
+   "free_match": 0.01968503937007874,
+   "first_div": 4,
+   "gen_len": 508
+  },
+  {
+   "prompt": "One day, a little girl named Lily",
+   "nll_f": 0.5147014674607626,
+   "nll_q": 0.6672239616792955,
+   "argmax_agree": 0.8207171314741036,
+   "logit_relL2": 0.1489041557492408,
+   "free_match": 0.049800796812749,
+   "first_div": 20,
+   "gen_len": 502
+  },
+  {
+   "prompt": "The dog and the cat were best friends",
+   "nll_f": 0.5057070216842046,
+   "nll_q": 0.6323106902106149,
+   "argmax_agree": 0.8496993987975952,
+   "logit_relL2": 0.15393633811976037,
+   "free_match": 0.04008016032064128,
+   "first_div": 10,
+   "gen_len": 499
+  },
+  {
+   "prompt": "Tom had a big red ball",
+   "nll_f": 0.5240480514105142,
+   "nll_q": 0.6342760728549615,
+   "argmax_agree": 0.8687872763419483,
+   "logit_relL2": 0.1458038011691915,
+   "free_match": 0.013916500994035786,
+   "first_div": 1,
+   "gen_len": 503
+  }
+ ],
+ "W4A8 g32 + KV8": [
+  {
+   "prompt": "Once upon a time",
+   "nll_f": 0.4892843284886404,
+   "nll_q": 0.6278216354085078,
+   "argmax_agree": 0.8385826771653543,
+   "logit_relL2": 0.1523458553906482,
+   "free_match": 0.015748031496062992,
+   "first_div": 4,
+   "gen_len": 508
+  },
+  {
+   "prompt": "One day, a little girl named Lily",
+   "nll_f": 0.5147014674607626,
+   "nll_q": 0.6698793174074286,
+   "argmax_agree": 0.8127490039840638,
+   "logit_relL2": 0.1499728568502527,
+   "free_match": 0.04780876494023904,
+   "first_div": 20,
+   "gen_len": 502
+  },
+  {
+   "prompt": "The dog and the cat were best friends",
+   "nll_f": 0.5057070216842046,
+   "nll_q": 0.6311336826147775,
+   "argmax_agree": 0.8496993987975952,
+   "logit_relL2": 0.15648745404071526,
+   "free_match": 0.036072144288577156,
+   "first_div": 10,
+   "gen_len": 499
+  },
+  {
+   "prompt": "Tom had a big red ball",
+   "nll_f": 0.5240480514105142,
+   "nll_q": 0.6327356642317589,
+   "argmax_agree": 0.8727634194831014,
+   "logit_relL2": 0.14634720902661963,
+   "free_match": 0.03180914512922465,
+   "first_div": 1,
+   "gen_len": 503
+  }
+ ],
+ "W4 g32 + KV4": [
+  {
+   "prompt": "Once upon a time",
+   "nll_f": 0.4892843284886404,
+   "nll_q": 1.527513535136068,
+   "argmax_agree": 0.5728346456692913,
+   "logit_relL2": 0.2696447801803878,
+   "free_match": 0.01968503937007874,
+   "first_div": 4,
+   "gen_len": 508
+  },
+  {
+   "prompt": "One day, a little girl named Lily",
+   "nll_f": 0.5147014674607626,
+   "nll_q": 1.6411761204246809,
+   "argmax_agree": 0.545816733067729,
+   "logit_relL2": 0.2842792374106251,
+   "free_match": 0.021912350597609563,
+   "first_div": 0,
+   "gen_len": 502
+  },
+  {
+   "prompt": "The dog and the cat were best friends",
+   "nll_f": 0.5057070216842046,
+   "nll_q": 1.4323514399361867,
+   "argmax_agree": 0.6032064128256514,
+   "logit_relL2": 0.2599462655782985,
+   "free_match": 0.036072144288577156,
+   "first_div": 8,
+   "gen_len": 499
+  },
+  {
+   "prompt": "Tom had a big red ball",
+   "nll_f": 0.5240480514105142,
+   "nll_q": 1.4297754415408412,
+   "argmax_agree": 0.5646123260437376,
+   "logit_relL2": 0.24146582121151303,
+   "free_match": 0.019880715705765408,
+   "first_div": 0,
+   "gen_len": 503
+  }
+ ]
+}

@@ -21,6 +21,14 @@ lappend srcs [file normalize chip_axi_wrap.v]
 add_files -norecurse $srcs
 foreach d $inc_dirs { lappend incs [file normalize $d] }
 set_property include_dirs $incs [current_fileset]
+# headers must be project files for the module-reference (create_bd_cell) elaboration
+set hdrs {}
+# only the header the elaboration asked for
+foreach d $incs { foreach f [glob -nocomplain $d/*/registers.svh] { lappend hdrs $f } }
+if {[llength $hdrs]} {
+  add_files -norecurse $hdrs
+  set_property file_type {Verilog Header} [get_files $hdrs]
+}
 update_compile_order -fileset sources_1
 
 # block design
@@ -51,7 +59,7 @@ update_compile_order -fileset sources_1
 if {$gui} { start_gui; return }
 
 set_property strategy Performance_Explore [get_runs impl_1]
-launch_runs impl_1 -to_step write_bitstream -jobs 4
+launch_runs impl_1 -to_step write_bitstream -jobs 1
 wait_on_run impl_1
 open_run impl_1
 file mkdir out
