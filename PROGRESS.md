@@ -95,7 +95,7 @@ DDR 모델: Weight는 DDR(latency 40, burst 16, 12.8 B/cycle, outstanding 8), KV
 | **S4** | 프롬프트 1종, greedy decoding 유지(11-15 결정 — 다중 프롬프트·sampling은 범위 밖) | — |
 | **S5** (a ✅, b 미착수) | on-chip 메모리 RTL: CPU inst/data SRAM(BRAM/URAM), KV·activation SRAM(URAM), 가속기 SRAM port + weight용 DDR(AXI) port. sim은 DDR slave 모델만 | ✔ M4 |
 | **S6** | 메모리 포함 full SoC 합성+P&R @150 MHz, E2E 재확인 | ✔ M5 |
-| ⑤ | ZCU104 보드 통합 — 비트스트림(125 MHz) 완료, 보드 실행 대기(PYNQ 이미지·`pynq/run_chip.py` 미검증) | — |
+| ⑤ | ZCU104 보드 통합 — 비트스트림(125 MHz) 완료, 보드 실행 대기(PYNQ 이미지·`pynq/run_chip.py` 미검증), 절차: `docs/BOARD_BRINGUP.md` | — |
 
 ## 미검증
 - 실제 DDR 수치(현재 가정값 → S2에서 문서값, 보드 실측은 ⑤), on-chip 메모리 포함 timing·면적(S6).
