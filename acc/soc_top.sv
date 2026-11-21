@@ -16,7 +16,8 @@ module soc_top #(
     // by fpga/prepare.py); 0 = combinational FPU (D1, every result before 11-15, not FPGA-realizable).
     parameter int CPU_FPU_LAT = 4,  // build_sim.sh: CPU_FPU_LAT=<n>
     parameter int ACC_FPU_LAT = 4,  // build_sim.sh: ACC_FPU_LAT=<n>
-    parameter int VFU_FPU_LAT = 4   // build_sim.sh: VFU_FPU_LAT=<n>
+    parameter int VFU_FPU_LAT = 4,  // build_sim.sh: VFU_FPU_LAT=<n>
+    parameter logic [31:0] EXT_BELOW = 32'h0   // gemv_acc weight reads of commands with W_ADDR below this are external (0 = none)
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -43,6 +44,7 @@ module soc_top #(
 
     output logic        acc_req_o,
     output logic        acc_we_o,
+    output logic        acc_ext_o,     // the current accelerator read is external (gemv_acc weights, see EXT_BELOW)
     output logic [31:0] acc_addr_o,
     output logic [31:0] acc_wdata_o,
     input  logic        acc_gnt_i,
@@ -95,17 +97,20 @@ module soc_top #(
     end
   assign s_rdata = (mmio_vfu_q ? v_rdata : g_rdata) | {31'b0, mmio_stat_q && wr_pend_q};
 
+  logic g_ext;
+  assign acc_ext_o   = !vfu_busy && g_ext;
   assign acc_req_o   = vfu_busy ? v_req : g_req;
   assign acc_we_o    = vfu_busy ? v_we : g_we;
   assign acc_addr_o  = vfu_busy ? v_addr : g_addr;
   assign acc_wdata_o = vfu_busy ? v_wdata : g_wdata;
 
-  gemv_acc #(.LANES(ACC_LANES), .RUN(ACC_RUN), .FDEPTH(ACC_FDEPTH), .FPU_LAT(ACC_FPU_LAT)) acc_i (
+  gemv_acc #(.LANES(ACC_LANES), .RUN(ACC_RUN), .FDEPTH(ACC_FDEPTH), .FPU_LAT(ACC_FPU_LAT), .EXT_BELOW(EXT_BELOW)) acc_i (
       .clk_i, .rst_ni,
       .s_req_i(c_req && is_mmio && !is_vfu), .s_we_i(c_we), .s_addr_i(c_addr[5:0]),
       .s_wdata_i(c_wdata), .s_rdata_o(g_rdata),
       .m_req_o(g_req), .m_we_o(g_we), .m_addr_o(g_addr), .m_wdata_o(g_wdata),
-      .m_gnt_i(acc_gnt_i && !vfu_busy), .m_rvalid_i(acc_rvalid_i && !vfu_busy), .m_rdata_i(acc_rdata_i)
+      .m_gnt_i(acc_gnt_i && !vfu_busy), .m_rvalid_i(acc_rvalid_i && !vfu_busy), .m_rdata_i(acc_rdata_i),
+      .m_ext_o(g_ext)
   );
 
   vfu #(.LANES(VFU_LANES), .FPU_LAT(VFU_FPU_LAT)) vfu_i (

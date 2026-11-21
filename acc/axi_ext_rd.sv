@@ -54,11 +54,21 @@ module axi_ext_rd #(
   logic [7:0]    idle_q;
   logic [LW-1:0] a_ln;
   logic          consec, full, issue_acc;
-  assign a_ln   = acc_addr_i[31:4];
+  // request FIFO: acc_gnt_o depends on its fill level only (a register), never on the request address;
+  // the burst logic below works on the FIFO output (the address would otherwise reach the grant through the
+  // consecutive-line compare and the whole interconnect, which missed 150 MHz by 2.3 ns)
+  localparam int QD = 4;
+  logic [LW-1:0] rq[QD];
+  logic [$clog2(QD):0]   rq_n_q;
+  logic [$clog2(QD)-1:0] rq_wp_q, rq_rp_q;
+  logic          a_req, a_take;
+  assign acc_gnt_o = rq_n_q < (($clog2(QD) + 1)'(QD));
+  assign a_req = rq_n_q != 0;
+  assign a_ln  = rq[rq_rp_q];
   assign full   = cnt_q == CW'(MAXB);
   // next line of the open burst: consecutive and still inside the same 4 KB (256 lines)
   assign consec = open_q && a_ln == base_ln_q + LW'(cnt_q) && !full && (base_ln_q[7:0] + 8'(cnt_q)) != 8'd0;
-  assign acc_gnt_o = !open_q || consec;            // a non-consecutive request waits until the burst is issued
+  assign a_take    = a_req && (!open_q || consec);  // a non-consecutive request waits until the burst is issued
   logic ar_busy_q;                                 // an AR is waiting for arready
   logic [$clog2(TD):0] tg_n_q;
   logic [31:0] infl_q;                             // lines requested, not yet returned
@@ -69,7 +79,7 @@ module axi_ext_rd #(
   logic        ar_room;
   assign ar_room = !ar_busy_q && tg_n_q < (($clog2(TD) + 1)'(TD));
   logic want_acc;
-  assign want_acc = open_q && (full || (acc_req_i && !consec) || (idle_q >= 8'(WT) && !acc_req_i)) && (infl_q + 32'(cnt_q) <= 32'(CRED));
+  assign want_acc = open_q && (full || (a_req && !consec) || (idle_q >= 8'(WT) && !a_req)) && (infl_q + 32'(cnt_q) <= 32'(CRED));
   logic issue_cpu;
   assign issue_cpu = ar_room && cpu_pend_q;
   assign issue_acc = ar_room && !cpu_pend_q && want_acc;
@@ -96,12 +106,17 @@ module axi_ext_rd #(
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
       open_q <= 1'b0; base_ln_q <= '0; cnt_q <= '0; idle_q <= '0; ar_busy_q <= 1'b0;
+      rq_n_q <= '0; rq_wp_q <= '0; rq_rp_q <= '0;
       ar_addr_q <= '0; ar_len_q <= '0; tg_wp_q <= '0; tg_rp_q <= '0; tg_n_q <= '0; infl_q <= '0;
       cpu_pend_q <= 1'b0; cpu_out_q <= 1'b0; cpu_addr_q <= '0; cpu_off_q <= '0;
       err_o <= 1'b0; n_bursts_o <= '0; n_lines_o <= '0;
     end else begin
-      // accelerator request accepted
-      if (acc_req_i && acc_gnt_o) begin
+      // request FIFO
+      if (acc_req_i && acc_gnt_o) begin rq[rq_wp_q] <= acc_addr_i[31:4]; rq_wp_q <= rq_wp_q + 1'b1; end
+      if (a_take) rq_rp_q <= rq_rp_q + 1'b1;
+      rq_n_q <= rq_n_q + ((acc_req_i && acc_gnt_o) ? 1 : 0) - (a_take ? 1 : 0);
+      // accelerator request taken from the FIFO
+      if (a_take) begin
         if (!open_q) begin open_q <= 1'b1; base_ln_q <= a_ln; cnt_q <= CW'(1); end
         else cnt_q <= cnt_q + CW'(1);
         idle_q <= '0;
