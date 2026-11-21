@@ -32,7 +32,7 @@
 | P1-2 정밀도 관문 | 11-20 | host 실측(4 prompt × 512 step): int8 W/A(+KV) ≤ +0.003 nats/token(행 단위 scale도 충분), 무보정 int4 +0.10~0.18·argmax 82~85 %, int4 KV 불가. **통과 기준은 미결정(사용자)** | `docs/P1_REPORT.md` §1 | `quant/results/gate_512.json` |
 | P1-3 DDR row/bank 모델 | 11-20 | 1차 모델(미검증): 단일 스트림 95.7 %(bank group 인터리브)/64 %(페이지 선형), 2 master 교대 128 B 24 %·8 KB 91 %·16 KB 94 %. sim.cpp DDR 모델은 변경 없음 | `docs/P1_REPORT.md` §2 | `ddr/ddr_model_results.md` |
 | P1-4 CPU 잔여 | 11-20 | 측정: rmsnorm+RoPE+residual+기타 = ctx1 26.7 % / ctx128 19.3 % / ctx512 10.6 %. rmsnorm·residual VFU 이전 상한 3~8 % → **구현하지 않기를 권고**(단기 문맥 위주면 재검토) | `docs/P1_REPORT.md` §3 | `prof/chip_full_opta_d2.txt` |
-| P1-1 보드 통합 | 11-20 | **막힘, 비트스트림 없음**: 블록 디자인 validate까지 통과(PL0 125 MHz). 프로젝트 run 합성에서 Vivado가 `EXCEPTION_ACCESS_VIOLATION`으로 6회 중 5회 충돌(같은 RTL이 batch `run_chip.sh`에서는 정상), 원인 미발견. 대안은 보고서 §4 | `fpga/bd/`, `docs/P1_REPORT.md` §4 | — |
+| P1-1 보드 통합 | 11-20~21 | **125 MHz 비트스트림 생성 완료(보드 실행 전)**: Windows Vivado GUI에서 PS+칩 블록 디자인 합성·구현·bitgen 성공, WNS +0.320 ns / WHS +0.010 ns / 실패 0, LUT 55,775·URAM 64·DSP 85(OOC와 동일 규모). 스크립트(batch `-mode batch`) 경로는 프로젝트 합성 충돌로 6회 중 5회 실패, 원인 미발견. 150 MHz는 이 구성에서 미시험 | `fpga/bd/`, `docs/P1_REPORT.md` §4 | `E:/fpga_work/board_gui/.../board_wrapper.bit`(저장소 밖) | `fpga/bd/`, `docs/P1_REPORT.md` §4 | — |
 
 ## 현재 성능 (D2 = 150 MHz 실현 구성, 11-15; SW 기준선 = 같은 CPU(FPU lat 4)의 llama2.c `-O2 -funroll-loops`)
 | | SW 기준선 cycles | full offload (원 수치) | 배율 | **Option A** | 배율 | Option A + DDR 모델 | 배율 |
@@ -95,7 +95,7 @@ DDR 모델: Weight는 DDR(latency 40, burst 16, 12.8 B/cycle, outstanding 8), KV
 | **S4** | 프롬프트 1종, greedy decoding 유지(11-15 결정 — 다중 프롬프트·sampling은 범위 밖) | — |
 | **S5** (a ✅, b 미착수) | on-chip 메모리 RTL: CPU inst/data SRAM(BRAM/URAM), KV·activation SRAM(URAM), 가속기 SRAM port + weight용 DDR(AXI) port. sim은 DDR slave 모델만 | ✔ M4 |
 | **S6** | 메모리 포함 full SoC 합성+P&R @150 MHz, E2E 재확인 | ✔ M5 |
-| ⑤ | ZCU104 보드 통합 — 막힘(위 P1-1: Vivado 프로젝트 합성 충돌, 보드 실행 전) | — |
+| ⑤ | ZCU104 보드 통합 — 비트스트림(125 MHz) 완료, 보드 실행 대기(PYNQ 이미지·`pynq/run_chip.py` 미검증) | — |
 
 ## 미검증
 - 실제 DDR 수치(현재 가정값 → S2에서 문서값, 보드 실측은 ⑤), on-chip 메모리 포함 timing·면적(S6).

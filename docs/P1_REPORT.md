@@ -108,7 +108,17 @@ Estimated gain of moving work into the VFU (estimate, not implemented):
   wider model range, the right step is a programmable VFU, not more fixed commands. This recommendation flips if
   the target workload is mostly short-context chat (ctx <= 128), where the residual is about 19 to 27 %.
 
-## 4. Board integration (P1-1): blocked, no bitstream (measured attempts)
+## 4. Board integration (P1-1)
+
+**Update 2026-11-21: the 125 MHz bitstream exists.** Built by the user in the Windows Vivado GUI (same block design
+from `run_board.sh ... gui`): synthesis, implementation and `write_bitstream` finished without errors. Read from the
+project reports: WNS +0.320 ns, TNS 0, WHS +0.010 ns (thin), 0 failing endpoints, "All user specified timing
+constraints are met"; CLB LUT 55,775 (24.2 %), registers 20,344, BRAM 7, URAM 64, DSP 85 (same size as the OOC
+result). File `board_wrapper.bit` (19.3 MB); PYNQ needs matching names (`board.bit` + `board.hwh`). The final clock
+(125 MHz) was set by the script, not re-read from the reports. 150 MHz was not tried in this context. **Nothing has
+been run on a board yet.** The scripted (batch) route below is still unreliable.
+
+### Scripted attempts (measured)
 
 `fpga/bd/run_board.sh 125` builds the ZCU104 block design (Zynq PS + `chip_axi_wrap`, PL clock 125 MHz).
 - **Passes:** block design creation, address assignment, `validate_bd_design`, PL0 clock = 125.000 MHz.
