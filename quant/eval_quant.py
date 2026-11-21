@@ -23,6 +23,7 @@ PROMPTS = ['Once upon a time', 'One day, a little girl named Lily', 'The dog and
 CONFIGS = [  # name, env
     ('fp32 (check)', {}),
     ('W8 g32', dict(QW=8, QG=32)),
+    ('W8 per-row (weight only)', dict(QW=8, QG=256)),   # I1: int8 weights, one scale per row, fp32 activations/MAC
     ('W8A8 g32', dict(QW=8, QA=8, QG=32)),
     ('W8A8 g128', dict(QW=8, QA=8, QG=128)),
     ('W8A8 per-row', dict(QW=8, QA=8, QG=256)),      # one scale per row / whole activation vector
