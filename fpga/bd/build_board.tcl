@@ -5,6 +5,7 @@
 #         the project xsim-free in ./board_proj (open board_proj/board.xpr in the GUI to see the diagram).
 set mhz [expr {[llength $argv] > 0 ? [lindex $argv 0] : 125}]
 set gui [expr {[llength $argv] > 1 && [lindex $argv 1] eq "gui"}]
+set inproc [expr {[llength $argv] > 1 && [lindex $argv 1] eq "inproc"}]
 set part xczu7ev-ffvc1156-2-e
 create_project -force board ./board_proj -part $part
 set bp [lindex [get_board_parts -quiet *zcu104*] end]
@@ -57,6 +58,29 @@ set_property top board_wrapper [current_fileset]
 update_compile_order -fileset sources_1
 
 if {$gui} { start_gui; return }
+
+# "inproc": no project runs (their child Vivado processes hung or crashed on this host); synthesis,
+# implementation and bitstream run inside this session.
+if {$inproc} {
+  set_property synth_checkpoint_mode None [get_files board.bd]
+  generate_target all [get_files board.bd]
+  file mkdir out
+  synth_design -top board_wrapper -part $part -include_dirs $incs -flatten_hierarchy rebuilt
+  write_checkpoint -force out/post_synth.dcp
+  report_utilization -file out/util_synth.rpt
+  opt_design
+  place_design
+  phys_opt_design
+  route_design
+  write_checkpoint -force out/post_route.dcp
+  report_timing_summary -max_paths 10 -file out/timing_impl.rpt
+  report_utilization -file out/util_impl.rpt
+  report_clocks -file out/clocks.rpt
+  write_bitstream -force out/board.bit
+  file copy -force [glob ./board_proj/board.gen/sources_1/bd/board/hw_handoff/board.hwh] out/board.hwh
+  puts "BOARD BUILD DONE"
+  exit
+}
 
 set_property strategy Performance_Explore [get_runs impl_1]
 # Windows Vivado: parallel child runs fail ("system resources"), a queued single job hung once, and

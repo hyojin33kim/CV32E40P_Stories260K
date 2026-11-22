@@ -109,6 +109,7 @@ int main(int argc, char** argv) {
     }
     unsigned run_cycles = axi_read(0x200000C), done_v = axi_read(0x2000008), st = axi_read(0x2000004);
     unsigned nb = axi_read(0x2000014), nl = axi_read(0x2000018);
+    unsigned pf[6]; for (int i = 0; i < 6; i++) pf[i] = axi_read(0x2000020 + 4 * i);
     axi_write(0x2000000, 0);                                          // hold, then read back the SRAM
     for (unsigned a = 0x100000; a < 0x200000; a += 4) { unsigned v = axi_read(a); memcpy(&mem[a], &v, 4); }
     memcpy(mem.data(), ddr.data(), 0x100000);                         // weights: DDR array (not modified by the chip)
@@ -117,5 +118,7 @@ int main(int argc, char** argv) {
               << " status=0x" << std::hex << st << std::dec << " bursts=" << nb << " lines=" << nl
               << " avg_burst_lines=" << (nb ? (double)nl / nb : 0.0) << " ar=" << ar_n << " r_beats=" << r_beats
               << " bad=" << ar_bad << " loaded_words=" << nz << " axi_cycles=" << cyc << "\n";
+    std::cout << "PERF gemv_busy=" << pf[0] << " vfu_busy=" << pf[1] << " acc_stall=" << pf[2] << " acc_rd_lines=" << pf[3]
+              << " tq_full=" << pf[4] << " eq_max=" << pf[5] << "\n";
     return 0;
 }

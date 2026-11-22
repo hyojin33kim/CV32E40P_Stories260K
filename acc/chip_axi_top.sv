@@ -9,6 +9,8 @@
 //   0x200_0004  STATUS  R   bit0 DONE (the firmware wrote 0x2000_0000; cleared by RUN 0 -> 1)
 //   0x200_0008  DONE_V  R   value the firmware wrote to 0x2000_0000
 //   0x200_000C  CYCLES  R   clock cycles since RUN was set (stops at DONE)
+//   0x200_0020 .. 0x200_0034  performance counters (R, cleared when RUN is set): gemv busy cycles, vfu busy cycles,
+//       accelerator memory-grant stall cycles, accelerator read lines, tag-FIFO-full cycles, external line FIFO high-water mark
 // Memory windows are accessible only while RUN = 0 (writes ignored, reads return 0 otherwise).
 // The core's other external accesses (sim MMIO 0x2000_0004 step log, anything outside the SRAM)
 // are answered immediately (reads return 0).
@@ -62,6 +64,7 @@ module chip_axi_top #(
   logic        a_req, a_we, a_gnt, a_rvalid;
   logic [31:0] a_addr, a_wdata;
   logic        ld_req, ld_we, ld_rvalid;
+  logic [31:0] pf_gemv, pf_vfu, pf_stall, pf_rd, pf_tq, pf_eq;
   logic [31:0] ld_addr, ld_wdata, ld_rdata;
 
   soc_chip #(.ACC_LANES(ACC_LANES), .VFU_LANES(VFU_LANES), .ACC_RUN(ACC_RUN), .ACC_FDEPTH(ACC_FDEPTH),
@@ -74,7 +77,9 @@ module chip_axi_top #(
       .data_be_o(d_be), .data_addr_o(d_addr), .data_wdata_o(d_wdata), .data_rdata_i(32'h0),
       .acc_req_o(a_req), .acc_we_o(a_we), .acc_addr_o(a_addr), .acc_wdata_o(a_wdata),
       .acc_gnt_i(1'b1), .acc_rvalid_i(1'b0), .acc_rdata_i('0),
-      .dbg_instr_req_o(), .dbg_instr_addr_o(), .dbg_data_req_o(), .dbg_data_we_o(), .dbg_data_addr_o());
+      .dbg_instr_req_o(), .dbg_instr_addr_o(), .dbg_data_req_o(), .dbg_data_we_o(), .dbg_data_addr_o(),
+      .perf_gemv_busy_o(pf_gemv), .perf_vfu_busy_o(pf_vfu), .perf_acc_stall_o(pf_stall), .perf_acc_rd_o(pf_rd),
+      .perf_tq_full_o(pf_tq), .perf_eq_max_o(pf_eq));
 
   // external CPU accesses: answered next cycle; a write to 0x2000_0000 is DONE
   assign d_gnt = 1'b1;
@@ -88,7 +93,7 @@ module chip_axi_top #(
   logic [31:0] wdata_q, rdata_q;
   logic        is_mem, is_ctrl;
   assign is_mem  = addr_q < 26'h020_0000 || (addr_q >= 26'h100_0000 && addr_q < 26'h100_4000);
-  assign is_ctrl = addr_q[25:4] == 22'(26'h200_0000 >> 4);
+  assign is_ctrl = addr_q[25:6] == 20'(26'h200_0000 >> 6);
 
   assign s_axi_awready = st_q == S_IDLE && s_axi_awvalid && s_axi_wvalid;
   assign s_axi_wready  = s_axi_awready;
@@ -118,7 +123,7 @@ module chip_axi_top #(
           if (s_axi_awready) begin addr_q <= s_axi_awaddr; wdata_q <= s_axi_wdata; st_q <= S_WR; end
           else if (s_axi_arready) begin addr_q <= s_axi_araddr; st_q <= S_RD; end
         S_WR: begin
-          if (is_ctrl && addr_q[3:0] == 4'h0) begin
+          if (is_ctrl && addr_q[5:2] == 4'h0) begin
             if (wdata_q[0] && !run_q) begin done_q <= 1'b0; cyc_q <= '0; end
             run_q <= wdata_q[0];
           end
@@ -128,11 +133,18 @@ module chip_axi_top #(
         S_RD:
           if (is_mem && !run_q) st_q <= S_RWAIT;
           else begin
-            unique case (addr_q[3:0])
-              4'h0: rdata_q <= is_ctrl ? {31'b0, run_q} : '0;
-              4'h4: rdata_q <= is_ctrl ? {31'b0, done_q} : '0;
-              4'h8: rdata_q <= is_ctrl ? done_v_q : '0;
-              4'hC: rdata_q <= is_ctrl ? cyc_q : '0;
+            rdata_q <= '0;
+            if (is_ctrl) unique case (addr_q[5:2])
+              4'd0: rdata_q <= {31'b0, run_q};
+              4'd1: rdata_q <= {31'b0, done_q};
+              4'd2: rdata_q <= done_v_q;
+              4'd3: rdata_q <= cyc_q;
+              4'd8: rdata_q <= pf_gemv;
+              4'd9: rdata_q <= pf_vfu;
+              4'd10: rdata_q <= pf_stall;
+              4'd11: rdata_q <= pf_rd;
+              4'd12: rdata_q <= pf_tq;
+              4'd13: rdata_q <= pf_eq;
               default: rdata_q <= '0;
             endcase
             st_q <= S_R;

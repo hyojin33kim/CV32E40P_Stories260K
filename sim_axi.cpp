@@ -60,10 +60,13 @@ int main(int argc, char** argv) {
         if (cyc > maxc) { std::cerr << "TIMEOUT\n"; return 1; }
     }
     unsigned run_cycles = axi_read(0x200000C), done_v = axi_read(0x2000008);
+    unsigned pf[6]; for (int i = 0; i < 6; i++) pf[i] = axi_read(0x2000020 + 4 * i);
     axi_write(0x2000000, 0);                                          // hold, then read back
     for (unsigned a = 0; a < 0x200000; a += 4) { unsigned v = axi_read(a); memcpy(&mem[a], &v, 4); }
     std::ofstream out(argv[2], std::ios::binary); out.write((char*)mem.data(), 0x200000);
     std::cout << "DONE cycles=" << run_cycles << " done_value=0x" << std::hex << done_v << std::dec
               << " loaded_words=" << nz << " load_cycles=" << load_cycles << " axi_cycles=" << cyc << "\n";
+    std::cout << "PERF gemv_busy=" << pf[0] << " vfu_busy=" << pf[1] << " acc_stall=" << pf[2] << " acc_rd_lines=" << pf[3]
+              << " tq_full=" << pf[4] << " eq_max=" << pf[5] << "\n";
     return 0;
 }

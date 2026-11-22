@@ -72,7 +72,8 @@ module gemv_acc
     input  logic [127:0] m_rdata_i,
     // 1 while the weight reads of the running command are external (decided from W_ADDR when the command
     // starts, a register compare: the issue address itself, a multiplier output, stays off the decode path)
-    output logic         m_ext_o
+    output logic         m_ext_o,
+    output logic         busy_o
 );
   localparam int R    = (FPU_LAT < 1) ? 1 : FPU_LAT;   // rows interleaved per physical lane
   localparam int LL   = LANES * R;                       // logical lanes (rows per group)
@@ -89,6 +90,7 @@ module gemv_acc
   localparam int YW   = $clog2(YB);
 
   logic ext_q;
+  assign busy_o = state_q != IDLE;
   assign m_ext_o = ext_q && (state_q == ROWS || state_q == LOADS);   // weights, and the W8 row scales that sit next to them
   typedef enum logic [2:0] {IDLE, LOADX, LOADS, ROWS, WBP, WB} state_e;
   typedef enum logic [1:0] {MA, MB, MC, MD} mode_e;

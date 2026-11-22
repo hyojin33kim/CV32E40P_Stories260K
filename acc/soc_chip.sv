@@ -71,7 +71,14 @@ module soc_chip #(
     output logic [31:0] dbg_instr_addr_o,
     output logic        dbg_data_req_o,
     output logic        dbg_data_we_o,
-    output logic [31:0] dbg_data_addr_o
+    output logic [31:0] dbg_data_addr_o,
+    // performance counters (see soc_top) and the accelerator-port FIFO statistics
+    output logic [31:0] perf_gemv_busy_o,
+    output logic [31:0] perf_vfu_busy_o,
+    output logic [31:0] perf_acc_stall_o,
+    output logic [31:0] perf_acc_rd_o,
+    output logic [31:0] perf_tq_full_o,      // cycles the accelerator request tag FIFO is full
+    output logic [31:0] perf_eq_max_o        // high-water mark of the external line FIFO (lines)
 );
   localparam logic [31:0] SRAM_BASE = WEIGHTS_ONCHIP ? 32'h0000_0000 : 32'h0010_0000;
   localparam int          SRAM_LINES = WEIGHTS_ONCHIP ? 131072 : 65536;
@@ -121,7 +128,8 @@ module soc_chip #(
       .data_be_o(d_be), .data_addr_o(d_addr), .data_wdata_o(d_wdata), .data_rdata_i(d_rdata),
       .acc_req_o(a_req), .acc_we_o(a_we), .acc_ext_o(a_ext_w), .acc_addr_o(a_addr), .acc_wdata_o(a_wdata),
       .acc_gnt_i(a_gnt), .acc_rvalid_i(a_rvalid), .acc_rdata_i(a_rdata),
-      .acc_wr_pend_i(SRAM_BREG && b_en_x && b_we_x));
+      .acc_wr_pend_i(SRAM_BREG && b_en_x && b_we_x),
+      .perf_gemv_busy_o, .perf_vfu_busy_o, .perf_acc_stall_o, .perf_acc_rd_o);
 
   assign dbg_instr_req_o = i_req; assign dbg_instr_addr_o = i_addr;
   assign dbg_data_req_o = d_req; assign dbg_data_we_o = d_we; assign dbg_data_addr_o = d_addr;
@@ -236,6 +244,12 @@ module soc_chip #(
     if (SRAM_BREG) s_fly_n = s_fly_n + b_rd_x;   // read in the input register
   end
   assign t_full = tq_n_q >= TQ - 1;
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni) begin perf_tq_full_o <= '0; perf_eq_max_o <= '0; end
+    else begin
+      if (a_req && t_full) perf_tq_full_o <= perf_tq_full_o + 32'd1;
+      if (32'(eq_n_q) > perf_eq_max_o) perf_eq_max_o <= 32'(eq_n_q);
+    end
   assign s_room = sq_n_q + s_fly_n < SQ - 1;
   assign acc_req_o   = a_req && a_ext && !a_we && !t_full;
   assign acc_we_o    = 1'b0;
