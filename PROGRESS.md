@@ -1,5 +1,9 @@
 # CV32E40P Stories260K — 진행 기록 (index)
 
+[Linux 개발 흐름과 디렉터리 이관 순서](docs/FLOW.md#디렉터리-이관과-개발-이력)
+
+**W8 변경 이력 예시** · [I1 구현 커밋](https://github.com/hyojin33kim/CV32E40P_Stories260K/commit/142e867826a69f4316c89acbaf6f86ad95ff3176)에서 가중치를 행별 scale을 쓰는 INT8로 저장하고 FP32 누산을 유지했다. [수치 기준과 검증 결과](w8/W8_I1.md), [타깃 펌웨어](gen/firmware_gen.c), [GEMV RTL](acc/gemv_acc.sv), [랜덤 시험](w8/test_w8_gemv.c)을 이 항목에서 추적한다. 기본 seed의 366건에서 출력 불일치 0건을 기록했다. [125 MHz PS 연결 빌드](docs/BOARD_BRINGUP.md)는 RTL `d3b41bf`로 생성했으며 실보드 dump 대조가 남아 있다.
+
 목표: llama2.c Stories260K를 CV32E40P(RV32IMFC+FPU) RISC 단독으로 실행 → 대표 연산을 HW로 교체 →
 **RISC-SW와 bit-exact**를 유지하며 가속 → ZCU104 통합.
 
