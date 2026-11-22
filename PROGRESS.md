@@ -106,7 +106,7 @@ DDR 모델: Weight는 DDR(latency 40, burst 16, 12.8 B/cycle, outstanding 8), KV
 | # | 우선 | 항목 | 상태 | 남은 것 / 막힌 점 |
 |---|---|---|---|---|
 | 1 | P1 | 보드 통합·타이밍 마진 | 부분 | 125 MHz bitgen 완료. 보드 실행(`docs/BOARD_BRINGUP.md`), AREG 합성, 150 MHz PS 시험, xsim↔Verilator 불일치 원인 |
-| 2 | P1 | 정수 lane 정밀도 | 부분(I1 완료) | I1(int8 가중치+행 scale, fp32 MAC) 구현·비트 일치 검증 완료(`w8/W8_I1.md`, nll_delta +0.0023). I2(int8×int8 정수 MAC·활성화 양자화)는 **별도 세션에서 fixed-point C부터 새로 시작하기로 함(사용자 결정 11-22)**. int8 통과 기준 결정(사용자) 대기. 125 MHz: DDR top 닫힘, 온칩 top(보드용)은 합성 진행 중(`E:/fpga_work/chip_on125`) |
+| 2 | P1 | 정수 lane 정밀도 | 부분(I1 완료) | I1(int8 가중치+행 scale, fp32 MAC) 구현·비트 일치 검증 완료(`w8/W8_I1.md`, nll_delta +0.0023, 무작위 단위 시험 366케이스 불일치 0). I2(int8×int8 정수 MAC·활성화 양자화)는 **별도 세션에서 fixed-point C부터 새로 시작하기로 함(사용자 결정 11-22)**. int8 통과 기준 결정(사용자) 대기. 125 MHz: DDR top 닫힘, 온칩 top(보드용)은 합성 진행 중(`E:/fpga_work/chip_on125`) |
 | 3 | P1 | row/bank 메모리 모델 | 부분 | Python 모델 완료(미검증). `sim.cpp` DDR 모델 반영, 8~16 KB fetch 재설계, 컨트롤러 대조 |
 | 4 | P1 | CPU 잔여 작업 | 측정 완료 | VFU 이전은 비권고(상한 3~8 %). RoPE는 별도 설계 필요 |
 | 5 | P2 | 포트 폭 확대 | 미착수 | 15M 이후 구조와 함께 결정 |
