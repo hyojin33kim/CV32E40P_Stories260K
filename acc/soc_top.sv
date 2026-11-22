@@ -53,7 +53,12 @@ module soc_top #(
     // 1 while an accelerator write is still on its way into the memory (soc_chip SRAM_BREG input
     // register). OR-ed into bit 0 (busy) of both accelerators' STATUS reads, so the CPU sees a
     // command as finished only after its last write has reached the SRAM. Tie 0 without one.
-    input  logic        acc_wr_pend_i
+    input  logic        acc_wr_pend_i,
+    // performance counters (cleared by reset: the board tops hold the core in reset until RUN)
+    output logic [31:0] perf_gemv_busy_o,   // cycles gemv_acc is busy
+    output logic [31:0] perf_vfu_busy_o,     // cycles vfu is busy
+    output logic [31:0] perf_acc_stall_o,    // cycles an accelerator request waits for the memory grant
+    output logic [31:0] perf_acc_rd_o        // accelerator read requests granted (lines)
 );
   localparam logic [31:0] ACC_BASE = 32'h3000_0000;
 
@@ -97,7 +102,7 @@ module soc_top #(
     end
   assign s_rdata = (mmio_vfu_q ? v_rdata : g_rdata) | {31'b0, mmio_stat_q && wr_pend_q};
 
-  logic g_ext;
+  logic g_ext, g_busy;
   assign acc_ext_o   = !vfu_busy && g_ext;
   assign acc_req_o   = vfu_busy ? v_req : g_req;
   assign acc_we_o    = vfu_busy ? v_we : g_we;
@@ -110,8 +115,17 @@ module soc_top #(
       .s_wdata_i(c_wdata), .s_rdata_o(g_rdata),
       .m_req_o(g_req), .m_we_o(g_we), .m_addr_o(g_addr), .m_wdata_o(g_wdata),
       .m_gnt_i(acc_gnt_i && !vfu_busy), .m_rvalid_i(acc_rvalid_i && !vfu_busy), .m_rdata_i(acc_rdata_i),
-      .m_ext_o(g_ext)
+      .m_ext_o(g_ext), .busy_o(g_busy)
   );
+
+  always_ff @(posedge clk_i or negedge rst_ni)
+    if (!rst_ni) {perf_gemv_busy_o, perf_vfu_busy_o, perf_acc_stall_o, perf_acc_rd_o} <= '0;
+    else begin
+      if (g_busy) perf_gemv_busy_o <= perf_gemv_busy_o + 32'd1;
+      if (vfu_busy) perf_vfu_busy_o <= perf_vfu_busy_o + 32'd1;
+      if (acc_req_o && !acc_gnt_i) perf_acc_stall_o <= perf_acc_stall_o + 32'd1;
+      if (acc_req_o && acc_gnt_i && !acc_we_o) perf_acc_rd_o <= perf_acc_rd_o + 32'd1;
+    end
 
   vfu #(.LANES(VFU_LANES), .FPU_LAT(VFU_FPU_LAT)) vfu_i (
       .clk_i, .rst_ni,
