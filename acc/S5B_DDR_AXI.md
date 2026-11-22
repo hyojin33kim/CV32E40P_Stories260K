@@ -48,9 +48,23 @@ Sensitivity at CRED 48: latency 20 -> 1,422,916; latency 80 -> 1,844,084 (+26.5 
 bandwidth 8 -> 1,837,220. For latency x bandwidth above about 768 B the window limits throughput; the limit is
 soc_chip's 64-line external FIFO (`EQ`), which must grow if the real DDR latency is longer.
 
+## Row/bank DRAM model in the AXI memory model (11-22, measured)
+`sim_axi_ddr.cpp` has an optional DDR4 channel model (`SIM_ROWBANK=1`; rules of `ddr/ddr_model.py`: open page, 4 bank
+groups x 4 banks, tRCD/tRP/tRAS/tRC/tRTP, tCCD_S/L, tRRD_S/L, tFAW, refresh; `SIM_DRAM_PAGE`, `SIM_DRAM_MAP` = bgint|rowseq,
+`SIM_CORE_MHZ` 125, `SIM_DDR_LAT` = fixed latency added on top). Default off: the results above are unchanged.
+8-token images, DDR board top (cycles; accelerator stall cycles in the counter):
+| | fixed latency 40 | row/bank, bgint, 8 KB | 4 KB | 2 KB | rowseq 8 KB |
+|---|---:|---:|---:|---:|---:|
+| int8 | 1,343,898 | 1,351,707 (+0.6 %, hit 91.0 %) | 1,351,707 (90.6 %) | 1,351,813 (89.6 %) | 1,352,002 (96.8 %) |
+| fp32 | 1,458,156 | 1,486,282 (+1.9 %, hit 96.6 %) | 1,486,329 (96.0 %) | 1,486,329 (94.7 %) | 1,486,761 (98.4 %) |
+Fixed latency 20 / 60 on top of the row/bank model: int8 1,315,098 / 1,394,715; fp32 1,438,909 / 1,658,202.
+Reading: for one tile streaming its weights the row/bank effects are small (<= 2 %); page size and mapping change the hit rate
+but not the cycles, because the run is latency bound and the tile uses about a tenth of the channel. The model has one
+master: row conflicts between two tiles sharing a channel (`ddr/ddr_model.py`: 24 % efficiency at 128 B alternation, 91 % at 8 KB)
+cannot be seen with it. DRAM timing values are from memory and not checked against a controller.
+
 ## Limits and what is not done
-- DDR model has no row/bank effects (see `ddr/ddr_model.py`; 8-line bursts of 128 B are the weak point), no AXI
-  slave stalls, no refresh. The real HP port / controller behaviour is unknown.
+- The default DDR model has no row/bank effects (optional `SIM_ROWBANK` model above, single master), no AXI slave stalls. The real HP port / controller behaviour is unknown.
 - Weights must be at DDR_BASE + address (0..1 MiB for 260K). The 15M layout (weights about 60 MB) needs a new
   address map: the S5a layout puts the SRAM at 0x100000, which cannot coexist with a larger weight region.
 - No prefetch/double buffer beyond the accelerator's own FIFOs; no pre-tiled weight layout; no write path.
