@@ -32,6 +32,9 @@
 | P1-2 정밀도 관문 | 11-20 | host 실측(4 prompt × 512 step): int8 W/A(+KV) ≤ +0.003 nats/token(행 단위 scale도 충분), 무보정 int4 +0.10~0.18·argmax 82~85 %, int4 KV 불가. **통과 기준은 미결정(사용자)** | `docs/P1_REPORT.md` §1 | `quant/results/gate_512.json` |
 | P1-3 DDR row/bank 모델 | 11-20 | 1차 모델(미검증): 단일 스트림 95.7 %(bank group 인터리브)/64 %(페이지 선형), 2 master 교대 128 B 24 %·8 KB 91 %·16 KB 94 %. sim.cpp DDR 모델은 변경 없음 | `docs/P1_REPORT.md` §2 | `ddr/ddr_model_results.md` |
 | P1-4 CPU 잔여 | 11-20 | 측정: rmsnorm+RoPE+residual+기타 = ctx1 26.7 % / ctx128 19.3 % / ctx512 10.6 %. rmsnorm·residual VFU 이전 상한 3~8 % → **구현하지 않기를 권고**(단기 문맥 위주면 재검토) | `docs/P1_REPORT.md` §3 | `prof/chip_full_opta_d2.txt` |
+| I1 int8 가중치 | 11-21 | 행 단위 scale int8 가중치를 새 SW 기준으로 정의, host·RISC-V·GEMV(mode D)·보드 top 비트 일치(8·64 토큰). 가중치 1 MiB→268 KiB, 가속기 읽기 -60 %, DDR top +6.9 %(fp32 +15.3 %). `reproduce.sh quick` 42/42 | `w8/W8_I1.md` | `quant/results`, `w8/` |
+| S5b DDR AXI | 11-21 | `axi_ext_rd`+`chip_axi_ddr_top`: 260K 가중치를 DDR(AXI4 모델)에서 읽어 온칩과 바이트 동일, +13~32 % cycle(fp32). 150 MHz 미충족(WNS −0.569 ns, 재시도 중) | `acc/S5B_DDR_AXI.md` | `.scratch`(저장소 밖) |
+| 11-22 결정 | 11-22 | 사용자: 150 MHz 불필요(125 MHz면 됨), 정수 lane(I2)은 별도 세션에서 fixed-point C 기준부터 새로 만든다 | — | — |
 | P1-1 보드 통합 | 11-20~21 | **125 MHz 비트스트림 생성 완료(보드 실행 전)**: Windows Vivado GUI에서 PS+칩 블록 디자인 합성·구현·bitgen 성공, WNS +0.320 ns / WHS +0.010 ns / 실패 0, LUT 55,775·URAM 64·DSP 85(OOC와 동일 규모). 스크립트(batch `-mode batch`) 경로는 프로젝트 합성 충돌로 6회 중 5회 실패, 원인 미발견. 150 MHz는 이 구성에서 미시험 | `fpga/bd/`, `docs/P1_REPORT.md` §4 | `E:/fpga_work/board_gui/.../board_wrapper.bit`(저장소 밖) | `fpga/bd/`, `docs/P1_REPORT.md` §4 | — |
 
 ## 현재 성능 (D2 = 150 MHz 실현 구성, 11-15; SW 기준선 = 같은 CPU(FPU lat 4)의 llama2.c `-O2 -funroll-loops`)
@@ -102,11 +105,11 @@ DDR 모델: Weight는 DDR(latency 40, burst 16, 12.8 B/cycle, outstanding 8), KV
 | # | 우선 | 항목 | 상태 | 남은 것 / 막힌 점 |
 |---|---|---|---|---|
 | 1 | P1 | 보드 통합·타이밍 마진 | 부분 | 125 MHz bitgen 완료. 보드 실행(`docs/BOARD_BRINGUP.md`), AREG 합성, 150 MHz PS 시험, xsim↔Verilator 불일치 원인 |
-| 2 | P1 | 정수 lane 정밀도 | 부분 | host 정밀도 측정 완료. **통과 기준 결정(사용자)** 후 정수 lane RTL·새 기준 정의 |
+| 2 | P1 | 정수 lane 정밀도 | 부분(I1 완료) | I1(int8 가중치+행 scale, fp32 MAC) 구현·비트 일치 검증 완료(`w8/W8_I1.md`, nll_delta +0.0023). I2(int8×int8 정수 MAC·활성화 양자화)는 **별도 세션에서 fixed-point C부터 새로 시작하기로 함(사용자 결정 11-22)**. int8 통과 기준 결정(사용자) 대기. 125 MHz: DDR top 닫힘, 온칩 top(보드용)은 합성 진행 중(`E:/fpga_work/chip_on125`) |
 | 3 | P1 | row/bank 메모리 모델 | 부분 | Python 모델 완료(미검증). `sim.cpp` DDR 모델 반영, 8~16 KB fetch 재설계, 컨트롤러 대조 |
 | 4 | P1 | CPU 잔여 작업 | 측정 완료 | VFU 이전은 비권고(상한 3~8 %). RoPE는 별도 설계 필요 |
 | 5 | P2 | 포트 폭 확대 | 미착수 | 15M 이후 구조와 함께 결정 |
-| 6 | P2 | 가중치 외부화(AXI4 master·DMA·pre-tiling) | 미착수 | S5b. 보드 DDR 세대·컨트롤러 정보 필요 |
+| 6 | P2 | 가중치 외부화(AXI4 master·DMA·pre-tiling) | 부분 | 260K 범위 AXI4 read master 완료·검증(바이트 동일, `acc/S5B_DDR_AXI.md`). **125 MHz 닫힘(WNS +0.155 ns), 150 MHz 미충족(최선 −0.001 ns, 사용자가 150 불필요로 결정)**. 15M 주소 맵·EQ FIFO 확대·pre-tiling·실제 DDR 대조 미착수 |
 | 7 | P2 | 제어 방식(descriptor 큐) | 미착수 | 필요성 미측정(명령당 약 40 cycle은 추정) |
 | 8 | P2 | KV cache | 미착수 | 15M KV fp32(DDR) vs fp16(온칩) 사용자 결정 대기 |
 | 9 | P2 | 관측성(성능 카운터) | 미착수 | 결정 불필요, 바로 시작 가능 |

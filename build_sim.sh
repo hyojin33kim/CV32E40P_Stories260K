@@ -25,7 +25,7 @@ cd "$(dirname "$0")"
 # and open the .vcd in GTKWave. Default directory gets a _trace suffix. (soc_top / soc_chip / CPU only)
 TRC=()
 if [ "${TRACE:-0}" = 1 ]; then TRC=(--trace -CFLAGS -DVTRACE); fi
-export DESIGN_RTL_DIR="$PWD/cv32e40p-master/rtl"
+export DESIGN_RTL_DIR="${DESIGN_RTL_DIR:-$PWD/cv32e40p-master/rtl}"   # DESIGN_RTL_DIR: alternative core RTL copy (e.g. without debug triggers)
 VERILATOR=${VERILATOR:-verilator}
 TOP=${TOP:-cv32e40p_top}
 CFG=${CFG:-d2}

@@ -1,5 +1,14 @@
 # S5b: weights in DDR through an AXI4 read master (11-21)
 
+Update 11-22: the same top also runs the int8 weights image (see `w8/W8_I1.md`), bit-identical, +7 % cycles in the
+DDR model (fp32: +15 %). Timing (OOC, final RTL = int8 mode + request FIFO + registered external flag): **125 MHz
+closed, WNS +0.155 ns**, 0 failing, LUT 59,272, URAM 32, DSP 93. **150 MHz not closed**: best WNS -0.001 ns, other
+runs -0.263 / -0.832 ns (critical path moves between the CPU branch to imem address path and FPU internals; the
+design has no margin at 150 MHz). Two RTL changes came from synthesis: the external-read decision is a per-command
+registered flag (`EXT_BELOW`/`m_ext_o` in gemv_acc) and `axi_ext_rd` has a 4-entry request FIFO, so the request
+address no longer reaches the grant. `NO_TRIGGERS=1` (fpga/prepare.py, FPGA work copy only) removes the unused debug
+triggers; simulation with that core is identical (cycles and the 2 MiB dump) for an fp32 and an int8 image.
+
 Conclusion: the weight region can be served from DDR by a read-only AXI4 master with **bit-identical results**
 to the on-chip-weights top (ctx 1/128/512 single steps and an 8-token generation; only timing words differ).
 Cost in simulation (DDR model: 40 cycles latency, 12.8 B/cycle): about +14 to +31 % of a step at ctx 512 to ctx 1,

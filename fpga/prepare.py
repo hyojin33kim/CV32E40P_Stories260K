@@ -34,6 +34,10 @@ if os.environ.get('PIPE_DIST', '1') == '1':
     fw = D / 'rtl' / 'cv32e40p_fp_wrapper.sv'
     t = fw.read_text(); assert 'PipeConfig: fpnew_pkg::AFTER' in t
     fw.write_text(t.replace('PipeConfig: fpnew_pkg::AFTER', 'PipeConfig: fpnew_pkg::DISTRIBUTED'))
+if os.environ.get('NO_TRIGGERS', '0') == '1':   # debug triggers are unused here; their match logic sat on the 150 MHz critical path (imem address)
+    co = D / 'rtl' / 'cv32e40p_core.sv'
+    t = co.read_text(); assert 'localparam DEBUG_TRIGGER_EN = 1;' in t
+    co.write_text(t.replace('localparam DEBUG_TRIGGER_EN = 1;', 'localparam DEBUG_TRIGGER_EN = 0;'))
 (D / 'acc').mkdir(exist_ok=True); (D / 'fpga').mkdir(exist_ok=True)
 ACC_FILES = ['gemv_acc.sv', 'vfu_exp2.sv', 'vfu_lane.sv', 'vfu.sv', 'soc_top.sv', 'sram_dp.sv', 'soc_chip.sv', 'chip_axi_top.sv']
 if os.environ.get('WITH_DDR', '0') == '1':   # S5b: weights in DDR top (kept out of the board build by default)
