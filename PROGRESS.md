@@ -110,7 +110,7 @@ DDR 모델: Weight는 DDR(latency 40, burst 16, 12.8 B/cycle, outstanding 8), KV
 | 3 | P1 | row/bank 메모리 모델 | 부분 | Python 모델 + `sim_axi_ddr.cpp` row/bank 모델(`SIM_ROWBANK=1`) 완료. tile 1개 스트리밍은 영향 ≤ 2 %(int8 +0.6 %, fp32 +1.9 %), 지연이 지배. **두 master 경쟁 시나리오와 컨트롤러 대조는 미착수** |
 | 4 | P1 | CPU 잔여 작업 | 측정 완료 | VFU 이전은 비권고(상한 3~8 %). RoPE는 별도 설계 필요 |
 | 5 | P2 | 포트 폭 확대 | 미착수 | 15M 이후 구조와 함께 결정 |
-| 6 | P2 | 가중치 외부화(AXI4 master·DMA·pre-tiling) | 부분 | 260K 범위 AXI4 read master 완료·검증(바이트 동일, `acc/S5B_DDR_AXI.md`). **125 MHz 닫힘(WNS +0.155 ns), 150 MHz 미충족(최선 −0.001 ns, 사용자가 150 불필요로 결정)**. 15M 주소 맵·EQ FIFO 확대·pre-tiling·실제 DDR 대조 미착수 |
+| 6 | P2 | 가중치 외부화(AXI4 master·DMA·pre-tiling) | 부분(설계·pre-tiling 완료) | 260K 범위 AXI4 read master 완료·검증(바이트 동일, `acc/S5B_DDR_AXI.md`). **125 MHz 닫힘(WNS +0.155 ns), 150 MHz 미충족(최선 −0.001 ns, 사용자가 150 불필요로 결정)**. 15M 설계 문서 `docs/15M_ADDRESS_MAP.md`(크기·주소 맵 2안·FIFO 근거·결정 사항), pre-tiling 구현·검증 완료(355+14 케이스 불일치 0), 버퍼 1024 파라미터화·15M 형상 시험 통과, EQ 확대 불필요(`eq_max`=0). **미착수:** 주소 맵 RTL 파라미터화와 펌웨어 포팅(15-3), 모델 파일, DDR top에서 pre-tiling 효과 측정, 실제 DDR 대조 |
 | 7 | P2 | 제어 방식(descriptor 큐) | 미착수 | 필요성 미측정(명령당 약 40 cycle은 추정) |
 | 8 | P2 | KV cache | 미착수 | 15M KV fp32(DDR) vs fp16(온칩) 사용자 결정 대기 |
 | 9 | P2 | 관측성(성능 카운터) | 미착수 | 결정 불필요, 바로 시작 가능 |

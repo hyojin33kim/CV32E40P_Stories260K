@@ -18,6 +18,7 @@
 #   ACC_RUN=<n>        : gemv_acc mode-A lines per lane run (CFG default; 1 = pre-11-14 order)
 #   ACC_FDEPTH=<n>     : gemv_acc words per lane FIFO, power of two (default 256; was 128)
 #   CPU_FPU_LAT / ACC_FPU_LAT / VFU_FPU_LAT=<n> : FPU pipeline registers (CFG default)
+#   ACC_XBUF / ACC_YBUF / VFU_BUF=<n> : gemv x and y buffer words, vfu buffer words for TOP=soc_top (default 512; 15M-class: 1024)
 set -eu
 cd "$(dirname "$0")"
 # TRACE=1: waveform build (Verilator --trace, sim.cpp VTRACE). Run with
@@ -52,7 +53,7 @@ elif [ "$TOP" = soc_chip ]; then
   EXTRA=(-CFLAGS -DSOC -CFLAGS -DCHIP -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT -GSRAM_RLAT=${SRAM_RLAT:-1} -GSRAM_RLAT_B=${SRAM_RLAT_B:-2} -GSRAM_AREG=${SRAM_AREG:-0} "${WOPT[@]}" "${ACCSRC[@]}" "$PWD/acc/sram_dp.sv" "$PWD/acc/soc_chip.sv")
   MDIR=${MDIR:-obj_chip$SUF}; LOG=${LOG:-verilator_build_chip.log}
 elif [ "$TOP" = soc_top ]; then
-  EXTRA=(-CFLAGS -DSOC -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT "$PWD/acc/gemv_acc.sv" "$PWD/acc/vfu_exp2.sv" "$PWD/acc/vfu_lane.sv" "$PWD/acc/vfu.sv" "$PWD/acc/soc_top.sv")
+  EXTRA=(-CFLAGS -DSOC -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GACC_XBUF=${ACC_XBUF:-512} -GACC_YBUF=${ACC_YBUF:-512} -GVFU_BUF=${VFU_BUF:-512} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT "$PWD/acc/gemv_acc.sv" "$PWD/acc/vfu_exp2.sv" "$PWD/acc/vfu_lane.sv" "$PWD/acc/vfu.sv" "$PWD/acc/soc_top.sv")
   MDIR=${MDIR:-obj_soc$SUF}; LOG=${LOG:-verilator_build_soc.log}
 else
   EXTRA=(-GFPU=1 -GFPU_ADDMUL_LAT=$CPU_FPU_LAT -GFPU_OTHERS_LAT=$CPU_FPU_LAT)
