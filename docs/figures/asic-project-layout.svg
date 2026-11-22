@@ -1,0 +1,452 @@
+<svg class="dark " xmlns="http://www.w3.org/2000/svg" viewBox="0 0 785.6 534" width="785.6" height="534" id="mffd273__root" data-diagram-type="ascii">
+  <style data-mercat-style="universal">.mercat text{font-family:'Google Sans',Roboto,Arial,sans-serif;fill:var(--m-text);dominant-baseline:central}.mercat .m-edge .m-path{fill:none;stroke:var(--m-line);stroke-width:1.5px}.mercat .m-note .m-label{fill:var(--m-note-text)}.mercat .t-label{font-size:13px;font-weight:500}</style>
+  <style data-mercat-style="theme-light">#mffd273__root{--m-text:#1f1f1f;--m-line:#545454;--m-note-text:#1f1f1f}</style>
+  <style data-mercat-style="theme-dark">#mffd273__root.dark{--m-text:#e3e3e3;--m-line:#bfbfbf;--m-note-text:#e3e3e3}</style>
+  <style data-mercat-style="type">#mffd273__root .arrow-line,#mffd273__root .bus-line{fill:none;stroke:var(--m-line);stroke-width:1.5px;stroke-linecap:round;stroke-linejoin:round}#mffd273__root .annotation-text{fill:var(--m-text);font-size:13px;font-weight:500;white-space:pre}</style>
+  <style data-mercat-style="diagram">#mffd273__root text{font-family:Google Sans Mono, Roboto Mono, monospace}</style>
+  <g class="mercat mercat-ascii">
+    <defs>
+      <marker id="mffd273__mk-arrow" refX="9.45" refY="3.4" markerWidth="10.8" markerHeight="6.8" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+        <path d="M 0 0 L 10.8 3.4 L 0 6.8 Z" class="m-marker" fill="var(--m-line)" stroke="none"/>
+      </marker>
+    </defs>
+    <g class="m-edge" id="mffd273__edge__pt__a1__0" data-role="connector">
+      <line x1="19.25" y1="47" x2="36.25" y2="47" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a6__0" data-role="connector">
+      <line x1="19.25" y1="69" x2="36.25" y2="69" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a10__0" data-role="connector">
+      <line x1="53.25" y1="91" x2="70.25" y2="91" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a15__0" data-role="connector">
+      <line x1="53.25" y1="113" x2="70.25" y2="113" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a22__0" data-role="connector">
+      <line x1="53.25" y1="135" x2="70.25" y2="135" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a30__0" data-role="connector">
+      <line x1="19.25" y1="157" x2="36.25" y2="157" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a38__0" data-role="connector">
+      <line x1="19.25" y1="179" x2="36.25" y2="179" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a42__0" data-role="connector">
+      <line x1="53.25" y1="201" x2="70.25" y2="201" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a45__0" data-role="connector">
+      <line x1="53.25" y1="223" x2="70.25" y2="223" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a53__0" data-role="connector">
+      <line x1="53.25" y1="245" x2="70.25" y2="245" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a58__0" data-role="connector">
+      <line x1="19.25" y1="267" x2="36.25" y2="267" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a61__0" data-role="connector">
+      <line x1="53.25" y1="289" x2="70.25" y2="289" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a64__0" data-role="connector">
+      <line x1="53.25" y1="311" x2="70.25" y2="311" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a69__0" data-role="connector">
+      <line x1="53.25" y1="333" x2="70.25" y2="333" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a71__0" data-role="connector">
+      <line x1="53.25" y1="355" x2="70.25" y2="355" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a75__0" data-role="connector">
+      <line x1="19.25" y1="377" x2="36.25" y2="377" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a83__0" data-role="connector">
+      <line x1="19.25" y1="399" x2="36.25" y2="399" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a88__0" data-role="connector">
+      <line x1="19.25" y1="421" x2="36.25" y2="421" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a93__0" data-role="connector">
+      <line x1="19.25" y1="443" x2="36.25" y2="443" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a97__0" data-role="connector">
+      <line x1="19.25" y1="465" x2="36.25" y2="465" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a108__0" data-role="connector">
+      <line x1="19.25" y1="487" x2="36.25" y2="487" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__a115__0" data-role="connector">
+      <line x1="19.25" y1="509" x2="36.25" y2="509" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__pt__0" data-role="connector">
+      <line x1="19.25" y1="47" x2="19.25" y2="509" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__pt__1" data-role="connector">
+      <line x1="53.25" y1="91" x2="53.25" y2="135" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__pt__2" data-role="connector">
+      <line x1="53.25" y1="201" x2="53.25" y2="245" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__pt__pt__3" data-role="connector">
+      <line x1="53.25" y1="289" x2="53.25" y2="355" class="m-path bus-line"/>
+    </g>
+    <g class="m-edge" id="mffd273__edge__a74__a79__0" data-role="connector">
+      <line x1="486.75" y1="355" x2="486.75" y2="359.15" class="m-path arrow-line" marker-end="url(#mffd273__mk-arrow)"/>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a0" data-role="annotation">
+      <text x="15" y="25" class="m-label t-label annotation-text" text-anchor="start">project_root/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a1" data-role="annotation">
+      <text x="49" y="47" class="m-label t-label annotation-text" text-anchor="start">doc/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a2" data-role="annotation">
+      <text x="185" y="47" class="m-label t-label annotation-text" text-anchor="start"># 설계</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a3" data-role="annotation">
+      <text x="244.5" y="47" class="m-label t-label annotation-text" text-anchor="start">스펙 (Spec), 아키텍처</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a4" data-role="annotation">
+      <text x="423" y="47" class="m-label t-label annotation-text" text-anchor="start">문서 , 레지스터</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a5" data-role="annotation">
+      <text x="550.5" y="47" class="m-label t-label annotation-text" text-anchor="start">맵 (RDL, Excel 등 )</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a6" data-role="annotation">
+      <text x="49" y="69" class="m-label t-label annotation-text" text-anchor="start">rtl/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a7" data-role="annotation">
+      <text x="185" y="69" class="m-label t-label annotation-text" text-anchor="start"># 합성</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a8" data-role="annotation">
+      <text x="244.5" y="69" class="m-label t-label annotation-text" text-anchor="start">가능한 (Synthesizable) Verilog/SystemVerilog/VHDL 소스</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a9" data-role="annotation">
+      <text x="703.5" y="69" class="m-label t-label annotation-text" text-anchor="start">코드</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a10" data-role="annotation">
+      <text x="83" y="91" class="m-label t-label annotation-text" text-anchor="start">top/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a11" data-role="annotation">
+      <text x="185" y="91" class="m-label t-label annotation-text" text-anchor="start"># 최상위</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a12" data-role="annotation">
+      <text x="261.5" y="91" class="m-label t-label annotation-text" text-anchor="start">모듈 (Chip Top) 및</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a13" data-role="annotation">
+      <text x="414.5" y="91" class="m-label t-label annotation-text" text-anchor="start">패드</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a14" data-role="annotation">
+      <text x="457" y="91" class="m-label t-label annotation-text" text-anchor="start">링 (Pad ring) 연결</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a15" data-role="annotation">
+      <text x="83" y="113" class="m-label t-label annotation-text" text-anchor="start">subsys/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a16" data-role="annotation">
+      <text x="185" y="113" class="m-label t-label annotation-text" text-anchor="start"># CPU, Bus, Memory Controller 등</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a17" data-role="annotation">
+      <text x="465.5" y="113" class="m-label t-label annotation-text" text-anchor="start">서</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a18" data-role="annotation">
+      <text x="482.5" y="113" class="m-label t-label annotation-text" text-anchor="start">브</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a19" data-role="annotation">
+      <text x="499.5" y="113" class="m-label t-label annotation-text" text-anchor="start">시</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a20" data-role="annotation">
+      <text x="516.5" y="113" class="m-label t-label annotation-text" text-anchor="start">스</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a21" data-role="annotation">
+      <text x="533.5" y="113" class="m-label t-label annotation-text" text-anchor="start">템</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a22" data-role="annotation">
+      <text x="83" y="135" class="m-label t-label annotation-text" text-anchor="start">common/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a23" data-role="annotation">
+      <text x="185" y="135" class="m-label t-label annotation-text" text-anchor="start"># 공용</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a24" data-role="annotation">
+      <text x="244.5" y="135" class="m-label t-label annotation-text" text-anchor="start">라</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a25" data-role="annotation">
+      <text x="261.5" y="135" class="m-label t-label annotation-text" text-anchor="start">이</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a26" data-role="annotation">
+      <text x="278.5" y="135" class="m-label t-label annotation-text" text-anchor="start">브</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a27" data-role="annotation">
+      <text x="295.5" y="135" class="m-label t-label annotation-text" text-anchor="start">러</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a28" data-role="annotation">
+      <text x="312.5" y="135" class="m-label t-label annotation-text" text-anchor="start">리</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a29" data-role="annotation">
+      <text x="338" y="135" class="m-label t-label annotation-text" text-anchor="start">(FIFO, Synchronizer, Arbiter 등 )</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a30" data-role="annotation">
+      <text x="49" y="157" class="m-label t-label annotation-text" text-anchor="start">ip/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a31" data-role="annotation">
+      <text x="185" y="157" class="m-label t-label annotation-text" text-anchor="start"># 외부</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a32" data-role="annotation">
+      <text x="244.5" y="157" class="m-label t-label annotation-text" text-anchor="start">상용</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a33" data-role="annotation">
+      <text x="287" y="157" class="m-label t-label annotation-text" text-anchor="start">IP(Synopsys, Cadence 등 ) 또는</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a34" data-role="annotation">
+      <text x="542" y="157" class="m-label t-label annotation-text" text-anchor="start">사내</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a35" data-role="annotation">
+      <text x="584.5" y="157" class="m-label t-label annotation-text" text-anchor="start">검증된</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a36" data-role="annotation">
+      <text x="644" y="157" class="m-label t-label annotation-text" text-anchor="start">하드 /소프트</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a37" data-role="annotation">
+      <text x="746" y="157" class="m-label t-label annotation-text" text-anchor="start">IP</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a38" data-role="annotation">
+      <text x="49" y="179" class="m-label t-label annotation-text" text-anchor="start">dv/ (또는</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a39" data-role="annotation">
+      <text x="134" y="179" class="m-label t-label annotation-text" text-anchor="start">verif/)# 설계</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a40" data-role="annotation">
+      <text x="253" y="179" class="m-label t-label annotation-text" text-anchor="start">검증 (Design Verification) 환경</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a41" data-role="annotation">
+      <text x="516.5" y="179" class="m-label t-label annotation-text" text-anchor="start">(UVM, Testbench, Stimulus)</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a42" data-role="annotation">
+      <text x="83" y="201" class="m-label t-label annotation-text" text-anchor="start">tb/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a43" data-role="annotation">
+      <text x="185" y="201" class="m-label t-label annotation-text" text-anchor="start"># 테스트벤치</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a44" data-role="annotation">
+      <text x="295.5" y="201" class="m-label t-label annotation-text" text-anchor="start">탑 , 인터페이스 , 에이전트 (Driver, Monitor)</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a45" data-role="annotation">
+      <text x="83" y="223" class="m-label t-label annotation-text" text-anchor="start">tests/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a46" data-role="annotation">
+      <text x="185" y="223" class="m-label t-label annotation-text" text-anchor="start"># 테스트</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a47" data-role="annotation">
+      <text x="261.5" y="223" class="m-label t-label annotation-text" text-anchor="start">시</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a48" data-role="annotation">
+      <text x="278.5" y="223" class="m-label t-label annotation-text" text-anchor="start">나</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a49" data-role="annotation">
+      <text x="295.5" y="223" class="m-label t-label annotation-text" text-anchor="start">리</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a50" data-role="annotation">
+      <text x="312.5" y="223" class="m-label t-label annotation-text" text-anchor="start">오</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a51" data-role="annotation">
+      <text x="338" y="223" class="m-label t-label annotation-text" text-anchor="start">및</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a52" data-role="annotation">
+      <text x="363.5" y="223" class="m-label t-label annotation-text" text-anchor="start">시퀀스 (Sequence)</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a53" data-role="annotation">
+      <text x="83" y="245" class="m-label t-label annotation-text" text-anchor="start">sim/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a54" data-role="annotation">
+      <text x="185" y="245" class="m-label t-label annotation-text" text-anchor="start"># 시뮬레이션</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a55" data-role="annotation">
+      <text x="295.5" y="245" class="m-label t-label annotation-text" text-anchor="start">실행 (VCS, Xcelium 등 ) 및</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a56" data-role="annotation">
+      <text x="508" y="245" class="m-label t-label annotation-text" text-anchor="start">파형 (FSDB, VCD), 로그</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a57" data-role="annotation">
+      <text x="695" y="245" class="m-label t-label annotation-text" text-anchor="start">저장소</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a58" data-role="annotation">
+      <text x="49" y="267" class="m-label t-label annotation-text" text-anchor="start">syn/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a59" data-role="annotation">
+      <text x="185" y="267" class="m-label t-label annotation-text" text-anchor="start"># 논리</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a60" data-role="annotation">
+      <text x="244.5" y="267" class="m-label t-label annotation-text" text-anchor="start">합성 (Logic Synthesis - Design Compiler, Genus 등 )</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a61" data-role="annotation">
+      <text x="83" y="289" class="m-label t-label annotation-text" text-anchor="start">scripts/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a62" data-role="annotation">
+      <text x="185" y="289" class="m-label t-label annotation-text" text-anchor="start"># 합성용</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a63" data-role="annotation">
+      <text x="261.5" y="289" class="m-label t-label annotation-text" text-anchor="start">TCL 스크립트</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a64" data-role="annotation">
+      <text x="83" y="311" class="m-label t-label annotation-text" text-anchor="start">constraints/# 타이밍</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a65" data-role="annotation">
+      <text x="261.5" y="311" class="m-label t-label annotation-text" text-anchor="start">제약</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a66" data-role="annotation">
+      <text x="304" y="311" class="m-label t-label annotation-text" text-anchor="start">조건</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a67" data-role="annotation">
+      <text x="346.5" y="311" class="m-label t-label annotation-text" text-anchor="start">파일</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a68" data-role="annotation">
+      <text x="389" y="311" class="m-label t-label annotation-text" text-anchor="start">(.sdc)</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a69" data-role="annotation">
+      <text x="83" y="333" class="m-label t-label annotation-text" text-anchor="start">reports/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a70" data-role="annotation">
+      <text x="185" y="333" class="m-label t-label annotation-text" text-anchor="start"># 면적 (Area), 타이밍 (Timing), 전력 (Power) 리포트</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a71" data-role="annotation">
+      <text x="83" y="355" class="m-label t-label annotation-text" text-anchor="start">netlist/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a72" data-role="annotation">
+      <text x="185" y="355" class="m-label t-label annotation-text" text-anchor="start"># 합성</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a73" data-role="annotation">
+      <text x="244.5" y="355" class="m-label t-label annotation-text" text-anchor="start">완료된</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a74" data-role="annotation">
+      <text x="304" y="355" class="m-label t-label annotation-text" text-anchor="start">Gate-level Netlist (.</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a75" data-role="annotation">
+      <text x="49" y="377" class="m-label t-label annotation-text" text-anchor="start">dft/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a76" data-role="annotation">
+      <text x="185" y="377" class="m-label t-label annotation-text" text-anchor="start"># 테스트</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a77" data-role="annotation">
+      <text x="261.5" y="377" class="m-label t-label annotation-text" text-anchor="start">용이화</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a78" data-role="annotation">
+      <text x="321" y="377" class="m-label t-label annotation-text" text-anchor="start">설계</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a79" data-role="annotation">
+      <text x="363.5" y="377" class="m-label t-label annotation-text" text-anchor="start">(Scan chain, MBIST, JTAG 삽입</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a80" data-role="annotation">
+      <text x="618.5" y="377" class="m-label t-label annotation-text" text-anchor="start">및</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a81" data-role="annotation">
+      <text x="644" y="377" class="m-label t-label annotation-text" text-anchor="start">ATPG 패턴</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a82" data-role="annotation">
+      <text x="729" y="377" class="m-label t-label annotation-text" text-anchor="start">생성 )</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a83" data-role="annotation">
+      <text x="49" y="399" class="m-label t-label annotation-text" text-anchor="start">sta/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a84" data-role="annotation">
+      <text x="185" y="399" class="m-label t-label annotation-text" text-anchor="start"># 정적</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a85" data-role="annotation">
+      <text x="244.5" y="399" class="m-label t-label annotation-text" text-anchor="start">타이밍</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a86" data-role="annotation">
+      <text x="304" y="399" class="m-label t-label annotation-text" text-anchor="start">분석</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a87" data-role="annotation">
+      <text x="346.5" y="399" class="m-label t-label annotation-text" text-anchor="start">(Static Timing Analysis - PrimeTime, Tempus 등 )</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a88" data-role="annotation">
+      <text x="49" y="421" class="m-label t-label annotation-text" text-anchor="start">pnr/ (또는</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a89" data-role="annotation">
+      <text x="142.5" y="421" class="m-label t-label annotation-text" text-anchor="start">pd/)</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a90" data-role="annotation">
+      <text x="193.5" y="421" class="m-label t-label annotation-text" text-anchor="start"># 물리</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a91" data-role="annotation">
+      <text x="253" y="421" class="m-label t-label annotation-text" text-anchor="start">설계</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a92" data-role="annotation">
+      <text x="295.5" y="421" class="m-label t-label annotation-text" text-anchor="start">(Physical Design: Floorplan, Place &amp; Route - Innovus, ICC2)</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a93" data-role="annotation">
+      <text x="49" y="443" class="m-label t-label annotation-text" text-anchor="start">pv/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a94" data-role="annotation">
+      <text x="185" y="443" class="m-label t-label annotation-text" text-anchor="start"># 물리</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a95" data-role="annotation">
+      <text x="244.5" y="443" class="m-label t-label annotation-text" text-anchor="start">검증</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a96" data-role="annotation">
+      <text x="287" y="443" class="m-label t-label annotation-text" text-anchor="start">(Physical Verification: DRC, LVS, Antenna - Calibre)</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a97" data-role="annotation">
+      <text x="49" y="465" class="m-label t-label annotation-text" text-anchor="start">fpga/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a98" data-role="annotation">
+      <text x="185" y="465" class="m-label t-label annotation-text" text-anchor="start"># 프로토타이핑용</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a99" data-role="annotation">
+      <text x="329.5" y="465" class="m-label t-label annotation-text" text-anchor="start">FPGA 합성</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a100" data-role="annotation">
+      <text x="414.5" y="465" class="m-label t-label annotation-text" text-anchor="start">및</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a101" data-role="annotation">
+      <text x="440" y="465" class="m-label t-label annotation-text" text-anchor="start">비</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a102" data-role="annotation">
+      <text x="457" y="465" class="m-label t-label annotation-text" text-anchor="start">트</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a103" data-role="annotation">
+      <text x="474" y="465" class="m-label t-label annotation-text" text-anchor="start">스</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a104" data-role="annotation">
+      <text x="491" y="465" class="m-label t-label annotation-text" text-anchor="start">트</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a105" data-role="annotation">
+      <text x="508" y="465" class="m-label t-label annotation-text" text-anchor="start">림</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a106" data-role="annotation">
+      <text x="533.5" y="465" class="m-label t-label annotation-text" text-anchor="start">생성</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a107" data-role="annotation">
+      <text x="576" y="465" class="m-label t-label annotation-text" text-anchor="start">파일</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a108" data-role="annotation">
+      <text x="49" y="487" class="m-label t-label annotation-text" text-anchor="start">sw/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a109" data-role="annotation">
+      <text x="185" y="487" class="m-label t-label annotation-text" text-anchor="start"># 펌웨어 (Firmware), 부트로더 , 베어메탈</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a110" data-role="annotation">
+      <text x="516.5" y="487" class="m-label t-label annotation-text" text-anchor="start">C</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a111" data-role="annotation">
+      <text x="533.5" y="487" class="m-label t-label annotation-text" text-anchor="start">테</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a112" data-role="annotation">
+      <text x="550.5" y="487" class="m-label t-label annotation-text" text-anchor="start">스</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a113" data-role="annotation">
+      <text x="567.5" y="487" class="m-label t-label annotation-text" text-anchor="start">트</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a114" data-role="annotation">
+      <text x="593" y="487" class="m-label t-label annotation-text" text-anchor="start">코드</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a115" data-role="annotation">
+      <text x="49" y="509" class="m-label t-label annotation-text" text-anchor="start">scripts/</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a116" data-role="annotation">
+      <text x="185" y="509" class="m-label t-label annotation-text" text-anchor="start"># 빌드 , 환경</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a117" data-role="annotation">
+      <text x="295.5" y="509" class="m-label t-label annotation-text" text-anchor="start">설정 (env.sh), 자동화</text>
+    </g>
+    <g class="m-node m-note" id="mffd273__note__a118" data-role="annotation">
+      <text x="474" y="509" class="m-label t-label annotation-text" text-anchor="start">파이프라인 (Makefile, Python)</text>
+    </g>
+  </g>
+</svg>
