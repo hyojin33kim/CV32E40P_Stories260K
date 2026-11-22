@@ -32,7 +32,7 @@ Linux 서버의 단일 실행 명령이 **변경 감지 → 영향받는 산출�
 
 ## 모델 변경 시 RISC-V 프로파일과 HW·메모리 개선 후보
 
-모델이나 연산 정밀도가 바뀌면 **CPU 기준 실행 → 동일 워크로드의 병목 분리 → 개선 후보 평가**를 2단계와 가속 검증 사이에 추가한다. 이 절은 자동화 목표다. CPU 기준이 Golden 검증을 통과하면 프로파일을 실행하고, 결과와 개선 후보를 남긴다. 기존 HW로 실행할 수 있는 구성은 다음 검증으로 이어간다. RTL 추가·수정은 후보를 선택한 뒤 별도 커밋으로 검증한다.
+모델이나 연산 정밀도가 바뀌면 **CPU 기준 실행 → 동일 워크로드의 병목 분리 → 개선 후보 평가**를 ② RISC-V 이미지 생성과 ④ 가속 검증 사이에 추가한다. 이 절은 자동화 목표다. CPU 기준이 Golden 검증을 통과하면 프로파일을 실행하고, 결과와 개선 후보를 남긴다. 기존 HW로 실행할 수 있는 구성은 다음 검증으로 이어간다. RTL 추가·수정은 후보를 선택한 뒤 별도 커밋으로 검증한다.
 
 | 단계 | 입력 | 출력과 판정 |
 |---|---|---|
@@ -72,20 +72,36 @@ ASIC의 정량 배치는 공정 LEF/Lib, SRAM macro와 PHY·pad 정보가 확보
 
 현재 저장소의 [Vivado 흐름](../fpga/bd/build_board.tcl)은 구현 timing·utilization·clock 보고서를 생성한다. 후보 자동 생성, 배치 비교·혼잡 수집은 추가 구현 항목이다. 첫 비교는 [ZCU104 125 MHz 기준](BOARD_BRINGUP.md)을 두고 **GEMV lane 변경안과 SRAM bank 재배치안**을 각각 평가하는 것으로 시작한다.
 
+## 권장 소스 디렉터리와 현재 경로
+
+| 권장 디렉터리 | 담당 소스 | 현재 실행 경로 |
+|---|---|---|
+| `model/` | 호스트 Golden, 양자화, 가중치 변환 | `opta/`, `quant/`, `w8/`의 기준 모델·변환기 |
+| `fw/` | Tile 내부 CV32E40P 코드, 링커, 가속기 제어 | `firmware.c`, `gen/firmware_gen.c`, `build.sh` |
+| `rtl/ip/`, `rtl/soc/` | GEMV·VFU 등 개별 블록 / SoC 및 AXI 통합 | `acc/`의 개별 블록, `soc_chip`, `chip_axi_top`, `chip_axi_ddr_top` |
+| `boards/zcu104/` | ZCU104 Vivado Tcl, PS–PL BD, 클록·핀 제약 | `fpga/bd/`, `fpga/`의 해당 빌드 입력 |
+| `host/linux/` | 보드 ARM PS에서 Tile을 적재·제어·조회하는 코드 | `pynq/run_chip.py` |
+| `verify/` | 블록 TB, RTL 시뮬레이션, 회귀, 기대값 대조 | `sim*.cpp`, `fpga/xsim/`, `w8/`의 GEMV 테스트, `reproduce.sh` |
+
+왼쪽은 향후 소스 배치안이다. 실행기는 현재 경로와 아래 단계별 입력·출력부터 사용한다. `gen/run_gen.py`처럼 여러 단계를 연결하는 드라이버는 공통 진입점으로 유지한다. 실행 결과는 서버의 `runs/<run-id>/`에 두고 실행 명세에 각 산출물의 경로와 해시를 기록한다.
+
 ## 단계별 입력·출력과 진행 상태
 
-2026-11-22 저장소 기록 기준. 실측을 추가할 때는 상태와 함께 해당 실행 로그 또는 결과 파일의 위치를 갱신한다.
+①~⑥은 개발 서버에서, ⑦은 ZCU104의 PS Linux에서 실행한다. 표의 상태는 2026-11-22 저장소 기록 기준이다.
 
-| 단계 | 입력 | 실행 명령 또는 진입점 | 출력 → 소비 단계 | 합격 기준 | 최근 결과·상태 |
-|---|---|---|---|---|---|
-| 1. 모델·수치 기준 | `stories260K.bin`, `gen/tok512.bin`, 프롬프트, W8·OPTA 설정 | [run_gen.py](../gen/run_gen.py)의 host C 실행 | 기준 token·logits·KV → 3 | 같은 입력의 logits·KV 상대 L2 각각 < 1e-5, token 판정은 실행 스크립트 기준 | [W8 결과](../w8/W8_I1.md)에 8·64 step 기록 |
-| 2. RISC-V 펌웨어 | `gen/firmware_gen.c`, 모델, 실행 옵션 | 같은 스크립트가 `build.sh`, `image.py`, W8 pack 호출 | `fw.elf`, `image.bin` → 3·4·6 | ELF·이미지 생성 후 해당 이미지로 3 통과 | [빌드·실행 스크립트](../gen/run_gen.py) |
-| 3. CPU 기준·가속 SoC RTL | CPU 및 SoC RTL, SW 전용 및 가속 펌웨어 이미지 | 아래 A의 CPU 기준 → 가속 실행 | `result.json`, `steps.bin`, `cycles.npy`, 가속 실행의 `image.bin` → 4·6 | `pass=true`, 가속 결과의 `logits_kv_tokens_bitexact_vs_Os=true` | [W8 검증 기록](../w8/W8_I1.md). 16-step 결과는 해당 실행에서 기록 |
-| 4. Chip RTL 기대값 | 3의 **가속** `image.bin`, imem·SRAM 포함 `soc_chip` | 아래 A의 `Vsoc_chip` 실행 | `dump_sim.bin`, DONE 값·cycle 로그 → 6 | DONE 도달, 2 MiB dump 생성. 최종 대조는 6 | [Chip 시뮬레이션 절차](SIM_GUIDE.md) |
-| 5. FPGA 구현 | 온칩형 `chip_axi_top`, ZCU104 PS–PL BD, 125 MHz 설정 | 아래 B 또는 기존 동일 구성 배포본 | 같은 빌드의 `board.bit`·`board.hwh`, timing report → 6 | setup/hold 위반 0, 생성물과 빌드 SHA 식별 | [Windows GUI 빌드](BOARD_BRINGUP.md) RTL `d3b41bf`, WNS +0.100 ns, WHS +0.008 ns. Linux 빌드 미확인 |
-| 6. 보드 Linux 실행 | 3의 이미지 + 4의 기대 dump·cycle + 5의 bit/hwh | 아래 C의 PYNQ 실행 | 보드 `dump.bin`, DONE 값, cycles, 비교 로그 | DONE 값·cycles 일치 및 2 MiB 전체 byte 일치 | [실보드 실행 대기](BOARD_BRINGUP.md) |
+| 단계 | 입력 | 현재 실행 진입점 | 출력 → 다음 단계 | 합격 기준·근거 |
+|---|---|---|---|---|
+| ① 수치 기준 | `stories260K.bin`, `gen/tok512.bin`, 프롬프트, W8·OPTA | [run_gen.py](../gen/run_gen.py)의 host C 실행 | 기준 token·logits·KV → ④ | logits·KV 상대 L2 각각 < 1e-5, token은 스크립트 판정 기준. [W8 기록](../w8/W8_I1.md) |
+| ② RISC-V 이미지 | 펌웨어 C, 빌드 옵션, 가중치, 프롬프트 | `run_gen.py` → `build.sh` → `image.py` → W8 pack | `fw.elf`, SW 전용 및 가속 `image.bin` → ④. 가속 이미지는 ⑤·⑦에 전달 | 생성 완료 및 ④에서 수치 검증 |
+| ③ RTL 시뮬레이터 | CV32E40P·가속기 RTL, top, Verilator 드라이버 | `TOP=<top> ./build_sim.sh`. A의 CPU·SoC·Chip top 사용 | CPU/SoC 실행 파일 → ④, `obj_chip/Vsoc_chip` → ⑤ | 지정한 top·설정의 실행 파일 생성. [시뮬레이션 가이드](SIM_GUIDE.md) |
+| ④ SoC 추론 검증 | ① 기준값 + ② 이미지 + ③ CPU/SoC 실행 파일 | A의 SW 전용 실행과 `W8=1 OPTA=1 GEN_ACC=full python3 gen/run_gen.py 16` | `result.json`, `steps.bin`, `cycles.npy`, SoC `dump.bin`. 검증한 가속 `image.bin` → ⑤·⑦ | `pass=true` 및 가속 결과가 SW 전용 기준과 bit-exact. [W8 기록](../w8/W8_I1.md) |
+| ⑤ Chip RTL 기대값 | ④에서 검증한 동일 가속 `image.bin` + ③의 `Vsoc_chip` | `obj_chip/Vsoc_chip <image.bin> <dump_sim.bin>` | `dump_sim.bin`, Chip DONE·cycle 로그 → ⑦ | DONE과 2 MiB dump 확인. [시뮬레이션 가이드](SIM_GUIDE.md) |
+| ⑥ FPGA 구현 | 후보의 RTL·온칩형 `chip_axi_top`, PS–PL BD, 125 MHz 제약 | B의 Vivado 합성 → P&R → bitgen | 동일 빌드의 `board.bit`·`board.hwh`, timing report → ⑦ | setup/hold 위반 0. [Windows GUI 빌드 기록](BOARD_BRINGUP.md), Linux 빌드 미확인 |
+| ⑦ 실보드 검증 | ④의 가속 이미지 + ⑤의 기대 dump·cycle + ⑥의 bit/hwh | C의 `run_chip.py`와 `cmp`. 원격 실행기는 전송·실행·회수를 담당 | 보드 `dump.bin`, DONE, cycles, 비교 로그 | DONE·cycle 및 2 MiB dump 일치. [실보드 검증 대기](BOARD_BRINGUP.md) |
 
-1·2·3은 하나의 드라이버가 묶어 실행한다. 4와 5는 독립적으로 준비할 수 있다. 외부 DDR 가중치용 top은 별도 구성이다.
+**자동화 연결** · 현재 `run_gen.py`는 ①·②·④를 한 번의 실행에서 묶어 처리하므로 ③을 먼저 준비한다. ④가 통과한 뒤 ⑤에서 보드 기대값을 생성한다. ⑥은 ⑤와 독립적으로 실행할 수 있으며, ⑦은 검증된 이미지·기대값·호환되는 FPGA 산출물이 모두 준비되면 실행한다.
+
+**모델·HW 변경 분기** · 모델 변경 시 CPU 기준이 Golden을 통과한 뒤 프로파일을 수집한다. HW·메모리 변경이 필요한 후보는 예비 Floorplan을 평가하고 선택한 구성의 입력으로 ②~⑥ 중 영향받는 단계만 다시 실행한다. FPGA 구현 입력이 동일한 모델·펌웨어 변경은 ⑥의 확인된 산출물을 재사용한다.
 
 ## A. Linux 개발 서버에서 16-step 기준 실행 만들기
 
@@ -119,7 +135,7 @@ obj_chip/Vsoc_chip "$RUN/image.bin" "$RUN/dump_sim.bin" | tee "$RUN/chip.log"
 test "$(stat -c %s "$RUN/dump_sim.bin")" -eq 2097152
 ```
 
-`chip.log`에서 DONE과 cycle을 확인한다. 단계 3의 SoC dump와 단계 4의 Chip dump는 메모리 구현과 cycle 정보가 다를 수 있으므로 보드 대조에는 단계 4의 파일을 사용한다.
+`chip.log`에서 DONE과 cycle을 확인한다. ④의 SoC dump와 ⑤의 Chip dump는 메모리 구현과 cycle 정보가 다를 수 있으므로 보드 대조에는 ⑤의 파일을 사용한다.
 
 ## B. ZCU104 배포본 준비
 
