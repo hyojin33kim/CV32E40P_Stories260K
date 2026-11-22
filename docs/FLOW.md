@@ -48,6 +48,30 @@ Linux 서버의 단일 실행 명령이 **변경 감지 → 영향받는 산출�
 
 실행별로 `profile/summary.json`, 원시 trace, `profile/recommendations.md`를 보관한다. 프로파일러의 첫 검증은 기존 Stories260K 결과를 재현한 뒤, **HW 후보 한 건과 메모리 후보 한 건의 예상 효과를 실제 RTL A/B 실행으로 비교**하는 것이다. 최종 채택은 동일 workload에서 수치 검증을 유지하고 목표 지연·자원·타이밍 조건을 만족하는지로 판단한다.
 
+## 개선 후보별 예비 Floorplan
+
+프로파일의 개선 후보를 대상으로 **기존 배치 대비 무엇이 어디로 이동하고, 어떤 배선과 제약이 달라지는지**를 검토한다. 흐름은 **CPU 프로파일 → 개선 후보 → 예비 Floorplan → 후보 선택 → 상세 구현·bitgen → 원격 보드 검증**이다. 현재 대상은 ZCU104의 PL 배치다. ASIC Tile과 PCB 배치는 해당 변경이 있는 후보에서 별도로 평가한다.
+
+### 입력과 배치 비교
+
+입력은 후보별 연산 lane 수, SRAM 용량·포트·은행 수, DDR 전송량과 포트 구성, 블록별 클록·데이터 폭이다. 기준 FPGA 배치에는 디바이스, PS–PL 연결, 클록·XDC, DSP·BRAM·URAM 위치와 사용량을 포함한다. 같은 top·타깃 클록·도구 설정에서 기준안과 후보안을 비교하고, DDR top으로 전환하는 경우처럼 top 자체가 달라지면 그 차이를 기록한다.
+
+| 개선 후보 | ZCU104 PL에서 비교할 배치 변경 | ASIC·PCB에 영향이 있는 경우 |
+|---|---|---|
+| GEMV/VFU lane·HW 블록 추가 | DSP·LUT 배치, 연산기와 SRAM bank 간 거리, fanout, 제어 신호와 데이터 폭에 따른 routing 경로 | ASIC에서 연산 블록 면적, SRAM macro 및 전력망과의 인접성, 클록 분배 검토 |
+| SRAM 용량·bank 증설, buffer 재배치 | BRAM·URAM 사용량과 해당 자원 열, bank별 포트 연결, 배선 집중, 추가 파이프라인 지연 비교 | ASIC에서 SRAM macro 크기·방향·핀 위치, macro 사이 배선 공간과 채널 검토 |
+| DDR BW 확대 또는 Tile 링크 변경 | PS–PL DDR 포트, AXI 폭·burst·outstanding 변경에 필요한 FIFO, CDC 및 배선 경로 검토 | PHY·패드·보드 I/O가 바뀌면 ASIC의 PHY·pad 위치와 PCB의 FPGA/Tile–DDR 배치, 핀맵, 배선 길이·층, 리턴 경로를 별도 검토 |
+
+### 자동화 수준과 산출물
+
+1. **배치 초안** · `profile/summary.json`과 후보 구성을 받아 블록별 용량·대역폭 요구와 연결을 나타낸 블록도를 생성한다. 기준안 대비 이동·추가된 블록과 연결을 표시한다. 후보 RTL이 없는 경우 이 단계의 크기·배치는 추정으로 표시한다.
+2. **FPGA 구현 가능성 확인** · 후보 RTL이 있으면 Vivado에서 합성과 placement를 실행해 자원 사용량, 배치 스냅샷, 예상 timing과 혼잡을 수집한다. 먼저 기본 배치를 비교하고, 자원 위치나 배선 병목에 근거가 있는 후보에 Pblock을 적용해 재비교한다. 배치 단계의 timing은 예측치다.
+3. **채택 판정** · 후보별 `floorplan/<candidate>/`에 기준 대비 배치 그림, 사용 자원, 혼잡 구간, 주요 경로, 예상 cycle/token과 클록을 보관한다. 선택 후보의 전체 P&R에서 setup/hold와 최종 routing을 확인한 뒤 해당 구현의 bitstream을 보드에 넘긴다. 개선 효과는 동일 workload의 실제 구현 클록을 적용한 **ms/token**으로 비교한다.
+
+ASIC의 정량 배치는 공정 LEF/Lib, SRAM macro와 PHY·pad 정보가 확보된 경우 진행한다. PCB의 정량 비교에는 패키지 핀맵, DDR 배치와 stack-up이 필요하다. 각 입력의 확보 수준에 맞춰 개념 배치와 물리 구현 결과를 구분한다.
+
+현재 저장소의 [Vivado 흐름](../fpga/bd/build_board.tcl)은 구현 timing·utilization·clock 보고서를 생성한다. 후보 자동 생성, 배치 비교·혼잡 수집은 추가 구현 항목이다. 첫 비교는 [ZCU104 125 MHz 기준](BOARD_BRINGUP.md)을 두고 **GEMV lane 변경안과 SRAM bank 재배치안**을 각각 평가하는 것으로 시작한다.
+
 ## 단계별 입력·출력과 진행 상태
 
 2026-11-22 저장소 기록 기준. 실측을 추가할 때는 상태와 함께 해당 실행 로그 또는 결과 파일의 위치를 갱신한다.
