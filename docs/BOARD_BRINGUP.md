@@ -4,7 +4,17 @@ Notion copy: https://app.notion.com/p/41f12d20bf0a817d922dce27e2289c95 (the repo
 Last updated 2026-11-21. Status words: **done** = verified by a command or report in this repo; **planned** = not run yet;
 **unknown** = not checked. Update the status table as steps are executed.
 
-## 1. Starting point (done)
+## 0. Newest bitstream (2026-11-22) — use this one
+`E:/fpga_work/board_release_125_int8/` (`board.bit`, `board.hwh`, reports, `SHA256SUMS`, `README.txt`). Built in the Windows
+Vivado GUI from the merged RTL (commit d3b41bf): int8 GEMV mode D, performance counters, weights on chip. 125 MHz;
+routed WNS +0.100 ns, TNS 0, WHS +0.008 ns (thin), WPWS 2.5 ns, 0 failing endpoints; LUT 60,179, registers 22,032,
+BRAM 7, URAM 64, DSP 93. Not run on a board. New in the register window (0x200_0020 .. 0x200_0034, read-only, cleared
+when RUN is set): gemv busy cycles, vfu busy cycles, accelerator memory-grant stall cycles, accelerator read lines,
+tag-FIFO-full cycles, external line FIFO high-water mark; the older registers keep their addresses. The int8 image is
+built with `W8=1 OPTA=1 GEN_ACC=full python3 gen/run_gen.py <steps>` (see `w8/W8_I1.md`). The scripted build
+(`fpga/bd/run_board.sh`) still hangs or crashes on this host; the GUI works (cause unknown).
+
+## 1. Earlier bitstream (2026-11-21, superseded; no int8 mode)
 - 125 MHz bitstream built in the Windows Vivado GUI (block design `fpga/bd`, Zynq PS + `chip_axi_wrap`):
   WNS +0.320 ns, WHS +0.010 ns (thin), 0 failing endpoints; LUT 55,775, registers 20,344, BRAM 7, URAM 64, DSP 85.
   File `board_wrapper.bit` (19.3 MB). Details: `docs/P1_REPORT.md` section 4.

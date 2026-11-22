@@ -35,6 +35,7 @@
 | I1 int8 가중치 | 11-21 | 행 단위 scale int8 가중치를 새 SW 기준으로 정의, host·RISC-V·GEMV(mode D)·보드 top 비트 일치(8·64 토큰). 가중치 1 MiB→268 KiB, 가속기 읽기 -60 %, DDR top +6.9 %(fp32 +15.3 %). `reproduce.sh quick` 42/42 | `w8/W8_I1.md` | `quant/results`, `w8/` |
 | S5b DDR AXI | 11-21 | `axi_ext_rd`+`chip_axi_ddr_top`: 260K 가중치를 DDR(AXI4 모델)에서 읽어 온칩과 바이트 동일, +13~32 % cycle(fp32). 150 MHz 미충족(WNS −0.569 ns, 재시도 중) | `acc/S5B_DDR_AXI.md` | `.scratch`(저장소 밖) |
 | 11-22 결정 | 11-22 | 사용자: 150 MHz 불필요(125 MHz면 됨), 정수 lane(I2)은 별도 세션에서 fixed-point C 기준부터 새로 만든다 | — | — |
+| 최신 비트스트림 | 11-22 | 최신 RTL(int8 모드 mode D, 관측성 카운터)로 PS 연결 125 MHz 비트스트림 생성(Windows GUI): WNS +0.100 / WHS +0.008 ns, LUT 60,179, URAM 64, DSP 93. `E:/fpga_work/board_release_125_int8/`(저장소 밖, SHA256 포함). **보드 실행 전** | `docs/BOARD_BRINGUP.md` §0 | — |
 | P1-1 보드 통합 | 11-20~21 | **125 MHz 비트스트림 생성 완료(보드 실행 전)**: Windows Vivado GUI에서 PS+칩 블록 디자인 합성·구현·bitgen 성공, WNS +0.320 ns / WHS +0.010 ns / 실패 0, LUT 55,775·URAM 64·DSP 85(OOC와 동일 규모). 스크립트(batch `-mode batch`) 경로는 프로젝트 합성 충돌로 6회 중 5회 실패, 원인 미발견. 150 MHz는 이 구성에서 미시험 | `fpga/bd/`, `docs/P1_REPORT.md` §4 | `E:/fpga_work/board_gui/.../board_wrapper.bit`(저장소 밖) | `fpga/bd/`, `docs/P1_REPORT.md` §4 | — |
 
 ## 현재 성능 (D2 = 150 MHz 실현 구성, 11-15; SW 기준선 = 같은 CPU(FPU lat 4)의 llama2.c `-O2 -funroll-loops`)
