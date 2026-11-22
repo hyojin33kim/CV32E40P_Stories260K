@@ -58,6 +58,41 @@ static __attribute__((noinline)) float acc_vfu_sum(unsigned cmd, float* a, float
 #else
 #define MM matmul
 #endif
+
+#ifdef W8
+// I1: int8 weights, one fp32 scale per row (w8/make_run_w8.py, w8/quantize.py):
+//   y[i] = (sum_j (float)wq[i*stride+j] * x[j]) * sc[i]     (fmul + fadd per MAC in j order, then one fmul)
+#include "../w8/w8_layout.h"
+static void sw_matmul_w8(float* y, float* x, const signed char* wq, const float* sc, int n, int d, int stride) {
+    for (int i = 0; i < d; i++) {
+        const signed char *wr = wq + i * stride;
+        float val = 0.0f;
+        for (int j = 0; j < n; j++) val += (float)wr[j] * x[j];
+        y[i] = val * sc[i];
+    }
+}
+#ifdef USE_ACC
+// gemv_acc int8 mode: CTRL bit1, SC_ADDR (0x2C) = row scales, W_STRIDE = bytes between rows (multiple of 16)
+static __attribute__((noinline)) void acc_matmul_w8(float* y, float* x, const signed char* wq, const float* sc, int n, int d, int stride) {
+    volatile unsigned *r = (volatile unsigned*)0x30000000;
+    r[2] = (unsigned)x; r[3] = (unsigned)wq; r[4] = (unsigned)y;
+    r[5] = n; r[6] = d; r[7] = stride; r[11] = (unsigned)sc;
+    r[0] = 3;
+    while (r[1] & 1) ;
+}
+#define W8_FFN acc_matmul_w8
+#else
+#define W8_FFN sw_matmul_w8
+#endif
+#ifdef USE_ACC_MM
+#define W8_MM acc_matmul_w8
+#else
+#define W8_MM sw_matmul_w8
+#endif
+// matrix K (WQ, WK, ...) of layer l: n inputs, d outputs
+#define W8_CALL(F, y, x, K, l, n, d) F((y), (x), (const signed char*)(W8_##K##_Q + (unsigned)(l) * (d) * W8_##K##_STRIDE), \
+    (const float*)(W8_##K##_S + (unsigned)(l) * (d) * 4u), (n), (d), W8_##K##_STRIDE)
+#endif
 #include <string.h>
 typedef struct {
     int dim; // transformer dimension
@@ -200,9 +235,21 @@ float* forward(Transformer* transformer, int token, int pos) {
         s->v = s->value_cache + loff + pos * kv_dim;
 
         // qkv matmuls for this position
+#ifdef W8
+        W8_CALL(W8_MM, s->q, s->xb, WQ, l, dim, dim);
+#else
         MM(s->q, s->xb, w->wq + l*dim*dim, dim, dim);
+#endif
+#ifdef W8
+        W8_CALL(W8_MM, s->k, s->xb, WK, l, dim, kv_dim);
+#else
         MM(s->k, s->xb, w->wk + l*dim*kv_dim, dim, kv_dim);
+#endif
+#ifdef W8
+        W8_CALL(W8_MM, s->v, s->xb, WV, l, dim, kv_dim);
+#else
         MM(s->v, s->xb, w->wv + l*dim*kv_dim, dim, kv_dim);
+#endif
 
         // RoPE relative positional encoding: complex-valued rotate q and k in each head
         for (int i = 0; i < dim; i+=2) {
@@ -296,7 +343,11 @@ float* forward(Transformer* transformer, int token, int pos) {
         }
 
         // final matmul to get the output of the attention
+#ifdef W8
+        W8_CALL(W8_MM, s->xb2, s->xb, WO, l, dim, dim);
+#else
         MM(s->xb2, s->xb, w->wo + l*dim*dim, dim, dim);
+#endif
 
         // residual connection back into x
         for (int i = 0; i < dim; i++) {
@@ -308,8 +359,16 @@ float* forward(Transformer* transformer, int token, int pos) {
 
         // Now for FFN in PyTorch we have: self.w2(F.silu(self.w1(x)) * self.w3(x))
         // first calculate self.w1(x) and self.w3(x)
+#ifdef W8
+        W8_CALL(W8_FFN, s->hb, s->xb, W1, l, dim, hidden_dim);
+#else
         FFN_MATMUL(s->hb, s->xb, w->w1 + l*dim*hidden_dim, dim, hidden_dim);
+#endif
+#ifdef W8
+        W8_CALL(W8_FFN, s->hb2, s->xb, W3, l, dim, hidden_dim);
+#else
         FFN_MATMUL(s->hb2, s->xb, w->w3 + l*dim*hidden_dim, dim, hidden_dim);
+#endif
 
         // SwiGLU non-linearity
 #ifdef USE_ACC_VFU
@@ -334,7 +393,11 @@ float* forward(Transformer* transformer, int token, int pos) {
 #endif
 
         // final matmul to get the output of the ffn
+#ifdef W8
+        W8_CALL(W8_FFN, s->xb, s->hb, W2, l, hidden_dim, dim);
+#else
         FFN_MATMUL(s->xb, s->hb, w->w2 + l*dim*hidden_dim, hidden_dim, dim);
+#endif
 
         // residual connection
         for (int i = 0; i < dim; i++) {
@@ -346,7 +409,11 @@ float* forward(Transformer* transformer, int token, int pos) {
     rmsnorm(x, x, w->rms_final_weight, dim);
 
     // classifier into logits
+#ifdef W8
+    W8_CALL(W8_MM, s->logits, x, CLS, 0, p->dim, p->vocab_size);
+#else
     MM(s->logits, x, w->wcls, p->dim, p->vocab_size);
+#endif
     return s->logits;
 }
 

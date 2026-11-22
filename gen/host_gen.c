@@ -5,8 +5,14 @@
 //   host_gen free   <model> <prompt.u32> <steps> <toks.u32>   independent greedy run
 //   host_gen decode <model> <tok> <prompt.u32> <toks.u32> <steps>
 #define main original_main
-#ifdef OPTA
+#if defined(OPTA) && defined(W8)
+#include "../w8/run_opta_w8.c"  // Option A + int8 weights with per-row scale (I1, w8/make_run_w8.py)
+#elif defined(OPTA)
 #include "../opta/run_opta.c"   // Option A numerics (S3): exp2q softmax/SiLU, deferred normalization
+#elif defined(W8)
+#include "../w8/run_w8.c"       // int8 weights with per-row scale (I1)
+#elif defined(QUANT)
+#include "../quant/run_quant.c"  // precision gate (P1): fake-quantized weights/activations/KV
 #else
 #include "../run.c"
 #endif

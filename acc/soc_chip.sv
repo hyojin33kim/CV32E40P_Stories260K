@@ -94,15 +94,22 @@ module soc_chip #(
   // ---------------------------------------------------------------- core + accelerators
   logic        i_req, i_gnt, i_rvalid;
   logic [31:0] i_addr, i_rdata;
-  logic        d_req, d_gnt, d_rvalid, d_we;
-  logic [ 3:0] d_be;
-  logic [31:0] d_addr, d_wdata, d_rdata;
-  logic        a_req, a_gnt, a_rvalid, a_we;
+  // CPU data port (public for the simulator's SIM_TRACE_CPU trace; no effect on the hardware)
+  logic        d_req /*verilator public_flat_rd*/;
+  logic        d_gnt /*verilator public_flat_rd*/;
+  logic        d_rvalid /*verilator public_flat_rd*/;
+  logic        d_we /*verilator public_flat_rd*/;
+  logic [ 3:0] d_be /*verilator public_flat_rd*/;
+  logic [31:0] d_addr /*verilator public_flat_rd*/;
+  logic [31:0] d_wdata /*verilator public_flat_rd*/;
+  logic [31:0] d_rdata /*verilator public_flat_rd*/;
+  logic        a_req, a_gnt, a_rvalid, a_we, a_ext_w;
   logic [31:0] a_addr, a_wdata;
   logic [127:0] a_rdata;
 
   soc_top #(.ACC_LANES(ACC_LANES), .VFU_LANES(VFU_LANES), .ACC_RUN(ACC_RUN), .ACC_FDEPTH(ACC_FDEPTH),
-            .CPU_FPU_LAT(CPU_FPU_LAT), .ACC_FPU_LAT(ACC_FPU_LAT), .VFU_FPU_LAT(VFU_FPU_LAT)) soc_i (
+            .CPU_FPU_LAT(CPU_FPU_LAT), .ACC_FPU_LAT(ACC_FPU_LAT), .VFU_FPU_LAT(VFU_FPU_LAT),
+            .EXT_BELOW(WEIGHTS_ONCHIP ? 32'h0 : SRAM_BASE)) soc_i (
       .clk_i, .rst_ni, .pulp_clock_en_i(1'b1),
       // clock gates forced open during reset (as sim.cpp drives soc_top): the FPU divider's
       // gated clock must see the reset, otherwise its first request is never granted
@@ -112,7 +119,7 @@ module soc_chip #(
       .instr_rdata_i(i_rdata),
       .data_req_o(d_req), .data_gnt_i(d_gnt), .data_rvalid_i(d_rvalid), .data_we_o(d_we),
       .data_be_o(d_be), .data_addr_o(d_addr), .data_wdata_o(d_wdata), .data_rdata_i(d_rdata),
-      .acc_req_o(a_req), .acc_we_o(a_we), .acc_addr_o(a_addr), .acc_wdata_o(a_wdata),
+      .acc_req_o(a_req), .acc_we_o(a_we), .acc_ext_o(a_ext_w), .acc_addr_o(a_addr), .acc_wdata_o(a_wdata),
       .acc_gnt_i(a_gnt), .acc_rvalid_i(a_rvalid), .acc_rdata_i(a_rdata),
       .acc_wr_pend_i(SRAM_BREG && b_en_x && b_we_x));
 
@@ -209,7 +216,7 @@ module soc_chip #(
   // ---------------------------------------------------------------- accelerator port
   localparam int TQ = 256, SQ = 32, EQ = 64;
   logic        a_ext, a_go, t_full, s_room;
-  assign a_ext  = !WEIGHTS_ONCHIP && a_addr < SRAM_BASE;   // below the SRAM: DDR
+  assign a_ext  = !WEIGHTS_ONCHIP && a_ext_w;              // gemv_acc weight reads below the SRAM: DDR (flag from the command's W_ADDR)
   // tag FIFO: one entry per granted read (1 = external)
   logic        tq[TQ];
   logic [$clog2(TQ)-1:0] tq_wp_q, tq_rp_q;

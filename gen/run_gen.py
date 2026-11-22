@@ -34,9 +34,11 @@ cflags = os.environ.get('GEN_CFLAGS', '-O2 -funroll-loops')
 tag = {'-O2 -funroll-loops': 'O2u', '': 'Os'}.get(cflags, cflags.replace(' ', '').replace('-', '_'))
 OPTA = os.environ.get('OPTA') == '1'
 if OPTA: cflags += ' -DOPTA'; tag += '_opta'
+W8 = os.environ.get('W8') == '1'   # I1: int8 weights with per-row scale (w8/); host model + firmware + image
+if W8: cflags += ' -DW8'; tag += '_w8'
 CFG = os.environ.get('CFG', 'd2'); assert CFG in ('d1', 'd2')
 SUF = '_d1' if CFG == 'd1' else ''
-NUM = '_opta' if OPTA else ''
+NUM = ('_opta' if OPTA else '') + ('_w8' if W8 else '')
 os_tag = 'Os' + NUM + ('' if CFG == 'd1' else '_d2')
 extra = os.environ.get('GEN_EXTRA', '')   # extra -D flags (memory-model study); name them in GEN_HW
 if extra: cflags += ' ' + extra
@@ -62,7 +64,8 @@ def run(*a, **k):
 
 # host tool
 hg = O / 'host_gen'  # per-run copy so concurrent runs don't race on the binary
-run('cc', '-O2', '-ffp-contract=off', '-w', *(['-DOPTA'] if OPTA else []), G / 'host_gen.c', '-lm', '-o', hg)
+run('python3', W / 'w8' / 'make_run_w8.py', W / 'run.c', W / 'w8' / 'run_w8.c'); run('python3', W / 'w8' / 'make_run_w8.py', W / 'opta' / 'run_opta.c', W / 'w8' / 'run_opta_w8.c')
+run('cc', '-O2', '-ffp-contract=off', '-w', '-I', W / 'opta', *(['-DOPTA'] if OPTA else []), *(['-DW8'] if W8 else []), G / 'host_gen.c', '-lm', '-o', hg)
 np_ = int(run(hg, 'encode', model, tok, text, O / 'prompt.u32'))
 prompt = np.fromfile(O / 'prompt.u32', dtype='<u4')
 assert steps >= np_, 'steps must cover the prompt'
@@ -76,6 +79,7 @@ for ext in ('.elf', '.dis', '.map', '.su', '_size.txt'):
     tmp = Path(f'{fw}{ext}.{os.getpid()}')
     tmp.write_bytes((O / f'fw{ext}').read_bytes()); os.replace(tmp, f'{fw}{ext}')
 run('python3', W / 'image.py', O / 'fw.elf', O / 'image.bin')
+if W8: run('python3', W / 'w8' / 'quantize.py', 'pack', O / 'image.bin')
 m = bytearray((O / 'image.bin').read_bytes())
 m[0x1ae000:0x1ae000 + 4 * np_] = prompt.tobytes()
 struct.pack_into('<II', m, 0x1afff0, np_, steps)

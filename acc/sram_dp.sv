@@ -6,7 +6,8 @@
 // the accelerator port has no write response).
 // Synthesis (`SYNTHESIS, Vivado): xpm_memory_tdpram with MEMORY_PRIMITIVE "ultra" (URAM; plain
 // RTL inference fell back to BRAM, see fpga/P6_FPGA_SYNTH.md). Simulation: the behavioural
-// array below, public for the simulator's preload / dump. Both have the same port behaviour.
+// array below, public for the simulator's preload / dump. Both have the same port behaviour; define
+// USE_XPM to simulate with the XPM model instead (fpga/xsim, checked 11-18).
 module sram_dp #(
     parameter int LINES = 131072,     // 2 MiB
     parameter int RLAT  = 1,          // port A (CPU) read latency
@@ -49,6 +50,12 @@ module sram_dp #(
   assign b_rdata_o = b_line_q;
 
 `ifdef SYNTHESIS
+`define SRAM_DP_XPM
+`endif
+`ifdef USE_XPM            // simulation with the XPM model (fpga/xsim)
+`define SRAM_DP_XPM
+`endif
+`ifdef SRAM_DP_XPM
   xpm_memory_tdpram #(
       .ADDR_WIDTH_A(LW), .ADDR_WIDTH_B(LW), .CASCADE_HEIGHT(CASCADE),
       .BYTE_WRITE_WIDTH_A(8), .BYTE_WRITE_WIDTH_B(8),
