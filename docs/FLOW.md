@@ -85,6 +85,19 @@ ASIC의 정량 배치는 공정 LEF/Lib, SRAM macro와 PHY·pad 정보가 확보
 
 왼쪽은 향후 소스 배치안이다. 실행기는 현재 경로와 아래 단계별 입력·출력부터 사용한다. `gen/run_gen.py`처럼 여러 단계를 연결하는 드라이버는 공통 진입점으로 유지한다. 실행 결과는 서버의 `runs/<run-id>/`에 두고 실행 명세에 각 산출물의 경로와 해시를 기록한다.
 
+### ASIC 개발 디렉터리 대응
+
+![RTL·검증·합성·DFT·STA·물리 설계와 검증을 포함한 ASIC 프로젝트 디렉터리](figures/asic-project-layout.svg)
+
+| 구조도의 경로 | Tile 프로젝트에 적용하는 위치와 역할 |
+|---|---|
+| `doc/`, `rtl/{top,subsys,common}/`, `ip/` | 사양은 `docs/`, chip top과 서브시스템 통합은 `rtl/soc/`, 자체 블록은 `rtl/ip/`에 대응한다. 외부 IP는 공급 버전과 출처를 기록한다. |
+| `dv/{tb,tests,sim}/` | 테스트벤치·테스트·실행 설정은 `verify/`, 실행별 파형과 로그는 `runs/<run-id>/sim/`에 둔다. |
+| `syn/`, `dft/`, `sta/`, `pnr/`, `pv/` | ASIC 단계가 시작되면 `asic/{syn,dft,sta,pnr,pv}/`에 합성 Tcl·SDC, scan/MBIST, STA, floorplan·P&R, DRC/LVS 실행 설정을 둔다. 생성 netlist·배치 결과·보고서는 실행별 `asic/` 아래에 보관한다. |
+| `fpga/`, `sw/`, `scripts/` | ZCU104 구현은 `boards/zcu104/`, 타깃 펌웨어는 `fw/`, 서버 자동화는 `flow/`에 대응한다. |
+
+ASIC과 FPGA는 공통 RTL에서 분기한다. FPGA는 보드 제약과 bitstream을 사용하고, ASIC은 공정 라이브러리·SDC·매크로 정보를 입력으로 사용한다. 위 ASIC 경로는 향후 소스 배치안이다.
+
 ### 디렉터리 이관과 개발 이력
 
 저장소 루트의 [PROGRESS.md](../PROGRESS.md)는 변경 단위의 색인이다. 각 항목에서 기준 커밋, 변경 목적, 구현 파일, 검증 결과와 남은 작업을 찾을 수 있게 한다. Git은 소스와 판정 기준을 보관하고, Linux의 `~/runs/stories260k/<run-id>/`는 해당 실행 로그를, `~/releases/zcu104/<release-id>/`는 함께 배포한 파일을 보관한다. 새 실행부터 진행 기록에 run ID와 배포본 ID를 연결한다.
