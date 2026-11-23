@@ -15,6 +15,7 @@ function reads) was **not checked against the standard**. Either way the RTL sty
 
 ## What was verified
 - Verilator and the synthesized FPU netlist were correct all along (FPU: 1402/1402, netlist and RTL, with the patch).
+  The FPU vectors were extended on 11-23 to 3,896 (adds SUB, F2I, compare and special values, `docs/VERIFICATION_PLAN.md` V-F1/V-F3/V-F4): xsim RTL, the synthesized netlist and Verilator RTL are all 3896/3896.
 - CPU data-port trace, xsim vs Verilator: 4,462 events identical up to cycle 9,910 (`fpga/xsim/compare_trace.py`, store responses ignored because
   Verilator's 2-state value 0 and xsim's x are both "don't care"); the first stall is the VFU in state XS.
 - Full chip with both workarounds: DONE, dump equal over the whole 2 MiB.

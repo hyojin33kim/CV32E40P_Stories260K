@@ -24,7 +24,7 @@ module tb_fpu;
 `endif
       .apu_op_i(op), .apu_flags_i(flags), .apu_rvalid_o(rvalid), .apu_rdata_o(rdata), .apu_rflags_o(rflags));
   integer fi, fo, n, k;
-  logic [31:0] o, a, b, c;
+  logic [31:0] o, a, b, c, f;
   initial begin
     fi = $fopen("vec.hex", "r"); fo = $fopen("fpu_out.hex", "w");
 `ifdef NETLIST
@@ -32,8 +32,8 @@ module tb_fpu;
 `endif
     repeat (5) @(posedge clk); rst_n = 1; repeat (3) @(posedge clk);
     n = 0;
-    while ($fscanf(fi, "%h %h %h %h\n", o, a, b, c) == 4) begin
-      @(negedge clk); op = o[5:0]; opnd[0] = a; opnd[1] = b; opnd[2] = c; req = 1;
+    while ($fscanf(fi, "%h %h %h %h %h\n", o, a, b, c, f) == 5) begin
+      @(negedge clk); op = o[5:0]; flags = f[14:0]; opnd[0] = a; opnd[1] = b; opnd[2] = c; req = 1;
       do @(posedge clk); while (!gnt);
       #0.1 req = 0;
       k = 0;

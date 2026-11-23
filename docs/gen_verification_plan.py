@@ -13,8 +13,8 @@ COLS = ['ID', '단계', '분류', '점검 항목', '방법 / 자극(stimulus)', 
 # (id, level, area, item, method, criterion, where, status, evidence, note)
 ROWS = [
  # ---- L0 tool check
- ('V-T1', 'L0 도구 점검', '도구', 'xsim 신뢰도 점검(FPU)', '1,402 벡터(numpy IEEE 기준)를 FPU RTL과 합성 네트리스트에 입력', '1,402/1,402 일치', 'fpga/xsim/run_fpu_test.sh, run_fpu_verilator.sh', '통과',
-  '우회 패치 후 RTL 1402/1402, 네트리스트 1402/1402 (패치 전 671/1402)', 'xsim 결과를 믿기 전에 매번 먼저 실행(LESSONS_LEARNED C단계)'),
+ ('V-T1', 'L0 도구 점검', '도구', 'xsim 신뢰도 점검(FPU)', '3,896 벡터(정상 범위 + SUB/F2I/비교 + 경계값, numpy IEEE와 RISC-V 규칙 기준)를 FPU RTL과 합성 네트리스트에 입력', '3,896/3,896 일치', 'fpga/xsim/run_fpu_test.sh, run_fpu_verilator.sh', '통과',
+  '우회 패치 후 xsim RTL 3896/3896, 네트리스트 3896/3896, Verilator RTL 3896/3896 (11-22의 1,402개 벡터는 패치 전 671/1402)', 'xsim 결과를 믿기 전에 매번 먼저 실행(LESSONS_LEARNED C단계)'),
  ('V-T2', 'L0 도구 점검', '도구', '시뮬레이션 환경 빌드', 'CPU, CPU 프로파일러, SoC 시뮬레이터 빌드', '빌드 성공', 'reproduce.sh 첫 단계', '통과',
   'reproduce.sh quick 42/42', 'Ubuntu 24.04, verilator 5.038, riscv64 gcc + picolibc'),
  ('V-T3', 'L0 도구 점검', '도구', '시험이 틀림을 잡는지(변이 시험)', '기대값 또는 RTL을 일부러 훼손한 뒤 단위 시험 실행', '불일치가 검출됨', 'w8/test_w8_gemv.c, w8/run_test_w8.py', '통과',
@@ -68,10 +68,10 @@ ROWS = [
  ('V-G6', '격차', 'RTL', '정수 lane(I2: int8×int8 MAC + 활성화 양자화)', '고정소수점 C 기준부터 새로 시작', '', '', '미실행', '', '별도 세션에서 진행하기로 결정'),
  ('V-G7', '격차', '도구', '이전 xsim 불일치에서 패치별 기여 분리', '패치를 하나씩만 적용해 재실행', '각 패치의 효과 정량화', 'fpga/xsim/run_xsim.sh', '미실행', '', '우선순위 낮음'),
  # ---- new tests (gaps found in the block-by-block review)
- ('V-F1', '격차', 'FPU', 'FPU 경계값 벡터(subnormal, Inf, NaN, ±0)', 'fpu_vectors.py에 경계 피연산자 추가(ADD, MUL, DIV, SQRT, I2F). NaN은 정규 NaN(0x7fc00000)으로 비교', 'numpy와 일치(NaN은 NaN 여부로 비교)', 'fpga/xsim/fpu_vectors.py', '미실행', '현재 벡터는 정상 범위만', '우선순위 2, 추정 0.5일'),
+ ('V-F1', '격차', 'FPU', 'FPU 경계값 벡터(subnormal, Inf, NaN, ±0)', '17개 특수 피연산자의 모든 쌍을 ADD, SUB, MUL, DIV, 비교에, 특수값을 SQRT, I2F, F2I에 입력(1,494개). NaN 결과는 정규 NaN 0x7fc00000, F2I는 포화 규칙', 'RISC-V F 규칙의 기대값과 비트 일치', 'fpga/xsim/fpu_vectors.py (edge-*)', '통과', 'xsim RTL, 네트리스트, Verilator RTL(AFTER, DISTRIBUTED) 모두 3896/3896. 변이 시험(SUB→ADD 등 4건)이 모두 검출됨', '예외 플래그는 비교하지 않음(V-F2)'),
  ('V-F2', '격차', 'FPU', 'FPU 예외 플래그(rflags) 비교', '연산별 NV, DZ, OF, UF, NX 기대값을 만들어 rflags와 비교', '플래그 일치', 'fpga/xsim/fpu_vectors.py, tb_fpu.sv', '미실행', '현재 기대값 파일에 결과만 있음', '우선순위 4, 추정 1일(기준 구현 선택 필요: softfloat 등)'),
- ('V-F3', '격차', 'FPU', '펌웨어가 쓰지만 벡터에 없는 연산: SUB(fsub.s), F2I(fcvt.w.s), 비교(flt.s)', '해당 연산 벡터를 추가해 numpy와 비교. 펌웨어는 FMA, fmin, fmax를 쓰지 않음(fw.dis 0건)', '일치', 'fpga/xsim/fpu_vectors.py', '미실행', 'fw.dis 사용 횟수: fsub 36, flt 27, fcvt.w.s 1', '우선순위 1, 추정 0.5일'),
- ('V-F4', '격차', 'FPU', 'FPU 연속 요청(back-to-back, 파이프라인 중첩)', '지연 중에 다음 요청을 연속 입력하고 결과 순서와 값을 확인', '순서 보존, 값 일치', 'fpga/xsim/tb_fpu.sv 확장', '미실행', '현재 한 번에 하나씩만 요청', '우선순위 3, 추정 0.5일'),
+ ('V-F3', '격차', 'FPU', '펌웨어가 쓰지만 벡터에 없던 연산: SUB(fsub.s), F2I(fcvt.w.s, RTZ), 비교(flt.s, RTZ)', '정상 범위 SUB 300, F2I 300, FLT 400(무작위, 동일 값, 이웃 값)을 numpy와 비교. 펌웨어는 FMA, fmin, fmax를 쓰지 않음(fw.dis 0건)', '일치', 'fpga/xsim/fpu_vectors.py', '통과', 'xsim RTL, 네트리스트, Verilator RTL 모두 일치', 'fw.dis 사용 횟수: fsub 36, flt 27, fcvt.w.s 1'),
+ ('V-F4', '격차', 'FPU', 'FPU 연속 요청(back-to-back, 파이프라인 중첩)', '같은 연산 그룹(ADDMUL, DIVSQRT, NONCOMP, CONV)의 요청을 gnt가 허용하는 매 cycle 입력하고 결과를 순서대로 수집', '순서 보존, 값 일치, 요청 없는 결과 0', 'fpga/xsim/fpu_verilator.cpp (stream 모드)', '부분', 'Verilator RTL(AFTER, DISTRIBUTED) 3896/3896. ADDMUL, NONCOMP, CONV 1.00 cycle/op, 동시 진행 최대 3개, DIVSQRT 13.4 cycle/op', 'xsim RTL과 합성 네트리스트의 연속 요청 시험은 미구현. 서로 다른 그룹 사이 중첩은 시험하지 않음'),
  ('V-R1', '격차', 'RISC-V', '코어 ISA 적합성(펌웨어가 쓰는 RV32IMFC 부분집합)', 'riscv-arch-test에서 펌웨어가 쓰는 명령군만 골라 CPU sim에서 실행', '서명(signature) 일치', '(환경 구성 필요)', '미실행', '코어는 현재 펌웨어 실행으로만 간접 확인', '우선순위 5, 추정 1~2일(툴체인과 테스트 환경 준비 포함)'),
  ('V-A1', '격차', 'RTL', 'GEMV, VFU 버퍼 한계 경계', 'ACC_XBUF/YBUF와 VFU_BUF(512)의 한계 크기와 그 초과 동작 확인', '한계 안은 일치, 초과는 정의된 동작', 'w8/test_w8_gemv.c, vfu/run_test.py', '부분', 'VFU는 n=512까지 단위 시험에 포함. GEMV 버퍼는 1024 한 가지만, 초과 동작은 미확인', '우선순위 3, 추정 0.5일(초과를 하드웨어가 막는지 펌웨어 규칙인지 먼저 확인)'),
  ('V-A2', '격차', 'RTL', 'AXI 외부 읽기 경계: 4 KB 경계, 백프레셔 극단, 오류 응답', '4 KB 경계를 걸치는 주소, rready를 길게 내리는 메모리 모델, SLVERR 주입', 'AXI 규칙 준수, 데이터 일치, 오류 처리 정책대로 동작', 'sim_axi_ddr.cpp, acc/axi_ext_rd.sv', '미실행', '현재는 지연 모델, row/bank 모델만', '우선순위 2, 추정 1일(오류 응답을 어떻게 처리할지 정책 먼저 결정)'),
@@ -82,17 +82,17 @@ ROWS = [
 # block-by-block review: what each block is checked for, how, and where it is still open
 # (block, item, what is checked, coverage, evidence/location, linked IDs)   coverage: 확인 / 간접 / 없음 / 제외
 BLOCKS = [
- ('FPU', 'ADD, MUL', 'numpy float32(정확한 반올림)와 비트 일치', '확인', 'fpga/xsim/fpu_vectors.py, 1,402 벡터 중 각 300 이상', 'V-T1'),
+ ('FPU', 'ADD, MUL', 'numpy float32(정확한 반올림)와 비트 일치', '확인', 'fpga/xsim/fpu_vectors.py, 각 300 이상 + 경계값', 'V-T1'),
  ('FPU', 'DIV, SQRT', '위와 동일', '확인', '같은 벡터 파일', 'V-T1'),
  ('FPU', 'I2F(정수→실수)', '부호 있는 정수 200개', '확인', '같은 벡터 파일', 'V-T1'),
- ('FPU', '반올림 모드', 'RNE만', '간접', '다른 모드는 시험하지 않음(펌웨어는 RNE)', ''),
- ('FPU', '피연산자 범위', '정상 범위만', '없음', 'subnormal, Inf, NaN, ±0 경계 벡터 없음', 'V-F1'),
+ ('FPU', '반올림 모드', 'RNE(연산), RTZ(F2I, 비교)', '간접', '펌웨어가 쓰는 모드만. RDN, RUP, RMM은 시험하지 않음', ''),
+ ('FPU', '피연산자 범위', 'subnormal, Inf, NaN(조용한/신호), ±0, 최대·최소 정규수', '확인', '경계값 1,494개, xsim RTL, 네트리스트, Verilator 모두 일치', 'V-F1'),
  ('FPU', '예외 플래그(rflags)', '플래그 비교', '없음', '기대값 파일에 결과만 있음', 'V-F2'),
- ('FPU', 'SUB, F2I, 비교(펌웨어가 쓰는 연산)', '벡터에 없음', '없음', 'fw.dis: fsub 36, flt 27, fcvt.w.s 1 사용', 'V-F3'),
+ ('FPU', 'SUB, F2I, 비교(펌웨어가 쓰는 연산)', 'numpy와 RISC-V 규칙 기준 일치', '확인', 'fw.dis: fsub 36, flt 27, fcvt.w.s 1 사용. 3곳 시뮬레이터 모두 일치', 'V-F3'),
  ('FPU', 'FMA, fmin, fmax', '펌웨어가 쓰지 않음', '제외', 'fw.dis 0건', ''),
  ('FPU', '지연(latency)', 'FPU_LAT 0과 4에서 동작', '간접', 'D1(0), D2(4) 설정 회귀', 'V-I1'),
- ('FPU', '연속 요청 핸드셰이크', 'req→gnt→rvalid 중첩', '간접', '벡터 시험은 한 번에 하나. 가속기 통합 시험에서 간접 확인', 'V-F4'),
- ('FPU', '합성 후 네트리스트', '같은 벡터', '확인', '1,402/1,402', 'V-T1'),
+ ('FPU', '연속 요청 핸드셰이크', 'req→gnt→rvalid 중첩, 결과 순서', '확인', 'Verilator RTL만(연속 모드). xsim과 네트리스트는 미구현', 'V-F4'),
+ ('FPU', '합성 후 네트리스트', '같은 벡터', '확인', '3,896/3,896', 'V-T1'),
  ('RISC-V 코어', '명령 I, M, F, C', '펌웨어가 쓰는 범위 실행', '간접', 'HOLD 회귀, E2E 덤프 일치', 'V-I1, V-I4'),
  ('RISC-V 코어', '부팅', '_start, bss 초기화, imem 0x0100_0000', '간접', 'chip sim, xsim 실행', 'V-I1, V-I8'),
  ('RISC-V 코어', 'CSR', 'mstatus FS, mcountinhibit, mcycle', '간접', '시작 코드에서 사용', ''),
@@ -137,6 +137,7 @@ RULES = [
  '장시간 실행은 로그의 단위와 예상 종료 시점을 계산해 두고, 상한을 넘으면 중단한다.',
  'RTL을 바꾸면 V-I9(quick 42/42)를 다시 돌린다. 시험을 새로 만들면 V-T3(변이 시험)로 검출력을 확인한다.',
  '"통과"는 시뮬레이션 또는 합성 보고서 기준이며 보드 결과가 아니다. 보고할 때 둘을 구분한다.',
+ '결과 파일을 재사용하는 시험 스크립트는 입력이 바뀌면 낡은 결과를 비교하지 않는지 확인한다(`run_fpu_test.sh`는 실행 시작 때 결과 파일을 지운다).',
 ]
 
 
