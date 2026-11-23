@@ -7,6 +7,8 @@ import sys
 from pathlib import Path
 
 D = Path(__file__).resolve().parent
+sys.path.insert(0, str(D / 'experiments'))
+import experiment_log_data as XL   # experiment records (docs/EXPERIMENT_LOG.md and the xlsx sheets 실험 기록, 판단 이력)
 STATUS = ['통과', '부분', '미실행', '미정', '제외']
 COLS = ['ID', '단계', '분류', '점검 항목', '방법 / 자극(stimulus)', '합격 기준', '실행 위치', '상태', '근거 (기록된 수치)', '비고']
 
@@ -223,6 +225,47 @@ def write_md():
     print('wrote', D / 'VERIFICATION_PLAN.md')
 
 
+def write_log_md():
+    keys = ['id', 'date', 'topic', 'purpose', 'setup', 'result', 'observation', 'opinion', 'caveat', 'impact', 'raw']
+    out = ['# 실험 기록 (Experiment Log)\n',
+           '이 파일은 `docs/gen_verification_plan.py`가 `docs/experiments/experiment_log_data.py`에서 생성한다. 같은 내용이 `docs/VERIFICATION_PLAN.xlsx`의 "실험 기록", "판단 이력" 시트에 있다. 직접 고치지 말고 데이터 파일을 고친 뒤 스크립트를 다시 실행한다.\n',
+           '합격/불합격만이 아니라 **구성, 측정값, 관찰, 사용자에게 드린 의견(확신도)과 정정, 영향, 원본 데이터 위치**를 실험마다 남긴다. 원본 출력은 `docs/experiments/raw/`(설명: `raw/INDEX.md`)에 보존한다. 수치는 원본 출력에서 옮긴 것이다.\n',
+           '## 1. 실험 목록\n', '| ID | 날짜 | 주제 | 결과 요약(첫 줄) | 원본 |', '|---|---|---|---|---|']
+    for e in XL.EXPERIMENTS:
+        first = e['result'].split('\n')[0]
+        out.append(f"| {e['id']} | {e['date']} | {md_cell(e['topic'])} | {md_cell(first[:150])} | {md_cell(e['raw'])} |")
+    out.append('\n## 2. 실험별 기록\n')
+    labels = dict(purpose='목적', setup='구성 / 명령', result='결과 (측정값)', observation='관찰', opinion='의견 / 해석 (확신도)',
+                  caveat='정정 · 한계', impact='영향 · 후속', raw='원본 데이터 (docs/experiments/raw/)')
+    for e in XL.EXPERIMENTS:
+        out.append(f"### {e['id']} {e['topic']} ({e['date']})\n")
+        for k in keys[3:]:
+            v = e[k]
+            if '\n' in v:
+                out.append(f'- **{labels[k]}**')
+                for ln in v.split('\n'):
+                    out.append(f'  - {ln}')
+            else:
+                out.append(f'- **{labels[k]}**: {v}')
+        out.append('')
+    out.append('## 3. 판단 이력 (제가 드린 의견의 정정)\n')
+    out.append('| 날짜 | 당시의 말 또는 추정 | 확인된 사실 | 기록 위치 |\n|---|---|---|---|')
+    for c in XL.CORRECTIONS:
+        out.append('| ' + ' | '.join(md_cell(x) for x in c) + ' |')
+    out.append('\n## 4. 11-22 이전 실험\n')
+    out.append('상세는 이 기록에 다시 옮기지 않았고 아래 문서와 원본 파일에 있다. 해당 문서에 빠진 세부가 있을 수 있다.\n')
+    out.append('| 주제 | 상세 위치 |\n|---|---|')
+    for t, w in XL.EARLIER:
+        out.append(f'| {md_cell(t)} | {md_cell(w)} |')
+    out.append('\n## 5. 새 실험을 기록하는 방법 (규칙 R12)\n')
+    out.append('1. 실험을 돌린 직후 `python3 docs/experiments/archive_raw.py`로 원본 출력을 보존한다(`.scratch`는 git에 올라가지 않는다).')
+    out.append('2. `docs/experiments/experiment_log_data.py`의 `EXPERIMENTS`에 기록을 추가한다: 구성, 측정값, 관찰, 해석과 확신도, 정정과 한계, 영향, 원본 파일 이름.')
+    out.append('3. 의견을 정정하면 `CORRECTIONS`에 추가한다.')
+    out.append('4. `python3 docs/gen_verification_plan.py`로 이 문서와 엑셀을 다시 만들고 시험 코드와 같은 커밋에 넣는다.')
+    (D / 'EXPERIMENT_LOG.md').write_text('\n'.join(out) + '\n')
+    print('wrote', D / 'EXPERIMENT_LOG.md')
+
+
 def write_xlsx():
     try:
         from openpyxl import Workbook
@@ -332,10 +375,34 @@ def write_xlsx():
         for row in sh.iter_rows(min_row=2):
             for c in row:
                 c.alignment = wrap; c.border = border
+    ex = wb.create_sheet('실험 기록', 3)
+    ex.append(XL.FIELDS)
+    for e in XL.EXPERIMENTS:
+        ex.append([e[k] for k in ['id', 'date', 'topic', 'purpose', 'setup', 'result', 'observation', 'opinion', 'caveat', 'impact', 'raw']])
+    for i, w in enumerate([6, 11, 26, 30, 44, 70, 36, 44, 50, 34, 30], 1):
+        ex.column_dimensions[chr(64 + i)].width = w
+    for c in ex[1]:
+        c.fill = head_fill; c.font = head_font; c.border = border
+    for row in ex.iter_rows(min_row=2):
+        for c in row:
+            c.alignment = wrap; c.border = border
+    ex.freeze_panes = 'D2'
+    jh = wb.create_sheet('판단 이력', 4)
+    jh.append(['날짜', '당시의 말 또는 추정', '확인된 사실', '기록 위치'])
+    for c_ in XL.CORRECTIONS:
+        jh.append(list(c_))
+    for i, w in enumerate([8, 52, 70, 22], 1):
+        jh.column_dimensions[chr(64 + i)].width = w
+    for c in jh[1]:
+        c.fill = head_fill; c.font = head_font; c.border = border
+    for row in jh.iter_rows(min_row=2):
+        for c in row:
+            c.alignment = wrap; c.border = border
     wb.save(D / 'VERIFICATION_PLAN.xlsx')
     print('wrote', D / 'VERIFICATION_PLAN.xlsx')
 
 
 if __name__ == '__main__':
     write_md()
+    write_log_md()
     write_xlsx()

@@ -1,0 +1,12 @@
+== DISTRIBUTED addmul 4 others 6
+     -1.300    -2360.293                   5364                 9475        0.013        0.000                      0                 9475        2.225        0.000                       0                  4776  
+  Data Path Delay:        5.130ns  (logic 1.564ns (30.487%)  route 3.566ns (69.513%))
+  Destination:            core_i/sleep_unit_i/core_busy_q_reg/D
+== DISTRIBUTED addmul 5 others 5
+     -0.695     -783.902                   2957                 9522        0.008        0.000                      0                 9522        2.225        0.000                       0                  4799  
+  Data Path Delay:        5.672ns  (logic 2.703ns (47.651%)  route 2.969ns (52.349%))
+  Destination:            fpu_gen.fp_wrapper_i/i_fpnew_bulk/gen_operation_groups[3].i_opgroup_block/gen_merged_slice.i_multifmt_slice/gen_num_lanes[0].active_lane.lane_instance.i_fpnew_cast_multi/gen_output_pipeline[0].out_pipe_result_q_reg[1][13]/D
+== DISTRIBUTED addmul 5 others 6
+     -1.210    -2687.097                   5149                 9700        0.011        0.000                      0                 9700        2.225        0.000                       0                  4889  
+  Data Path Delay:        4.904ns  (logic 1.349ns (27.510%)  route 3.555ns (72.490%))
+  Destination:            core_i/sleep_unit_i/core_busy_q_reg/D

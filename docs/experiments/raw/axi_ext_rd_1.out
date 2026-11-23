@@ -1,0 +1,40 @@
+AXI_EXT_RD MAXB=16 CRED=48 TD=8 seeds 0..20: PASS | acc lines 107914, cpu words 6562, bursts 24788, beats 114476, cycles 598997 | longest burst 16 lines, max bursts outstanding 8, max lines outstanding 49
+AXI_EXT_RD MAXB=16 CRED=48 TD=8 seeds 100..110 inject: PASS | acc lines 52280, cpu words 3310, bursts 29248, beats 55590, cycles 480772 | longest burst 16 lines, max bursts outstanding 8, max lines outstanding 49
+AXI_EXT_RD MAXB=8 CRED=16 TD=2 seeds 0..20: PASS | acc lines 107914, cpu words 6562, bursts 32616, beats 114476, cycles 551653 | longest burst 8 lines, max bursts outstanding 2, max lines outstanding 16
+AXI_EXT_RD MAXB=8 CRED=16 TD=2 seeds 100..110 inject: PASS | acc lines 52280, cpu words 3310, bursts 32678, beats 55590, cycles 495622 | longest burst 8 lines, max bursts outstanding 2, max lines outstanding 16
+AXI_EXT_RD MAXB=4 CRED=8 TD=2 seeds 0..20: PASS | acc lines 107914, cpu words 6562, bursts 44979, beats 114476, cycles 574826 | longest burst 4 lines, max bursts outstanding 2, max lines outstanding 8
+AXI_EXT_RD MAXB=4 CRED=8 TD=2 seeds 100..110 inject: PASS | acc lines 52280, cpu words 3310, bursts 36299, beats 55590, cycles 517505 | longest burst 4 lines, max bursts outstanding 2, max lines outstanding 8
+AXI_EXT_RD MAXB=32 CRED=48 TD=8 seeds 0..20: PASS | acc lines 107914, cpu words 6562, bursts 22205, beats 114476, cycles 585142 | longest burst 32 lines, max bursts outstanding 8, max lines outstanding 49
+AXI_EXT_RD MAXB=32 CRED=48 TD=8 seeds 100..110 inject: PASS | acc lines 52280, cpu words 3310, bursts 28901, beats 55590, cycles 480885 | longest burst 32 lines, max bursts outstanding 8, max lines outstanding 48
+AXI_EXT_RD MAXB=48 CRED=63 TD=4 seeds 0..20: PASS | acc lines 107914, cpu words 6562, bursts 19520, beats 114476, cycles 601483 | longest burst 48 lines, max bursts outstanding 4, max lines outstanding 64
+AXI_EXT_RD MAXB=48 CRED=63 TD=4 seeds 100..110 inject: PASS | acc lines 52280, cpu words 3310, bursts 24991, beats 55590, cycles 477147 | longest burst 48 lines, max bursts outstanding 4, max lines outstanding 62
+  FAIL: seed 0 cyc 29: acc data of line 229473 wrong (got ef9ad091, expected 687149d0)
+  FAIL: seed 0 cyc 35: acc data of line 229472 wrong (got 687149d0, expected b8c499e5)
+  FAIL: seed 0 cyc 41: acc data of line 229471 wrong (got b8c499e5, expected 749282ce)
+  FAIL: seed 0 cyc 46: acc data of line 229470 wrong (got 749282ce, expected e2ee20c6)
+  FAIL: seed 0 cyc 51: acc data of line 229469 wrong (got e2ee20c6, expected 22ea208e)
+  FAIL: seed 0 cyc 56: acc data of line 229468 wrong (got 22ea208e, expected 5bb73520)
+  FAIL: seed 0 cyc 60: acc data of line 229467 wrong (got 5bb73520, expected 49d1f223)
+  FAIL: seed 0 cyc 65: acc data of line 229466 wrong (got 49d1f223, expected ee069129)
+  FAIL: seed 0 cyc 71: acc data of line 229465 wrong (got ee069129, expected 3aa70058)
+  FAIL: seed 0 cyc 76: acc data of line 229464 wrong (got 3aa70058, expected 8f1a28d4)
+  FAIL: seed 0 cyc 81: acc data of line 229463 wrong (got 8f1a28d4, expected 63bfc158)
+  FAIL: seed 0 cyc 85: acc data of line 229462 wrong (got 63bfc158, expected 22c8a230)
+AXI_EXT_RD MAXB=16 CRED=48 TD=1 seeds 0..20: FAIL | acc lines 0, cpu words 0, bursts 0, beats 107952, cycles 909723 | longest burst 16 lines, max bursts outstanding 1, max lines outstanding 16
+  FAIL: seed 100 cyc 398: acc data of line 81181 wrong (got f9891c3b, expected 9fd14158)
+  FAIL: seed 100 cyc 406: acc data of line 81182 wrong (got 9fd14158, expected 41ae7d4e)
+  FAIL: seed 100 cyc 407: acc data of line 81183 wrong (got 41ae7d4e, expected c5e25bc6)
+  FAIL: seed 100 cyc 420: acc data of line 81184 wrong (got c5e25bc6, expected c8d9f9d0)
+  FAIL: seed 100 cyc 421: unexpected acc response
+  FAIL: seed 100: no progress for 20000 cycles (issued 2680/2680, answered 2680, bursts 0) - deadlock
+  FAIL: seed 101 cyc 61: acc data of line 2052 wrong (got 1a2d55e5, expected 83c65ccf)
+  FAIL: seed 101 cyc 82: acc data of line 2053 wrong (got 83c65ccf, expected 8ae905cf)
+  FAIL: seed 101 cyc 83: acc data of line 2054 wrong (got 8ae905cf, expected 986893bf)
+  FAIL: seed 101 cyc 84: acc data of line 2055 wrong (got 986893bf, expected b50d70d8)
+  FAIL: seed 101 cyc 85: acc data of line 2056 wrong (got b50d70d8, expected f23b5aa0)
+  FAIL: seed 101 cyc 86: acc data of line 2057 wrong (got f23b5aa0, expected b60afb74)
+AXI_EXT_RD MAXB=16 CRED=48 TD=1 seeds 100..110 inject: FAIL | acc lines 0, cpu words 0, bursts 0, beats 52298, cycles 700363 | longest burst 16 lines, max bursts outstanding 1, max lines outstanding 16
+
+real	0m7.971s
+user	0m11.452s
+sys	0m2.538s

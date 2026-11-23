@@ -1,0 +1,6 @@
+1402 vectors -> /mnt/e/fpga_work/fpu_test
+TB_FPU 1402 vectors done
+# puts "FPU TEST FINISHED"
+FPU TEST FINISHED
+rtl: 671/1402 correct, wrong by op {'MUL': 301, 'I2F': 201, 'ADD': 229} (first #0: ['03', '3d1d9db1', '3d1d9db1', '00000000'] -> 7f800000, expected 3ac21598)
+net: 1402/1402 correct, wrong by op {} 

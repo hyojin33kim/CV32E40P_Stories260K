@@ -1,0 +1,23 @@
+FIXCLK: 15 always blocks reclocked to forever_cpuclk
+patched /mnt/e/fpga_work/xsim_fix/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv
+xsim.out:ERROR: [Project 1-161] Failed to remove the directory 'E:/fpga_work/xsim_fix/xsim_proj/xsim_chip.sim'. The directory might be in use by some other process.
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB loaded imem 4096 words, sram 265241 non-zero words at 3590861000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 500000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 1000000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 1500000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 2000000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 2500000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 3000000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 3500000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 4000000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 4500000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 5000000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 5500000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 6000000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 6500000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 7000000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 7500000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 8000000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 8500000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 9000000
+no dump.hex

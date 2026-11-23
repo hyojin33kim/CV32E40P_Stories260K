@@ -1,0 +1,7 @@
+1402 vectors -> /mnt/e/fpga_work/fpu_test
+TB_FPU 1402 vectors done
+TB_FPU 1402 vectors done
+# puts "FPU TEST FINISHED"
+FPU TEST FINISHED
+rtl: 1402/1402 correct, wrong by op {} 
+net: 1402/1402 correct, wrong by op {} 

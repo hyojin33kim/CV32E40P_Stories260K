@@ -1,0 +1,3 @@
+FIXCLK: 15 always blocks reclocked to forever_cpuclk
+patched /mnt/e/fpga_work/xsim_fix/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv
+trace -> /mnt/e/fpga_work/xsim_fix/trace_xsim.txt

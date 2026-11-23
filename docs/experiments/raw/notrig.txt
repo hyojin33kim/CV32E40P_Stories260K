@@ -1,0 +1,10 @@
+build exit=0
+gen/out_8_O2u_opta_w8_accfull_d2_L0_G1
+  with triggers   : DONE cycles=1255546 done_value=0x1 loaded_words=107029 load_cycles=333384 axi_cycles=3686432
+  without triggers: DONE cycles=1255546 done_value=0x1 loaded_words=107029 load_cycles=333384 axi_cycles=3686432
+  dump identical (whole 2 MiB): YES
+gen/out_8_O2u_opta_accfull_d2_L0_G1
+  with triggers   : DONE cycles=1263796 done_value=0x1 loaded_words=265245 load_cycles=808032 axi_cycles=4169092
+  without triggers: DONE cycles=1263796 done_value=0x1 loaded_words=265245 load_cycles=808032 axi_cycles=4169092
+  dump identical (whole 2 MiB): YES
+NOTRIG_DONE

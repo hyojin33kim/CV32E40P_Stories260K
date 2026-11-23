@@ -1,0 +1,56 @@
+already patched /mnt/e/fpga_work/fpu_test/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv
+inlined rd_ok in /mnt/e/fpga_work/fpu_test/acc/vfu.sv 5 calls
+3896 vectors -> /mnt/e/fpga_work/fpu_test (part 1: 1402, part 2: 1000, part 3: 1494)
+TB_FPU 3896 vectors done
+# puts "FPU TEST FINISHED"
+FPU TEST FINISHED
+rtl: 1402/3896 correct (result lines 1402, expected 3896)
+   F2I: 300 wrong of 300
+      #1702 op/a/b/c/flags=0b c3f039b7 00000000 00000000 0401 -> None, expected fffffe20
+      #1703 op/a/b/c/flags=0b 4bd9dab0 00000000 00000000 0401 -> None, expected 01b3b560
+      #1704 op/a/b/c/flags=0b 46a09630 00000000 00000000 0401 -> None, expected 0000504b
+   FLT: 400 wrong of 400
+      #2002 op/a/b/c/flags=08 bdc872ee c63afd74 00000000 0401 -> None, expected 00000000
+      #2003 op/a/b/c/flags=08 38e91d44 c3f71fd2 00000000 0401 -> None, expected 00000000
+      #2004 op/a/b/c/flags=08 3f60c740 468ff662 00000000 0401 -> None, expected 00000001
+   SUB: 300 wrong of 300
+      #1402 op/a/b/c/flags=12 00000000 b6741bf3 3b7ec048 0400 -> None, expected bb7efd4f
+      #1403 op/a/b/c/flags=12 00000000 bdce5856 bcece93e 0400 -> None, expected bd931e06
+      #1404 op/a/b/c/flags=12 00000000 3aa0e232 c71d63d8 0400 -> None, expected 471d63d8
+   edge-ADD: 289 wrong of 289
+      #2402 op/a/b/c/flags=02 00000000 00000000 00000000 0400 -> None, expected 00000000
+      #2407 op/a/b/c/flags=02 00000000 00000000 80000000 0400 -> None, expected 00000000
+      #2412 op/a/b/c/flags=02 00000000 00000000 00000001 0400 -> None, expected 00000001
+   edge-DIV: 289 wrong of 289
+      #2405 op/a/b/c/flags=04 00000000 00000000 00000000 0400 -> None, expected 7fc00000
+      #2410 op/a/b/c/flags=04 00000000 80000000 00000000 0400 -> None, expected 7fc00000
+      #2415 op/a/b/c/flags=04 00000000 00000001 00000000 0400 -> None, expected 00000000
+   edge-F2I: 19 wrong of 19
+      #3877 op/a/b/c/flags=0b 00000000 00000000 00000000 0401 -> None, expected 00000000
+      #3878 op/a/b/c/flags=0b 80000000 00000000 00000000 0401 -> None, expected 00000000
+      #3879 op/a/b/c/flags=0b 3f000000 00000000 00000000 0401 -> None, expected 00000000
+   edge-FLT: 289 wrong of 289
+      #2406 op/a/b/c/flags=08 00000000 00000000 00000000 0401 -> None, expected 00000000
+      #2411 op/a/b/c/flags=08 00000000 80000000 00000000 0401 -> None, expected 00000000
+      #2416 op/a/b/c/flags=08 00000000 00000001 00000000 0401 -> None, expected 00000001
+   edge-I2F: 13 wrong of 13
+      #3864 op/a/b/c/flags=0c 00000000 00000000 00000000 0400 -> None, expected 00000000
+      #3865 op/a/b/c/flags=0c 00000001 00000000 00000000 0400 -> None, expected 3f800000
+      #3866 op/a/b/c/flags=0c ffffffff 00000000 00000000 0400 -> None, expected bf800000
+   edge-MUL: 289 wrong of 289
+      #2404 op/a/b/c/flags=03 00000000 00000000 00000000 0400 -> None, expected 00000000
+      #2409 op/a/b/c/flags=03 00000000 80000000 00000000 0400 -> None, expected 80000000
+      #2414 op/a/b/c/flags=03 00000000 00000001 00000000 0400 -> None, expected 00000000
+   edge-SQRT: 17 wrong of 17
+      #3847 op/a/b/c/flags=05 00000000 00000000 00000000 0400 -> None, expected 00000000
+      #3848 op/a/b/c/flags=05 80000000 00000000 00000000 0400 -> None, expected 80000000
+      #3849 op/a/b/c/flags=05 00000001 00000000 00000000 0400 -> None, expected 1a3504f3
+   edge-SUB: 289 wrong of 289
+      #2403 op/a/b/c/flags=12 00000000 00000000 00000000 0400 -> None, expected 00000000
+      #2408 op/a/b/c/flags=12 00000000 00000000 80000000 0400 -> None, expected 00000000
+      #2413 op/a/b/c/flags=12 00000000 00000000 00000001 0400 -> None, expected 80000001
+net: 3896/3896 correct
+
+real	0m45.669s
+user	0m0.121s
+sys	0m0.049s

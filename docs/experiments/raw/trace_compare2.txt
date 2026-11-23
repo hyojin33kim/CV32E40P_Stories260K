@@ -1,0 +1,6 @@
+4562 .scratch/trv/trace_xsim.txt
+first difference at line 1:
+  verilator: 18 RSP rd=00000000
+  xsim     : 18 RSP rd=xxxxxxxx
+  context  : 17 REQ we=1 be=f a=001b4174 wd=00000000
+TRACE_COMPARE2_DONE

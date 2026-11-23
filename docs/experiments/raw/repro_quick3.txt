@@ -1,0 +1,55 @@
+
+=== build simulators (CPU, CPU profiler, CPU + accelerator SoC)
+
+=== G0: HOLD regression (stored HOLD ELF, ctx 1/128/512) on CPU sim and SoC sim
+OK   Vcv32e40p_top ctx1 HOLD dump byte-identical
+OK   Vcv32e40p_top ctx128 HOLD dump byte-identical
+OK   Vcv32e40p_top ctx512 HOLD dump byte-identical
+OK   Vsoc_top ctx1 HOLD dump byte-identical
+OK   Vsoc_top ctx128 HOLD dump byte-identical
+OK   Vsoc_top ctx512 HOLD dump byte-identical
+
+=== host reference C (ref/kv golden files)
+OK   ref_1.bin
+OK   ref_128.bin
+OK   ref_512.bin
+OK   kv_1.bin
+OK   kv_128.bin
+OK   kv_512.bin
+OK   after_kv_1.bin
+OK   after_kv_128.bin
+OK   after_kv_512.bin
+
+=== single-step profiles: SW baseline, then each offload level on the accelerator
+
+=== VFU unit test (expf / softmax / SiLU / divide / divide+softmax vs RISC-V software, bitwise)
+total 20,480 elements, mismatches 0
+
+=== E2E generation, 8 steps (-Os reference first, then the offload levels)
+
+=== compare with committed results
+OK   prof/O2u ctx1                     cycles 1,454,872 (delta +0) bit-exact vs HOLD True
+OK   prof/O2u ctx128                   cycles 3,039,675 (delta +0) bit-exact vs HOLD True
+OK   prof/O2u ctx512                   cycles 7,854,557 (delta +0) bit-exact vs HOLD True
+OK   prof/acc_all_l4v4 ctx1            cycles 565,396 (delta +0) bit-exact vs HOLD True
+OK   prof/acc_all_l4v4 ctx128          cycles 801,672 (delta +0) bit-exact vs HOLD True
+OK   prof/acc_all_l4v4 ctx512          cycles 1,517,775 (delta +0) bit-exact vs HOLD True
+OK   prof/acc_attn_l4v4 ctx1           cycles 674,262 (delta +0) bit-exact vs HOLD True
+OK   prof/acc_attn_l4v4 ctx128         cycles 1,667,665 (delta +0) bit-exact vs HOLD True
+OK   prof/acc_attn_l4v4 ctx512         cycles 4,694,987 (delta +0) bit-exact vs HOLD True
+OK   prof/acc_ffn_l4v4 ctx1            cycles 684,489 (delta +0) bit-exact vs HOLD True
+OK   prof/acc_ffn_l4v4 ctx128          cycles 2,265,040 (delta +0) bit-exact vs HOLD True
+OK   prof/acc_ffn_l4v4 ctx512          cycles 7,068,385 (delta +0) bit-exact vs HOLD True
+OK   prof/acc_full_l4v4 ctx1           cycles 121,958 (delta +0) bit-exact vs HOLD True
+OK   prof/acc_full_l4v4 ctx128         cycles 284,910 (delta +0) bit-exact vs HOLD True
+OK   prof/acc_full_l4v4 ctx512         cycles 780,213 (delta +0) bit-exact vs HOLD True
+OK   prof/gen_O2u ctx1                 cycles 1,454,871 (delta +0) bit-exact vs HOLD True
+OK   prof/gen_O2u ctx128               cycles 3,039,674 (delta +0) bit-exact vs HOLD True
+OK   prof/gen_O2u ctx512               cycles 7,854,556 (delta +0) bit-exact vs HOLD True
+OK   gen/out_8_O2u_accall_l4v4_L0_G1   pass True bit-exact vs -Os True cycles 4,586,425 (delta +0 vs committed)
+OK   gen/out_8_O2u_accattn_l4v4_L0_G1  pass True bit-exact vs -Os True cycles 5,628,634 (delta +0 vs committed)
+OK   gen/out_8_O2u_accfull_l4v4_L0_G1  pass True bit-exact vs -Os True cycles 1,017,613 (delta +0 vs committed)
+OK   gen/out_8_Os                      pass True bit-exact vs -Os None cycles 25,549,709 (delta +0 vs committed)
+OK   vfu unit test                     20,480 elements, 0 mismatches
+
+23/23 OK

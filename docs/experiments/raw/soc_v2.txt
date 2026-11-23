@@ -1,0 +1,17 @@
+60 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/soc_v2
+== synthesis
+     -1.051      -35.309                    132                57065       -2.327    -8455.430                   6810                57065        2.791        0.000                       0                 20529  
+| CLB LUTs*                  | 49279 |     0 |          0 |    230400 | 21.39 |
+| CLB Registers              | 16827 |     0 |          0 |    460800 |  3.65 |
+| Block RAM Tile    |  0.5 |     0 |          0 |       312 |  0.16 |
+| URAM              |    0 |     0 |          0 |        96 |  0.00 |
+| DSPs           |   39 |     0 |          0 |      1728 |  2.26 |
+== route
+      0.025        0.000                      0                57051        0.010        0.000                      0                57051        2.791        0.000                       0                 20520  
+| CLB LUTs                   | 49286 |     0 |          0 |    230400 | 21.39 |
+| CLB Registers              | 16818 |     0 |          0 |    460800 |  3.65 |
+| CLB Registers                              | 16818 |     0 |          0 |    460800 |  3.65 |
+| Block RAM Tile    |  0.5 |     0 |          0 |       312 |  0.16 |
+| URAM              |    0 |     0 |          0 |        96 |  0.00 |
+| DSPs           |   39 |     0 |          0 |      1728 |  2.26 |
+  Data Path Delay:        6.622ns  (logic 2.210ns (33.373%)  route 4.412ns (66.627%))
