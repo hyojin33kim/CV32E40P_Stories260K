@@ -27,6 +27,9 @@ module tb_fpu;
   logic [31:0] o, a, b, c;
   initial begin
     fi = $fopen("vec.hex", "r"); fo = $fopen("fpu_out.hex", "w");
+`ifdef NETLIST
+    #200;   // the Xilinx global set/reset (GSR, 100 ns) holds every flip-flop at the start of a post-synthesis simulation
+`endif
     repeat (5) @(posedge clk); rst_n = 1; repeat (3) @(posedge clk);
     n = 0;
     while ($fscanf(fi, "%h %h %h %h\n", o, a, b, c) == 4) begin

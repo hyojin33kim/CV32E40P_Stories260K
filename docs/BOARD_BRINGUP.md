@@ -24,9 +24,9 @@ built with `W8=1 OPTA=1 GEN_ACC=full python3 gen/run_gen.py <steps>` (see `w8/W8
 
 ## 2. Why this run matters
 Vivado xsim of the full chip disagreed with Verilator (done cycles 4,347,318 vs 4,501,912), and an FPU-only xsim test
-got 671/1402 vectors right (MUL/ADD/I2F wrong); the cause was not found. **The board result decides whether the
-hardware matches the Verilator reference.** If the board matches Verilator, the xsim difference was probably a
-modelling issue; if it matches xsim, the synthesized FPU or the RTL has a real problem (not excluded).
+got 671/1402 vectors right (MUL/ADD/I2F wrong). **Update 11-23:** both were xsim evaluation problems (see `docs/XSIM_VS_VERILATOR.md`); with the
+work-copy workarounds the FPU is 1402/1402 (RTL and synthesized netlist) and the full-chip xsim dump equals Verilator's. What is still **not
+verified** is the synthesized full chip and the board: **the board result decides whether the hardware matches the Verilator reference.**
 
 ## 3. Procedure (small to large; do not skip ahead)
 | step | what | pass criterion | status |
