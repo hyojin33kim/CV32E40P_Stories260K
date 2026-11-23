@@ -107,7 +107,7 @@
 | V-F3 | FPU | 펌웨어가 쓰지만 벡터에 없던 연산: SUB(fsub.s), F2I(fcvt.w.s, RTZ), 비교(flt.s, RTZ) | 정상 범위 SUB 300, F2I 300, FLT 400(무작위, 동일 값, 이웃 값)을 numpy와 비교. 펌웨어는 FMA, fmin, fmax를 쓰지 않음(fw.dis 0건) | 일치 | fpga/xsim/fpu_vectors.py | 통과 | xsim RTL, 네트리스트, Verilator RTL 모두 일치 | fw.dis 사용 횟수: fsub 36, flt 27, fcvt.w.s 1 |
 | V-F4 | FPU | FPU 연속 요청(back-to-back, 파이프라인 중첩) | 같은 연산 그룹(ADDMUL, DIVSQRT, NONCOMP, CONV)의 요청을 gnt가 허용하는 매 cycle 입력하고 결과를 순서대로 수집 | 순서 보존, 값 일치, 요청 없는 결과 0 | fpga/xsim/fpu_verilator.cpp (stream 모드) | 부분 | Verilator RTL(AFTER, DISTRIBUTED) 3896/3896. ADDMUL, NONCOMP, CONV 1.00 cycle/op, 동시 진행 최대 3개, DIVSQRT 13.4 cycle/op | xsim RTL과 합성 네트리스트의 연속 요청 시험은 미구현. 서로 다른 그룹 사이 중첩은 시험하지 않음 |
 | V-R1 | RISC-V | 코어 ISA 적합성(펌웨어가 쓰는 RV32IMFC 부분집합) | riscv-arch-test에서 펌웨어가 쓰는 명령군만 골라 CPU sim에서 실행 | 서명(signature) 일치 | (환경 구성 필요) | 미실행 | 코어는 현재 펌웨어 실행으로만 간접 확인 |  |
-| V-A1 | RTL | GEMV, VFU 버퍼 한계 경계 | ACC_XBUF/YBUF와 VFU_BUF(512)의 한계 크기와 그 초과 동작 확인 | 한계 안은 일치, 초과는 정의된 동작 | w8/test_w8_gemv.c, vfu/run_test.py | 부분 | VFU는 n=512까지 단위 시험에 포함. GEMV 버퍼는 1024 한 가지만, 초과 동작은 미확인 |  |
+| V-A1 | RTL | GEMV, VFU 버퍼 한계 경계 | GEMV 모드 D: 한계(n 또는 d = XBUF/YBUF)와 초과(+1, +8, 2배, 양쪽 동시)를 하나씩 실행해 소프트웨어 기준과 비교. VFU softmax, divsoftmax, softmax2: 청크 길이 512, 513, 520, 1024 | 한계 안은 일치, 초과는 정의된 동작(오류 신호 또는 안전한 거부) | w8/overlimit.sh, vfu/overlimit.sh (run_test_w8.py의 TEST_CASES, run_test.py의 TEST_LN) | 부분 | 한계 안 통과(GEMV 512×8, 8×512, 1024 빌드의 1024×8, 8×1024, VFU 길이 512). 초과는 전부 조용히 틀림: GEMV 512 빌드 7/7, 1024 빌드 6/6 사례 실패, VFU 513에서 불일치 3,115, 520에서 5,887, 1024에서 12,279. 멈춤, 센티널 위반 없음 | 합격 기준 "초과는 정의된 동작"을 만족하지 못함(RTL에 보호 없음). 시뮬레이션 전용 어서션 추가 여부는 결정 D7. 1025×1025는 크기 필터(n×d > 1 MiB)로 제외되어 판정 없음. 실험 E08 |
 | V-A2 | RTL | AXI 외부 읽기 경계: 4 KB 경계, 슬레이브 지연·정지·beat 간격, 오류 응답 | 무작위 AXI 슬레이브(ready 확률 1/0.5/0.1과 긴 정지, 지연 0~200 cycle, R beat 간격)에 가속기 line 요청(4 KB 경계 걸침, 긴 연속, 점프, 반복, 내림차순)과 CPU word 읽기를 섞어 입력. 오류 주입 시험은 한 beat에 SLVERR/DECERR | 매 cycle 프로토콜 검사 통과(16 B 정렬, 4 KB 비횡단, arlen≤MAXB, AR 안정, TD, CRED+1), 응답 데이터가 주소 해시와 일치, 오류 시 err_o 설정 후 리셋으로 해제 | acc/tb_axi_ext_rd/run.sh, checks.sh | 통과 | 5개 구성(MAXB/CRED/TD = 16/48/8, 8/16/2, 4/8/2, 32/48/8, 48/63/4) × 일반 21 seed(약 10.8만 line, 6,562 CPU 읽기, burst 약 2.4만) + 오류 주입 11 seed 모두 PASS. 변이 5건(4 KB 검사, 오류 플래그, 크레딧, CPU word 선택, TD 한도 제거)을 모두 검출 | 구성 제약(시험으로 확인): CRED ≥ MAXB(아니면 deadlock), TD는 2 이상의 2의 거듭제곱(TD=1, 3, 6은 응답이 밀림). 마스터 쪽 백프레셔는 rready=1이라 없음. 오류 정책은 현재 동작(sticky 플래그, 실행 계속)을 확인한 것이고 더 엄격한 정책 여부는 결정 대기(D7). 전체 칩에서의 오류 주입은 미시험 |
 | V-A3 | RTL | CPU, GEMV, VFU 동시 메모리 접근 충돌 | 세 master가 같은 구간을 동시에 접근하는 시나리오를 직접 만들어 실행 | 결과가 순차 실행과 동일 | acc/soc_top.sv | 미실행 | E2E 실행에서만 간접 확인 |  |
 | V-A4 | RTL | 가속기 레지스터 인터페이스 경계: busy 중 쓰기, 잘못된 CTRL 값 | busy 상태에서 새 명령/설정 쓰기, 정의되지 않은 모드 값 | 정의된 동작(무시 또는 오류 표시) | acc/gemv_acc.sv, acc/vfu.sv | 미실행 | 펌웨어는 busy 폴링 후에만 씀 |  |
@@ -121,7 +121,7 @@
 | V-F3 | 펌웨어가 쓰지만 벡터에 없던 연산: SUB(fsub.s), F2I(fcvt.w.s, RTZ), 비교(flt.s, RTZ) | FPU | 1 | 0.5일 | 없음 | 통과 | xsim RTL, 네트리스트, Verilator RTL 모두 일치 | fpga/xsim/fpu_vectors.py | 2026-11-23 |
 | V-A2 | AXI 외부 읽기 경계: 4 KB 경계, 슬레이브 지연·정지·beat 간격, 오류 응답 | RTL | 2 | 1일 | 없음(오류 정책은 현재 동작을 확인, 변경 여부는 결정 D7) | 통과 | 5개 구성(MAXB/CRED/TD = 16/48/8, 8/16/2, 4/8/2, 32/48/8, 48/63/4) × 일반 21 seed(약 10.8만 line, 6,562 CPU 읽기, burst 약 2.4만) + 오류 주입 11 seed 모두 PASS. 변이 5건(4 KB 검사, 오류 플래그, 크레딧, CPU word 선택, TD 한도 제거)을 모두 검출 | acc/tb_axi_ext_rd/run.sh, checks.sh | 2026-11-23 |
 | V-F1 | FPU 경계값 벡터(subnormal, Inf, NaN, ±0) | FPU | 2 | 0.5일 | 없음 | 통과 | xsim RTL, 네트리스트, Verilator RTL(AFTER, DISTRIBUTED) 모두 3896/3896. 변이 시험(SUB→ADD 등 4건)이 모두 검출됨 | fpga/xsim/fpu_vectors.py (edge-*) | 2026-11-23 |
-| V-A1 | GEMV, VFU 버퍼 한계 경계 | RTL | 3 | 0.5일 | 버퍼 초과를 하드웨어가 막는지, 펌웨어 규칙인지 확인 | 부분 | VFU는 n=512까지 단위 시험에 포함. GEMV 버퍼는 1024 한 가지만, 초과 동작은 미확인 | w8/test_w8_gemv.c, vfu/run_test.py | - |
+| V-A1 | GEMV, VFU 버퍼 한계 경계 | RTL | 3 | 0.5일 | 확인 결과: 하드웨어는 막지 않음(조용한 오류). 어서션 추가는 결정 D7 | 부분 | 한계 안 통과(GEMV 512×8, 8×512, 1024 빌드의 1024×8, 8×1024, VFU 길이 512). 초과는 전부 조용히 틀림: GEMV 512 빌드 7/7, 1024 빌드 6/6 사례 실패, VFU 513에서 불일치 3,115, 520에서 5,887, 1024에서 12,279. 멈춤, 센티널 위반 없음 | w8/overlimit.sh, vfu/overlimit.sh (run_test_w8.py의 TEST_CASES, run_test.py의 TEST_LN) | 2026-11-23 |
 | V-A3 | CPU, GEMV, VFU 동시 메모리 접근 충돌 | RTL | 3 | 1일 | 없음 | 미실행 | E2E 실행에서만 간접 확인 | acc/soc_top.sv | - |
 | V-F4 | FPU 연속 요청(back-to-back, 파이프라인 중첩) | FPU | 3 | 0.5일(xsim 연속 요청까지는 +0.5일) | 없음 | 부분 | Verilator RTL(AFTER, DISTRIBUTED) 3896/3896. ADDMUL, NONCOMP, CONV 1.00 cycle/op, 동시 진행 최대 3개, DIVSQRT 13.4 cycle/op | fpga/xsim/fpu_verilator.cpp (stream 모드) | 2026-11-23 |
 | V-A4 | 가속기 레지스터 인터페이스 경계: busy 중 쓰기, 잘못된 CTRL 값 | RTL | 4 | 0.5일 | busy 중 쓰기 등 정의되지 않은 동작의 정책 | 미실행 | 펌웨어는 busy 폴링 후에만 씀 | acc/gemv_acc.sv, acc/vfu.sv | - |
@@ -169,7 +169,7 @@
 | GEMV 모드 D(int8 + scale) | 무작위 366건, 불일치 0 | 확인 | w8/test_w8_gemv.c | V-U3 |
 | GEMV 15M 형태, pre-tiled(bit2) | 일치 | 확인 |  | V-U4, V-U5 |
 | GEMV 행 stride 16 B 배수, scale 16 B 라인 적재 | 오류 없이 동작 | 확인 | LOADS 상태 수정 후 비트 비교 |  |
-| GEMV, VFU 버퍼 한계 | XBUF/YBUF, VFU_BUF | 간접 | VFU는 n=512까지 포함, GEMV는 1024 한 가지 | V-A1 |
+| GEMV, VFU 버퍼 한계 | 한계 안 일치, 한계 초과 시 동작 | 확인 | 한계 안 통과(버퍼 512, 1024 빌드). 초과는 조용히 틀림(오류 신호, 어서션 없음). 실험 E08 | V-A1 |
 | 레지스터 인터페이스 | CTRL, W_ADDR, SC_ADDR, busy 폴링 | 간접 | 펌웨어가 사용. 경계 입력은 미시험 | V-A4 |
 | VFU 명령 1~7 | exp, softmax, SiLU, 나눗셈, 나눗셈+softmax, softmax2, SiLU2를 소프트웨어와 비트 일치 | 확인 | vfu/run_test.py | V-U1 |
 | VFU 벡터 길이 경계 | softmax 계열 길이 1, 2, 8, 512, 무작위 1~512 | 확인 | vfu/run_test.py (53행 부근) | V-U1 |
@@ -189,7 +189,7 @@
 | D4 | 합성 후 전체 칩 시뮬레이션 수행 여부 | 미정 | V-S1 |
 | D5 | 보드 확보와 PYNQ 이미지 | 미정(보드 없음) | V-B0..V-B5 |
 | D6 | 커버리지, 어서션, 형식 검증 도입 여부 | 미정 | V-G3 |
-| D7 | AXI 외부 읽기 오류 응답 정책 | 현재: err_o(sticky, STATUS bit1)만 켜고 실행 계속. 오류 시 중단이나 재시도가 필요한지, 파라미터 제약(CRED≥MAXB, TD=2의 거듭제곱)을 RTL 어서션으로 강제할지 | V-A2 |
+| D7 | AXI 외부 읽기 오류 응답 정책 | 현재: err_o(sticky, STATUS bit1)만 켜고 실행 계속. 오류 시 중단이나 재시도가 필요한지, 파라미터 제약(CRED≥MAXB, TD=2의 거듭제곱)과 버퍼 한계(N>XBUF, D>YBUF, VFU n>BUF)를 시뮬레이션 전용 RTL 어서션으로 강제할지(V-A1: 지금은 조용히 틀린 결과) | V-A1, V-A2 |
 
 ## 7. 실행 규칙 (LESSONS_LEARNED 반영)
 

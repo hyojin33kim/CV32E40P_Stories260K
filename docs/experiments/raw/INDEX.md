@@ -6,6 +6,9 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 
 | file | saved | bytes | what it is | first line |
 |---|---|---|---|---|
+| `a1_overlimit_1024.out` | 11-23 23:54 | 1330 | GEMV mode D at and beyond the 1024-word buffers (15M build obj_soc_big, TEST_BIG=1): 2 limit cases pass, 6 over-limit cases wrong, 1025x1025 filtered (cases 0) (11-23) | `simulator obj_soc_big/Vsoc_top, XBUF=YBUF=1024` |
+| `a1_overlimit_512.out` | 11-23 23:28 | 1231 | GEMV mode D at and beyond the 512-word buffers (build obj_soc): limit cases pass, 7 over-limit cases silently wrong (11-23) | `simulator obj_soc/Vsoc_top, XBUF=YBUF=512` |
+| `a1_vfu_overlimit.out` | 11-23 23:34 | 1670 | VFU softmax/divsoftmax/softmax2 with chunk length 512, 513, 520, 1024 (buffer 512): 512 passes, longer chunks silently wrong (11-23) | `chunk length 512:` |
 | `axi_checks.out` | 11-23 21:59 | 3155 | acc/tb_axi_ext_rd/checks.sh: constraint probes (TD=1/3/6, MAXB>CRED, CRED=8) and five mutation checks (11-23) | `== constraint probes (expected: the unsupported sets fail)` |
 | `axi_ext_rd_1.out` | 11-23 21:58 | 4590 | acc/tb_axi_ext_rd/run.sh, six parameter sets (first set list incl. TD=1): five PASS, TD=1 FAIL (11-23) | `AXI_EXT_RD MAXB=16 CRED=48 TD=8 seeds 0..20: PASS / acc lines 107914, cpu words 6562, bursts 24788, beats 1144` |
 | `board125.out` | 11-20 22:58 | 293 | Vivado log of a PS-connected block design build attempt (Tcl output) | `# if {$bp ne ""} { set_property board_part $bp [current_project]; puts "BOARD_PART $bp" } else { puts "BOARD_P` |
@@ -25,7 +28,7 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `cpu_pipe.txt` | 11-15 12:25 | 2025 | Vivado timing summary for CPU/FPU pipeline variants (11-15) | `== cpu_grt3` |
 | `cpu_pipe2.txt` | 11-15 12:45 | 1383 | Vivado timing summary for CPU/FPU pipeline variants (11-15) | `== DISTRIBUTED addmul 4 others 6` |
 | `cpu_rt.txt` | 11-15 11:45 | 1121 | Vivado timing summary (11-15) | `60 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/cv` |
-| `fpfmt_repro.txt` | 11-23 22:09 | 672 | FMT lines of the minimal xsim reproduction fpga/xsim/tb_fpfmt.sv (variable index gives exp=7/bias=63 for every format) | `FMT f=0  A(var idx) exp=7 man=7 bias=63 / B exp=7 / C exp=8 / expected exp 8` |
+| `fpfmt_repro.txt` | 11-23 23:55 | 672 | FMT lines of the minimal xsim reproduction fpga/xsim/tb_fpfmt.sv (variable index gives exp=7/bias=63 for every format) | `FMT f=0  A(var idx) exp=7 man=7 bias=63 / B exp=7 / C exp=8 / expected exp 8` |
 | `fpu_after.out` | 11-22 21:01 | 339 | xsim FPU test (1,402 vectors) before the workaround: RTL 671/1402 (MUL 301, I2F 201, ADD 229 wrong), synthesized netlist 1402/1402 (11-22) | `1402 vectors -> /mnt/e/fpga_work/fpu_test` |
 | `fpu_net.out` | 11-22 20:58 | 313 | same experiment, netlist run repeated: RTL 671/1402, netlist 1402/1402 (11-22) | `1402 vectors -> /mnt/e/fpga_work/fpu_test` |
 | `fpu_workaround.out` | 11-22 21:17 | 221 | xsim FPU test with xsim_workaround.py: RTL 1402/1402, netlist 1402/1402 (11-22) | `1402 vectors -> /mnt/e/fpga_work/fpu_test` |
@@ -64,7 +67,7 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `w8_os.out` | 11-21 20:53 | 675 | int8 weight (I1) end-to-end run result (JSON, 11-21) | `{` |
 | `xsim_fix.out` | 11-23 12:32 | 1767 | full-chip xsim with the FPU workaround only: run was stopped after about 15 h without reaching DONE (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_full.out` | 11-23 13:58 | 828 | full-chip xsim with both workarounds: DONE run_cycles=157433, dump equal to Verilator (sim.cpp 157437) (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
-| `xsim_hang_window_trace.txt` | 11-23 22:09 | 20146 | xsim trace of cycles 9900..10300: instruction fetch (IF), VFU state (VFU) and the x_req term probe (XSPROBE); shows x_req=0 while every term is 1 | `9909 IF a=01000ec8` |
+| `xsim_hang_window_trace.txt` | 11-23 23:55 | 20146 | xsim trace of cycles 9900..10300: instruction fetch (IF), VFU state (VFU) and the x_req term probe (XSPROBE); shows x_req=0 while every term is 1 | `9909 IF a=01000ec8` |
 | `xsim_pc.out` | 11-23 12:48 | 185 | run that produced the instruction fetch trace (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_probe.out` | 11-23 13:48 | 185 | run that produced the XSPROBE lines (x_req terms) (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_trace.out` | 11-23 12:45 | 185 | xsim trace run of the first 200k cycles (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |

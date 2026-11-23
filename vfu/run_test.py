@@ -2,6 +2,7 @@
 """Step ④-b unit test: VFU (acc/vfu.sv) vs RISC-V software on the SoC RTL sim, bitwise.
 
 usage: vfu/run_test.py [seeds=4] [n=65536]     (TEST_SIM overrides obj_soc/Vsoc_top)
+       env: TEST_ONLY=2,5,6 (tests to run), TEST_LN=<n> (softmax chunk length), TEST_OUT
 Runs tests exp/softmax/silu/divs for each seed in parallel; prints mismatches per run.
 exp inputs: every sf_exp threshold +-64 ulp (both signs), specials (+-0, +-inf, NaN,
 +-FLT_MAX, subnormals), the k<-125 / subnormal-result range, |x|<2^-23, uniform ranges,
@@ -50,7 +51,7 @@ def inputs(test, rng):
         x[rng.integers(0, N, N // 64)] = 0
         j = 0
         while j < N:
-            ln = int(rng.choice([1, 2, 8, 512, int(rng.integers(1, 513))]))
+            ln = int(os.environ['TEST_LN']) if os.environ.get('TEST_LN') else int(rng.choice([1, 2, 8, 512, int(rng.integers(1, 513))]))   # TEST_LN=<n>: fixed chunk length (V-A1: at and beyond VFU_BUF)
             aux[j] = ln; j += ln
     elif test in (3, 7):  # silu: values seen in hb, gate in hb2
         x = f2u(rng.normal(0, 4, N).astype(np.float32))

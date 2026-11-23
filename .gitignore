@@ -64,3 +64,4 @@ obj_chip*/
 obj_axi*/
 acc/tb_axi_ext_rd/mut/
 acc/tb_axi_ext_rd/obj.build_*.log
+__pycache__/

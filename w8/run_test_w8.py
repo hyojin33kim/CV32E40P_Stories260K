@@ -2,6 +2,7 @@
 """I1 unit test: gemv_acc mode D (int8 weights + per-row scale) vs the software loop on the SoC RTL sim, bitwise.
 
 usage: w8/run_test_w8.py [seed=1] [extra_random=60] [mac_budget=1500000]
+       env: TEST_CASES=nxd,nxd,... explicit cases, TEST_MAXCYC=<cycles> simulator cycle limit, TEST_BIG, TEST_SIM, TEST_SRC, TEST_OUT
        (TEST_SIM overrides obj_soc/Vsoc_top; the sim is built by TOP=soc_top ./build_sim.sh)
 Cases: an edge grid of (n, d) with n not a multiple of 16 / 4, d not a multiple of 4 or of the 16-row group, plus a few large
 cases (n or d = 512, FIFO and ybuf limits) and seeded random sizes; the four weight patterns rotate over the cases.
@@ -32,6 +33,8 @@ else:
     cases += [(512, 512), (512, 64), (64, 512), (172, 512), (512, 33), (1, 512), (512, 1)]  # large / degenerate
     for _ in range(extra):
         cases.append((int(rng.integers(1, 513)), int(rng.integers(1, 513))))
+if os.environ.get('TEST_CASES'):   # explicit cases, e.g. TEST_CASES=513x8,8x513 (V-A1: sizes beyond the buffers); the MAC budget filter below still applies
+    cases = [tuple(int(v) for v in c.split('x')) for c in os.environ['TEST_CASES'].split(',')]
 # keep within the MAC budget (grid and large cases first, then random)
 sel, tot = [], 0
 for n, d in cases:
@@ -52,7 +55,8 @@ for c, (n, d) in enumerate(cases):
 struct.pack_into('<I', m, 0x1afff0, len(cases))
 img, dump = O / 'img.bin', O / 'dump.bin'
 img.write_bytes(m)
-subprocess.run([SIM, str(img), str(dump), str(10 ** 10)], check=True, capture_output=True)
+r = subprocess.run([SIM, str(img), str(dump), os.environ.get('TEST_MAXCYC', str(10 ** 10))], capture_output=True)
+if r.returncode != 0: print('simulator exit code', r.returncode, (r.stderr or r.stdout)[-200:].decode(errors='replace'))
 d = dump.read_bytes()
 bad, fc, fr, nc, csw, chw, sent, rows, marker, badt, cht = struct.unpack_from('<11I', d, 0x1aff00)
 print(f'cases {nc}, rows {rows}, total MAC {tot:,}, sw cycles {csw:,}, hw cycles {chw:,}')
