@@ -20,7 +20,7 @@ ROWS = [
  ('V-T3', 'L0 도구 점검', '도구', '시험이 틀림을 잡는지(변이 시험)', '기대값 또는 RTL을 일부러 훼손한 뒤 단위 시험 실행', '불일치가 검출됨', 'w8/test_w8_gemv.c, w8/run_test_w8.py', '통과',
   '불일치 1,019건 검출', '새 단위 시험을 추가할 때마다 반복'),
  # ---- L1 unit
- ('V-U1', 'L1 단위', 'RTL', 'VFU(expf, softmax, SiLU, 나눗셈, 나눗셈+softmax)', 'RISC-V 소프트웨어 결과와 비교. 규모는 quick/standard/full로 선택', '비트 단위 일치', 'vfu/run_test.py (reproduce.sh)', '통과',
+ ('V-U1', 'L1 단위', 'RTL', 'VFU(expf, softmax, SiLU, 나눗셈, 나눗셈+softmax)', 'RISC-V 소프트웨어 결과와 비교. 7개 명령 전부, softmax 계열 벡터 길이 1, 2, 8, 512와 무작위 1~512 포함. 규모는 quick/standard/full로 선택', '비트 단위 일치', 'vfu/run_test.py (reproduce.sh)', '통과',
   'PR #3 기록: 1.31M 벡터 불일치 0', 'quick은 작은 규모만 재실행. 이번 세션에서 1.31M을 다시 돌리지는 않음'),
  ('V-U2', 'L1 단위', 'RTL', 'exp2 RTL vs C 모델', '입력 벡터를 RTL과 C 모델에 넣어 비교', '일치', 'acc/tb_exp2/run.sh, opta/test_exp2q.c', '부분',
   'reproduce.sh Option A 단계에 포함', '개별 수치는 이번 세션에서 재확인하지 않음'),
@@ -67,6 +67,53 @@ ROWS = [
  ('V-G5', '격차', 'RTL', 'KV cache를 DDR에 두는 쓰기 경로', 'AXI write 경로 설계와 시험', '', '', '미실행', '설계되지 않음(KV fp32 3.375 MiB는 URAM 3.0 MiB에 안 맞음)', 'int8 KV는 0.914 MiB'),
  ('V-G6', '격차', 'RTL', '정수 lane(I2: int8×int8 MAC + 활성화 양자화)', '고정소수점 C 기준부터 새로 시작', '', '', '미실행', '', '별도 세션에서 진행하기로 결정'),
  ('V-G7', '격차', '도구', '이전 xsim 불일치에서 패치별 기여 분리', '패치를 하나씩만 적용해 재실행', '각 패치의 효과 정량화', 'fpga/xsim/run_xsim.sh', '미실행', '', '우선순위 낮음'),
+ # ---- new tests (gaps found in the block-by-block review)
+ ('V-F1', '격차', 'FPU', 'FPU 경계값 벡터(subnormal, Inf, NaN, ±0)', 'fpu_vectors.py에 경계 피연산자 추가(ADD, MUL, DIV, SQRT, I2F). NaN은 정규 NaN(0x7fc00000)으로 비교', 'numpy와 일치(NaN은 NaN 여부로 비교)', 'fpga/xsim/fpu_vectors.py', '미실행', '현재 벡터는 정상 범위만', '우선순위 2, 추정 0.5일'),
+ ('V-F2', '격차', 'FPU', 'FPU 예외 플래그(rflags) 비교', '연산별 NV, DZ, OF, UF, NX 기대값을 만들어 rflags와 비교', '플래그 일치', 'fpga/xsim/fpu_vectors.py, tb_fpu.sv', '미실행', '현재 기대값 파일에 결과만 있음', '우선순위 4, 추정 1일(기준 구현 선택 필요: softfloat 등)'),
+ ('V-F3', '격차', 'FPU', '펌웨어가 쓰지만 벡터에 없는 연산: SUB(fsub.s), F2I(fcvt.w.s), 비교(flt.s)', '해당 연산 벡터를 추가해 numpy와 비교. 펌웨어는 FMA, fmin, fmax를 쓰지 않음(fw.dis 0건)', '일치', 'fpga/xsim/fpu_vectors.py', '미실행', 'fw.dis 사용 횟수: fsub 36, flt 27, fcvt.w.s 1', '우선순위 1, 추정 0.5일'),
+ ('V-F4', '격차', 'FPU', 'FPU 연속 요청(back-to-back, 파이프라인 중첩)', '지연 중에 다음 요청을 연속 입력하고 결과 순서와 값을 확인', '순서 보존, 값 일치', 'fpga/xsim/tb_fpu.sv 확장', '미실행', '현재 한 번에 하나씩만 요청', '우선순위 3, 추정 0.5일'),
+ ('V-R1', '격차', 'RISC-V', '코어 ISA 적합성(펌웨어가 쓰는 RV32IMFC 부분집합)', 'riscv-arch-test에서 펌웨어가 쓰는 명령군만 골라 CPU sim에서 실행', '서명(signature) 일치', '(환경 구성 필요)', '미실행', '코어는 현재 펌웨어 실행으로만 간접 확인', '우선순위 5, 추정 1~2일(툴체인과 테스트 환경 준비 포함)'),
+ ('V-A1', '격차', 'RTL', 'GEMV, VFU 버퍼 한계 경계', 'ACC_XBUF/YBUF와 VFU_BUF(512)의 한계 크기와 그 초과 동작 확인', '한계 안은 일치, 초과는 정의된 동작', 'w8/test_w8_gemv.c, vfu/run_test.py', '부분', 'VFU는 n=512까지 단위 시험에 포함. GEMV 버퍼는 1024 한 가지만, 초과 동작은 미확인', '우선순위 3, 추정 0.5일(초과를 하드웨어가 막는지 펌웨어 규칙인지 먼저 확인)'),
+ ('V-A2', '격차', 'RTL', 'AXI 외부 읽기 경계: 4 KB 경계, 백프레셔 극단, 오류 응답', '4 KB 경계를 걸치는 주소, rready를 길게 내리는 메모리 모델, SLVERR 주입', 'AXI 규칙 준수, 데이터 일치, 오류 처리 정책대로 동작', 'sim_axi_ddr.cpp, acc/axi_ext_rd.sv', '미실행', '현재는 지연 모델, row/bank 모델만', '우선순위 2, 추정 1일(오류 응답을 어떻게 처리할지 정책 먼저 결정)'),
+ ('V-A3', '격차', 'RTL', 'CPU, GEMV, VFU 동시 메모리 접근 충돌', '세 master가 같은 구간을 동시에 접근하는 시나리오를 직접 만들어 실행', '결과가 순차 실행과 동일', 'acc/soc_top.sv', '미실행', 'E2E 실행에서만 간접 확인', '우선순위 3, 추정 1일'),
+ ('V-A4', '격차', 'RTL', '가속기 레지스터 인터페이스 경계: busy 중 쓰기, 잘못된 CTRL 값', 'busy 상태에서 새 명령/설정 쓰기, 정의되지 않은 모드 값', '정의된 동작(무시 또는 오류 표시)', 'acc/gemv_acc.sv, acc/vfu.sv', '미실행', '펌웨어는 busy 폴링 후에만 씀', '우선순위 4, 추정 0.5일(정책을 먼저 확인)'),
+]
+
+# block-by-block review: what each block is checked for, how, and where it is still open
+# (block, item, what is checked, coverage, evidence/location, linked IDs)   coverage: 확인 / 간접 / 없음 / 제외
+BLOCKS = [
+ ('FPU', 'ADD, MUL', 'numpy float32(정확한 반올림)와 비트 일치', '확인', 'fpga/xsim/fpu_vectors.py, 1,402 벡터 중 각 300 이상', 'V-T1'),
+ ('FPU', 'DIV, SQRT', '위와 동일', '확인', '같은 벡터 파일', 'V-T1'),
+ ('FPU', 'I2F(정수→실수)', '부호 있는 정수 200개', '확인', '같은 벡터 파일', 'V-T1'),
+ ('FPU', '반올림 모드', 'RNE만', '간접', '다른 모드는 시험하지 않음(펌웨어는 RNE)', ''),
+ ('FPU', '피연산자 범위', '정상 범위만', '없음', 'subnormal, Inf, NaN, ±0 경계 벡터 없음', 'V-F1'),
+ ('FPU', '예외 플래그(rflags)', '플래그 비교', '없음', '기대값 파일에 결과만 있음', 'V-F2'),
+ ('FPU', 'SUB, F2I, 비교(펌웨어가 쓰는 연산)', '벡터에 없음', '없음', 'fw.dis: fsub 36, flt 27, fcvt.w.s 1 사용', 'V-F3'),
+ ('FPU', 'FMA, fmin, fmax', '펌웨어가 쓰지 않음', '제외', 'fw.dis 0건', ''),
+ ('FPU', '지연(latency)', 'FPU_LAT 0과 4에서 동작', '간접', 'D1(0), D2(4) 설정 회귀', 'V-I1'),
+ ('FPU', '연속 요청 핸드셰이크', 'req→gnt→rvalid 중첩', '간접', '벡터 시험은 한 번에 하나. 가속기 통합 시험에서 간접 확인', 'V-F4'),
+ ('FPU', '합성 후 네트리스트', '같은 벡터', '확인', '1,402/1,402', 'V-T1'),
+ ('RISC-V 코어', '명령 I, M, F, C', '펌웨어가 쓰는 범위 실행', '간접', 'HOLD 회귀, E2E 덤프 일치', 'V-I1, V-I4'),
+ ('RISC-V 코어', '부팅', '_start, bss 초기화, imem 0x0100_0000', '간접', 'chip sim, xsim 실행', 'V-I1, V-I8'),
+ ('RISC-V 코어', 'CSR', 'mstatus FS, mcountinhibit, mcycle', '간접', '시작 코드에서 사용', ''),
+ ('RISC-V 코어', '트랩', '예기치 않은 예외', '간접', 'sim.cpp가 TRAP mepc를 감지해 중단', ''),
+ ('RISC-V 코어', '데이터 포트', '바이트 마스크, 크기, 정렬', '간접', 'xsim과 Verilator trace가 9,910 cycle까지 4,462 이벤트 동일', 'V-I8'),
+ ('RISC-V 코어', '스택', '최소 스택 주소', '간접', '실행 로그의 min_stack_write', ''),
+ ('RISC-V 코어', '외부 인터럽트', '사용하지 않음', '제외', '', ''),
+ ('RISC-V 코어', 'ISA 적합성(riscv-arch-test 등)', '명령 하나하나', '없음', '', 'V-R1'),
+ ('가속기', 'GEMV 모드 A(fp32)', '온칩과 DDR에서 일치', '확인', '', 'V-I5, V-I6'),
+ ('가속기', 'GEMV 모드 D(int8 + scale)', '무작위 366건, 불일치 0', '확인', 'w8/test_w8_gemv.c', 'V-U3'),
+ ('가속기', 'GEMV 15M 형태, pre-tiled(bit2)', '일치', '확인', '', 'V-U4, V-U5'),
+ ('가속기', 'GEMV 행 stride 16 B 배수, scale 16 B 라인 적재', '오류 없이 동작', '확인', 'LOADS 상태 수정 후 비트 비교', ''),
+ ('가속기', 'GEMV, VFU 버퍼 한계', 'XBUF/YBUF, VFU_BUF', '간접', 'VFU는 n=512까지 포함, GEMV는 1024 한 가지', 'V-A1'),
+ ('가속기', '레지스터 인터페이스', 'CTRL, W_ADDR, SC_ADDR, busy 폴링', '간접', '펌웨어가 사용. 경계 입력은 미시험', 'V-A4'),
+ ('가속기', 'VFU 명령 1~7', 'exp, softmax, SiLU, 나눗셈, 나눗셈+softmax, softmax2, SiLU2를 소프트웨어와 비트 일치', '확인', 'vfu/run_test.py', 'V-U1'),
+ ('가속기', 'VFU 벡터 길이 경계', 'softmax 계열 길이 1, 2, 8, 512, 무작위 1~512', '확인', 'vfu/run_test.py (53행 부근)', 'V-U1'),
+ ('가속기', 'VFU 연속 명령, 상태 전이', '명령 사이 상태 정리', '간접', 'E2E에서 확인', ''),
+ ('가속기', 'AXI 외부 읽기', '버스트 병합, 크레딧, 태그 FIFO, 지연', '확인', 'DDR top 시뮬레이션', 'V-U6'),
+ ('가속기', 'AXI 4 KB 경계, 백프레셔 극단, 오류 응답', '', '없음', '', 'V-A2'),
+ ('가속기', '성능 카운터', '6종 값이 모델과 일치', '확인', '', 'V-P1'),
+ ('가속기', 'CPU, GEMV, VFU 동시 접근', '충돌 시 결과 일치', '간접', 'E2E에서만 확인', 'V-A3'),
 ]
 
 DECISIONS = [
@@ -124,17 +171,30 @@ def write_md():
             if r[1] == lv:
                 out.append('| ' + ' | '.join(md_cell(x) for i, x in enumerate(r) if i != 1) + ' |')
         out.append('')
-    out.append('## 4. 사용자 결정 대기\n')
+    out.append('## 4. 블록별 점검 (FPU, RISC-V 코어, 가속기)\n')
+    out.append('"확인" = 시험 코드나 기록에서 확인, "간접" = 펌웨어/E2E 실행으로만 확인, "없음" = 확인한 범위에서 시험 없음, "제외" = 대상 아님. "연결 ID"는 3절의 항목이다.\n')
+    blocks = []
+    for b in BLOCKS:
+        if b[0] not in blocks:
+            blocks.append(b[0])
+    for bl in blocks:
+        out.append(f'### {bl}\n')
+        out.append('| 점검 항목 | 확인 내용 | 현재 | 근거와 위치 | 연결 ID |\n|---|---|---|---|---|')
+        for b in BLOCKS:
+            if b[0] == bl:
+                out.append('| ' + ' | '.join(md_cell(x) for x in b[1:]) + ' |')
+        out.append('')
+    out.append('## 5. 사용자 결정 대기\n')
     out.append('| ID | 결정 | 현재 | 관련 항목 |\n|---|---|---|---|')
     for d in DECISIONS:
         out.append('| ' + ' | '.join(md_cell(x) for x in d) + ' |')
-    out.append('\n## 5. 실행 규칙 (LESSONS_LEARNED 반영)\n')
+    out.append('\n## 6. 실행 규칙 (LESSONS_LEARNED 반영)\n')
     for i, t in enumerate(RULES, 1):
         out.append(f'{i}. {t}')
-    out.append('\n## 6. 한계\n')
+    out.append('\n## 7. 한계\n')
     out.append('- 이 표는 `reproduce.sh`, `docs/`, 이번 세션 기록에서 확인한 것만 담았다. 저장소의 모든 시험을 찾아본 것은 아니다.')
     out.append('- "근거" 열의 수치는 저장소 문서와 세션 기록에서 옮겼고, 이번 세션에서 다시 측정한 것은 V-I8(xsim 전체 칩)과 V-T1뿐이다.')
-    out.append('- `unit`급 시험이 따로 분리되지 않은 항목(V-U6)은 통합 시험으로 확인했다고 표시했다.')
+    out.append('- 단위 시험으로 따로 분리되지 않은 항목(V-U6)은 통합 시험으로 확인했다고 표시했다.\n- 4절 "블록별 점검"의 "없음"은 코드를 검색해 찾지 못했다는 뜻이며, 다른 위치에 시험이 있을 가능성을 완전히 배제하지는 않는다.\n- V-F1~V-A4(신규 시험)의 "추정 N일"은 작업량 추정이며 측정값이 아니다.')
     (D / 'VERIFICATION_PLAN.md').write_text('\n'.join(out) + '\n')
     print('wrote', D / 'VERIFICATION_PLAN.md')
 
@@ -190,6 +250,25 @@ def write_xlsx():
     sm.column_dimensions['A'].width = 18
     for j in range(2, len(STATUS) + 3):
         sm.column_dimensions[chr(64 + j)].width = 10
+
+    bs = wb.create_sheet('블록별 점검', 1)
+    bs.append(['블록', '점검 항목', '확인 내용', '현재', '근거와 위치', '연결 ID'])
+    for x in BLOCKS:
+        bs.append(list(x))
+    for i, w in enumerate([14, 38, 44, 8, 52, 14], 1):
+        bs.column_dimensions[chr(64 + i)].width = w
+    for c in bs[1]:
+        c.fill = head_fill; c.font = head_font; c.border = border
+    nb = len(BLOCKS) + 1
+    for row in bs.iter_rows(min_row=2, max_row=nb):
+        for c in row:
+            c.alignment = wrap; c.border = border
+    bs.freeze_panes = 'C2'
+    bs.auto_filter.ref = f'A1:F{nb}'
+    dv2 = DataValidation(type='list', formula1='"확인,간접,없음,제외"', allow_blank=False)
+    bs.add_data_validation(dv2); dv2.add(f'D2:D{nb}')
+    for s_, col in {'확인': 'C6EFCE', '간접': 'FFEB9C', '없음': 'F8CBAD', '제외': 'D9D9D9'}.items():
+        bs.conditional_formatting.add(f'D2:D{nb}', CellIsRule(operator='equal', formula=[f'"{s_}"'], fill=PatternFill('solid', bgColor=col, fgColor=col)))
 
     g = wb.create_sheet('게이트'); g.append(['게이트', '조건', '현재'])
     for x in GATES:
