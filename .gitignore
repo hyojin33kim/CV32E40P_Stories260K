@@ -62,3 +62,5 @@ acc/tb_exp2/*.txt
 acc/tb_exp2/build.log
 obj_chip*/
 obj_axi*/
+acc/tb_axi_ext_rd/mut/
+acc/tb_axi_ext_rd/obj.build_*.log
