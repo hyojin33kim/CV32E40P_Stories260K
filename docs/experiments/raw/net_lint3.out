@@ -1,0 +1,214 @@
+%Warning-TIMESCALEMOD: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/fpga/xsim/net_verilator/net_top.sv:3:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)
+    3 | module net_top (
+      |        ^~~~~~~
+                       /mnt/e/fpga_work/chip_net/vl/glbl_vl.v:2:8: ... Location of module with timescale
+    2 | module glbl ();
+      |        ^~~~
+                       ... For warning description see https://verilator.org/warn/TIMESCALEMOD?v=5.038
+                       ... Use "/* verilator lint_off TIMESCALEMOD */" and lint_on around source to disable this message.
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:789394:10: Unsupported: tristate in top-level IO: 'CI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+789394 |        (.CI(i___53_i_4_n_0),
+       |          ^~
+                    ... For error description see https://verilator.org/warn/UNSUPPORTED?v=5.038
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:789395:10: Unsupported: tristate in top-level IO: 'CI_TOP'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+789395 |         .CI_TOP(1'b0),
+       |          ^~~~~~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:789397:10: Unsupported: tristate in top-level IO: 'DI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+789397 |         .DI(\total_qt_rt_30_reg[28]_0 [27:20]),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:789399:10: Unsupported: tristate in top-level IO: 'S'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+789399 |         .S({i___53_i_5_n_0,i___53_i_6_n_0,i___53_i_7_n_0,i___53_i_8_n_0,i___53_i_9_n_0,i___53_i_10_n_0,i___53_i_11_n_0,i___53_i_12_n_0}));
+       |          ^
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:789461:10: Unsupported: tristate in top-level IO: 'CI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+789461 |        (.CI(\srt_divisor_reg[7]_i_6_n_0 ),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:789462:10: Unsupported: tristate in top-level IO: 'CI_TOP'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+789462 |         .CI_TOP(1'b0),
+       |          ^~~~~~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:789464:10: Unsupported: tristate in top-level IO: 'DI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+789464 |         .DI(\total_qt_rt_30_reg[28]_0 [19:12]),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:789466:10: Unsupported: tristate in top-level IO: 'S'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+789466 |         .S({i___53_i_18_n_0,i___53_i_19_n_0,i___53_i_20_n_0,i___53_i_21_n_0,i___53_i_22_n_0,i___53_i_23_n_0,i___53_i_24_n_0,i___53_i_25_n_0}));
+       |          ^
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:790999:10: Unsupported: tristate in top-level IO: 'CI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+790999 |        (.CI(\srt_divisor_reg[7]_i_10_n_0 ),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791000:10: Unsupported: tristate in top-level IO: 'CI_TOP'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791000 |         .CI_TOP(1'b0),
+       |          ^~~~~~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791002:10: Unsupported: tristate in top-level IO: 'DI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791002 |         .DI(\total_qt_rt_30_reg[28]_0 [19:12]),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791004:10: Unsupported: tristate in top-level IO: 'S'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791004 |         .S(\srt_divisor[8]_i_5__0_0 ));
+       |          ^
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791006:10: Unsupported: tristate in top-level IO: 'CI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791006 |        (.CI(\srt_divisor_reg[25]_i_8_n_0 ),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791007:10: Unsupported: tristate in top-level IO: 'CI_TOP'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791007 |         .CI_TOP(1'b0),
+       |          ^~~~~~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791009:10: Unsupported: tristate in top-level IO: 'DI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791009 |         .DI({1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,\total_qt_rt_30_reg[28]_0 [28]}),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791011:10: Unsupported: tristate in top-level IO: 'S'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791011 |         .S({1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,\srt_divisor_reg[25]_7 }));
+       |          ^
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791013:10: Unsupported: tristate in top-level IO: 'CI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791013 |        (.CI(i___53_i_1__0_n_0),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791014:10: Unsupported: tristate in top-level IO: 'CI_TOP'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791014 |         .CI_TOP(1'b0),
+       |          ^~~~~~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791016:10: Unsupported: tristate in top-level IO: 'DI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791016 |         .DI({1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,\total_qt_rt_30_reg[28]_0 [28]}),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791018:10: Unsupported: tristate in top-level IO: 'S'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791018 |         .S({1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,\srt_divisor[25]_i_11__0_n_0 }));
+       |          ^
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791020:10: Unsupported: tristate in top-level IO: 'CI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791020 |        (.CI(\srt_divisor_reg[25]_i_12_n_0 ),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791021:10: Unsupported: tristate in top-level IO: 'CI_TOP'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791021 |         .CI_TOP(1'b0),
+       |          ^~~~~~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791023:10: Unsupported: tristate in top-level IO: 'DI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791023 |         .DI(\total_qt_rt_30_reg[28]_0 [27:20]),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791025:10: Unsupported: tristate in top-level IO: 'S'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791025 |         .S(\srt_divisor[16]_i_5__0_0 ));
+       |          ^
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791063:10: Unsupported: tristate in top-level IO: 'CI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791063 |        (.CI(ex3_rslt_denorm),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791064:10: Unsupported: tristate in top-level IO: 'CI_TOP'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791064 |         .CI_TOP(1'b0),
+       |          ^~~~~~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791066:10: Unsupported: tristate in top-level IO: 'DI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791066 |         .DI(\total_qt_rt_30_reg[28]_0 [11:4]),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791068:10: Unsupported: tristate in top-level IO: 'S'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791068 |         .S({\srt_divisor[0]_i_3__0_0 ,\srt_divisor[7]_i_20__0_n_0 ,\srt_divisor[7]_i_21__0_n_0 }));
+       |          ^
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791070:10: Unsupported: tristate in top-level IO: 'CI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791070 |        (.CI(1'b0),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791071:10: Unsupported: tristate in top-level IO: 'CI_TOP'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791071 |         .CI_TOP(1'b0),
+       |          ^~~~~~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791073:10: Unsupported: tristate in top-level IO: 'DI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791073 |         .DI(\total_qt_rt_30_reg[28]_0 [11:4]),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:791075:10: Unsupported: tristate in top-level IO: 'S'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+791075 |         .S({\srt_divisor[7]_i_11__0_n_0 ,\srt_divisor[7]_i_12__0_n_0 ,\srt_divisor[7]_i_13__0_n_0 ,\srt_divisor[7]_i_14__0_n_0 ,\srt_divisor[7]_i_15__0_n_0 ,\srt_divisor[7]_i_16_n_0 ,\srt_divisor[7]_i_17__0_n_0 ,\srt_divisor[7]_i_18__0_n_0 }));
+       |          ^
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792144:10: Unsupported: tristate in top-level IO: 'CI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792144 |        (.CI(\srt_remainder_reg[1]_i_1__0_n_0 ),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792145:10: Unsupported: tristate in top-level IO: 'CI_TOP'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792145 |         .CI_TOP(1'b0),
+       |          ^~~~~~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792147:10: Unsupported: tristate in top-level IO: 'DI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792147 |         .DI({\srt_remainder_reg_n_0_[13] ,\srt_remainder_reg_n_0_[12] ,\srt_remainder_reg_n_0_[11] ,\srt_remainder_reg_n_0_[10] ,\srt_remainder_reg_n_0_[9] ,\srt_remainder_reg_n_0_[8] ,\srt_remainder_reg_n_0_[7] ,\srt_remainder_reg_n_0_[6] }),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792149:10: Unsupported: tristate in top-level IO: 'S'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792149 |         .S({\srt_remainder[15]_i_6__0_n_0 ,\srt_remainder[15]_i_7__0_n_0 ,\srt_remainder[15]_i_8__0_n_0 ,\srt_remainder[15]_i_9__0_n_0 ,\srt_remainder[15]_i_10__0_n_0 ,\srt_remainder[15]_i_11__0_n_0 ,\srt_remainder[15]_i_12__0_n_0 ,\srt_remainder[15]_i_13__0_n_0 }));
+       |          ^
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792183:10: Unsupported: tristate in top-level IO: 'CI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792183 |        (.CI(1'b0),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792184:10: Unsupported: tristate in top-level IO: 'CI_TOP'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792184 |         .CI_TOP(1'b0),
+       |          ^~~~~~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792186:10: Unsupported: tristate in top-level IO: 'DI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792186 |         .DI({\srt_remainder_reg_n_0_[5] ,\srt_remainder_reg_n_0_[4] ,\srt_remainder_reg_n_0_[3] ,\srt_remainder_reg_n_0_[2] ,\srt_remainder_reg_n_0_[1] ,\srt_remainder_reg_n_0_[0] ,1'b0,\srt_remainder[1]_i_2__0_n_0 }),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792188:10: Unsupported: tristate in top-level IO: 'S'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792188 |         .S({\srt_remainder[1]_i_3__0_n_0 ,\srt_remainder[1]_i_4__0_n_0 ,\srt_remainder[1]_i_5__0_n_0 ,\srt_remainder[1]_i_6__0_n_0 ,\srt_remainder[1]_i_7__0_n_0 ,\srt_remainder[1]_i_8__0_n_0 ,\srt_remainder[1]_i_9__0_n_0 ,\srt_remainder[1]_i_10__0_n_0 }));
+       |          ^
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792216:10: Unsupported: tristate in top-level IO: 'CI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792216 |        (.CI(\srt_remainder_reg[15]_i_4__0_n_0 ),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792217:10: Unsupported: tristate in top-level IO: 'CI_TOP'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792217 |         .CI_TOP(1'b0),
+       |          ^~~~~~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792219:10: Unsupported: tristate in top-level IO: 'DI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792219 |         .DI({\srt_remainder_reg_n_0_[21] ,\srt_remainder_reg_n_0_[20] ,\srt_remainder_reg_n_0_[19] ,\srt_remainder_reg_n_0_[18] ,\srt_remainder_reg_n_0_[17] ,\srt_remainder_reg_n_0_[16] ,\srt_remainder_reg_n_0_[15] ,\srt_remainder_reg_n_0_[14] }),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792221:10: Unsupported: tristate in top-level IO: 'S'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792221 |         .S({\srt_remainder[23]_i_5__0_n_0 ,\srt_remainder[23]_i_6__0_n_0 ,\srt_remainder[23]_i_7__0_n_0 ,\srt_remainder[23]_i_8__0_n_0 ,\srt_remainder[23]_i_9__0_n_0 ,\srt_remainder[23]_i_10__0_n_0 ,\srt_remainder[23]_i_11__0_n_0 ,\srt_remainder[23]_i_12__0_n_0 }));
+       |          ^
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792273:10: Unsupported: tristate in top-level IO: 'CI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792273 |        (.CI(\srt_remainder_reg[23]_i_3__0_n_0 ),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792274:10: Unsupported: tristate in top-level IO: 'CI_TOP'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792274 |         .CI_TOP(1'b0),
+       |          ^~~~~~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792276:10: Unsupported: tristate in top-level IO: 'DI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792276 |         .DI({1'b0,\srt_remainder_reg_n_0_[28] ,\srt_remainder_reg_n_0_[27] ,\srt_remainder_reg_n_0_[26] ,\srt_remainder_reg_n_0_[25] ,\srt_remainder_reg_n_0_[24] ,\srt_remainder_reg_n_0_[23] ,\srt_remainder_reg_n_0_[22] }),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:792278:10: Unsupported: tristate in top-level IO: 'S'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b0__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+792278 |         .S({\srt_remainder[30]_i_5__0_n_0 ,\srt_remainder[30]_i_6__0_n_0 ,\srt_remainder[30]_i_7__0_n_0 ,\srt_remainder[30]_i_8__0_n_0 ,\srt_remainder[30]_i_9__0_n_0 ,\srt_remainder[30]_i_10__0_n_0 ,\srt_remainder[30]_i_11__0_n_0 ,\srt_remainder[30]_i_12__0_n_0 }));
+       |          ^
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:780464:10: Unsupported: tristate in top-level IO: 'CI'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b1__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+780464 |        (.CI(i___53_i_4__0_n_0),
+       |          ^~
+%Error-UNSUPPORTED: /mnt/e/fpga_work/chip_net/vl/netlist_vl.v:780465:10: Unsupported: tristate in top-level IO: 'CI_TOP'
+                                                                       : ... note: In instance 'net_top.dut.soc_i.vfu_i.g_lane__05b1__05d__02elane_i.fpu_i.i_fpnew_bulk.gen_operation_groups__05b1__05d__02ei_opgroup_block.gen_merged_slice__02ei_multifmt_slice.gen_num_lanes__05b0__05d__02eactive_lane__02elane_instance__02ei_fpnew_divsqrt_multi_th.i_divsqrt_thead.x_pa_fdsu_srt'
+780465 |         .CI_TOP(1'b0),
+       |          ^~~~~~
+%Error: Exiting due to too many errors encountered; --error-limit=50
+
+real	0m27.226s
+user	0m25.261s
+sys	0m2.086s

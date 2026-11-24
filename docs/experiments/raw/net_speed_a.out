@@ -1,0 +1,7 @@
+wall time 211 s (vivado project creation, elaboration and simulation)
+xsim_net.out:ERROR: The current Vivado Simulator license tier you have, BASIC, does not meet the requirement to run the number of instances in this design. Number of instances in this design, 107091, exceed maximum allowed 50000. See the Vivado Licensing page for tier details and how to get the right license.
+xsim_net.out:ERROR: [Common 17-39] 'launch_simulation' failed due to earlier errors.
+xsim_net.out:ERROR: [Simtcl 6-50] Simulation engine failed to start: The Simulation shut down unexpectedly during initialization.
+xsim_net.out:ERROR: [USF-XSim-62] 'simulate' step failed with errors. Please check the Tcl console or log files for more information.
+xsim_net.out:ERROR: [Vivado 12-4473] Detected error while running simulation. Please correct the issue and retry this operation.
+xsim_net_proj/xsim_net.sim/sim_1/behav/xsim/simulate.log:ERROR: The current Vivado Simulator license tier you have, BASIC, does not meet the requirement to run the number of instances in this design. Number of instances in this design, 107091, exceed maximum allowed 50000. See the Vivado Licensing page for tier details and how to get the right license.

@@ -1,0 +1,38 @@
+%Error-BADVLTPRAGMA: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/fpga/xsim/net_verilator/net_top.sv:1:1: Unknown verilator comment: '/*verilator top of the post-synthesis netlist simulation (D4): the UNISIM models read the global set/reset through the hierarchical*/'
+    1 | /*verilator top of the post-synthesis netlist simulation (D4): the UNISIM models read the global set/reset through the hierarchical*/ 
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                     ... For error description see https://verilator.org/warn/BADVLTPRAGMA?v=5.038
+%Error-UNSUPPORTED: /mnt/h/2026.1/Vivado/data/verilog/src/unisims/FDCE.v:80:9: Unsupported: Verilog 1995 deassign
+   80 |         deassign Q_out;
+      |         ^~~~~~~~
+                    ... For error description see https://verilator.org/warn/UNSUPPORTED?v=5.038
+%Error-UNSUPPORTED: /mnt/h/2026.1/Vivado/data/verilog/src/unisims/FDPE.v:80:9: Unsupported: Verilog 1995 deassign
+   80 |         deassign Q_out;
+      |         ^~~~~~~~
+%Error-UNSUPPORTED: /mnt/h/2026.1/Vivado/data/verilog/src/unisims/FDRE.v:67:9: Unsupported: Verilog 1995 deassign
+   67 |         deassign Q_out;
+      |         ^~~~~~~~
+%Error-UNSUPPORTED: /mnt/h/2026.1/Vivado/data/verilog/src/unisims/FDSE.v:69:9: Unsupported: Verilog 1995 deassign
+   69 |         deassign Q_out;
+      |         ^~~~~~~~
+%Error: /mnt/h/2026.1/Vivado/data/verilog/src/unisims/RAMB18E2.v:2854:28: syntax error, unexpected INTEGER NUMBER, expecting '('
+ 2854 |     specparam PATHPULSE$ = 0;
+      |                            ^
+        ... See the manual at https://verilator.org/verilator_doc.html?v=5.038 for more assistance.
+%Error: /mnt/h/2026.1/Vivado/data/verilog/src/unisims/RAMB36E2.v:3710:28: syntax error, unexpected INTEGER NUMBER, expecting '('
+ 3710 |     specparam PATHPULSE$ = 0;
+      |                            ^
+%Error-UNSUPPORTED: /mnt/h/2026.1/Vivado/data/verilog/src/unisims/SRL16E.v:69:5: Unsupported: Verilog 1995 deassign
+   69 |     deassign data;
+      |     ^~~~~~~~
+%Error: /mnt/h/2026.1/Vivado/data/verilog/src/unisims/SRL16E.v:146:28: syntax error, unexpected INTEGER NUMBER, expecting '('
+  146 |     specparam PATHPULSE$ = 0;
+      |                            ^
+%Error: /mnt/h/2026.1/Vivado/data/verilog/src/unisims/URAM288.v:3922:28: syntax error, unexpected INTEGER NUMBER, expecting '('
+ 3922 |     specparam PATHPULSE$ = 0;
+      |                            ^
+%Error: Exiting due to 10 error(s)
+
+real	0m4.244s
+user	0m2.617s
+sys	0m0.913s

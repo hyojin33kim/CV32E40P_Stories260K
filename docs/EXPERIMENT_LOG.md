@@ -17,6 +17,8 @@
 | E07 | 2026-11-23 | AXI 외부 읽기 master(axi_ext_rd) 단독 시험 | 5개 구성 모두 PASS (구성 MAXB/CRED/TD: acc line 합계 107,914, CPU 읽기 6,562, beat 114,476): | axi_ext_rd_1.out, axi_checks.out |
 | E08 | 2026-11-23 | GEMV, VFU 버퍼 한계 초과 동작 | GEMV 버퍼 512 빌드: 512×8 통과, 8×512 통과. 초과: 513×8 실패(출력 8개 전부 틀림), 520×8(7개), 1024×4(4개), 8×513(4개), 8×520(8개), 4×1024(512개), 513×513(452개). 모두 종료 표식 0x60 | a1_overlimit_512.out, a1_overlimit_1024.out, a1_vfu_overlimit.out |
 | E09 | 2026-11-24 | FPU 연속 요청: xsim RTL과 합성 네트리스트 | rtl 3896/3896, net 3896/3896, rtl-stream 3896/3896, net-stream 3896/3896, 요청 없는 결과 0건(소요 1분 42초). | fpu_xsim_stream.out |
+| E10 | 2026-11-24 | CPU, GEMV, VFU 동시 접근 (V-A3) | 시나리오 1(GEMV 중 CPU 계산): 불일치 0, CPU 6회 중 2회가 GEMV 실행 중에 끝남, 17,781 cycle. 통과. | a3_conc.out |
+| E11 | 2026-11-24 | 합성 후 전체 칩 시뮬레이션(D4)의 준비와 막힘 | 합성: 5분 45초, 네트리스트 45,394,243 바이트(약 789,000줄), LUT 60,189, 레지스터 20,675, URAM 64, DSP 93, BRAM 7, 합성 단계 WNS −0.499 ns(구현 전 값). 소자 25종 89,803개(LUT6 28,05 | xsim_net_license_error.txt, net_speed_a.out, net_lint.out, net_lint2.out, net_lint3.out |
 
 ## 2. 실험별 기록
 
@@ -142,6 +144,38 @@
 - **정정 · 한계**: 서로 다른 연산 그룹 사이의 중첩은 시험하지 않았다. 1 cycle 차이의 원인은 미확인이다. 샘플 시점을 클럭 하강 에지로 바꾸어 다시 재면 구분할 수 있다.
 - **영향 · 후속**: V-F4 통과. D4(합성 후 전체 칩 시뮬레이션)의 시험대는 결과 샘플을 posedge+0.1 ns가 아니라 negedge에서 하도록 설계한다.
 - **원본 데이터 (docs/experiments/raw/)**: fpu_xsim_stream.out
+
+### E10 CPU, GEMV, VFU 동시 접근 (V-A3) (2026-11-24)
+
+- **목적**: CPU와 가속기, 그리고 가속기끼리 동시에 활동할 때 결과가 순차 실행과 같은지 확인한다.
+- **구성 / 명령**: 펌웨어 시험 acc/tb_conc/test_conc.c와 run_test.py, SoC 시뮬레이터 obj_soc/Vsoc_top. 데이터: GEMV 256×128 int8(모드 D), VFU softmax 512, CPU 계산은 256워드 6회 반복(별도 메모리). 먼저 세 작업을 블로킹으로 실행해 시간을 잰다(보정: GEMV 8,780 cycle, VFU 24,991, CPU 17,723). 시나리오마다 시뮬레이터를 새로 실행. 가속기를 실행하지 않은 쪽은 비교에서 제외.
+- **결과 (측정값)**
+  - 시나리오 1(GEMV 중 CPU 계산): 불일치 0, CPU 6회 중 2회가 GEMV 실행 중에 끝남, 17,781 cycle. 통과.
+  - 시나리오 2(VFU 중 CPU 계산): 불일치 0, 6회 모두 VFU 실행 중에 끝남, 25,000 cycle. 통과.
+  - 시나리오 3(GEMV 실행 ⅓ 지점에서 VFU 시작, 그때 GEMV busy=1): GEMV 시간 초과(busy가 풀리지 않음), GEMV 출력 128/128 틀림, VFU 출력 508/512 틀림, CPU 불일치 0, 1,770,760 cycle.
+  - 시나리오 4(VFU 실행 ⅓ 지점에서 GEMV 시작, 그때 VFU busy=1): 불일치 0, 시간 초과 없음, 51,461 cycle(순차 합 8,780 + 24,991 + 17,723 = 51,494와 거의 같음).
+  - 같은 시험을 두 번 실행해 결과가 같았다(결정적).
+- **관찰**: 가속기끼리의 겹침은 비대칭이다. VFU 실행 중 GEMV를 시작하면 GEMV의 요청이 막혔다가 풀려 직렬화되어 정상이고, GEMV 실행 중 VFU를 시작하면 GEMV가 멈추고 두 결과 모두 틀린다.
+- **의견 / 해석 (확신도)**: 코드 읽기(acc/soc_top.sv)로 세운 가설과 맞는다: GEMV와 VFU가 메모리 포트를 하나 공유하고 소유권을 vfu_busy 하나로 정하므로, GEMV가 읽기 응답을 기다리는 중에 VFU가 시작되면 그 응답이 GEMV에서 막히고 VFU로 전달된다. 확신: 중간(내부 신호는 보지 않았다). 펌웨어는 매번 busy를 폴링하고 다음 명령을 시작하므로 정상 동작에서는 이 경우가 생기지 않는다. 하드웨어가 이를 막지는 않는다.
+- **정정 · 한계**: 한 가지 크기와 한 가지 시작 시점(⅓)만 시험했다. CPU가 가속기와 같은 메모리 영역을 동시에 접근하는 경우는 정의되지 않은 동작이라 시험하지 않았다. CPU와 두 가속기를 모두 동시에 돌리는 경우도 시험하지 않았다. 첫 실행은 시험 오류로 판정할 수 없었다(실행하지 않은 가속기를 비교, 겹침 여부를 기록하지 않음). 보정을 넣고 고쳐서 이 결과를 얻었다.
+- **영향 · 후속**: V-A3 "부분". 결정 D7에 "GEMV 실행 중 VFU 시작을 하드웨어가 막거나 대기시킬지"를 추가. 펌웨어 규칙(항상 busy 폴링 후 다음 명령)은 지켜야 하는 요구사항이 됨.
+- **원본 데이터 (docs/experiments/raw/)**: a3_conc.out
+
+### E11 합성 후 전체 칩 시뮬레이션(D4)의 준비와 막힘 (2026-11-24)
+
+- **목적**: V-S1: 합성된 하드웨어(소자 수준 네트리스트)가 Verilator RTL과 같은 결과를 내는지 전체 칩과 같은 이미지(157,437 cycle)로 확인한다.
+- **구성 / 명령**: fpga/synth.tcl에 NETLIST 토큰 추가, soc_chip을 125 MHz 목표로 합성(구현 없음, FPU 레지스터 DISTRIBUTED, 작업 폴더 /mnt/e/fpga_work/chip_net). xsim: fpga/xsim/run_xsim_net.sh, run_xsim_net.tcl, tb_chip.sv(NETLIST 조건: 내부 신호 추적 제외, GSR 200 ns 대기, +LOADMAX, +MAXCYC). Verilator: fpga/xsim/net_verilator/(prep.py, prim_models.v, net_top.sv)로 lint.
+- **결과 (측정값)**
+  - 합성: 5분 45초, 네트리스트 45,394,243 바이트(약 789,000줄), LUT 60,189, 레지스터 20,675, URAM 64, DSP 93, BRAM 7, 합성 단계 WNS −0.499 ns(구현 전 값). 소자 25종 89,803개(LUT6 28,051, FDCE 18,083, LUT5 13,397, LUT3 8,063, LUT4 7,089, LUT2 6,313, LUT1 2,693, FDRE 2,468, CARRY8 1,554, MUXF7 904, MUXF8 397, RAM64M8 176, RAM32M16 139, FDSE 95, DSP48E2 93, SRL16E 93, RAM32M 65, URAM288 64, 그 외 소수), 시뮬레이터 인스턴스 107,091개.
+  - xsim: 3분 31초 후 오류 "Vivado Simulator license tier BASIC ... Number of instances in this design, 107091, exceed maximum allowed 50000". 시뮬레이션이 시작되지 않음.
+  - Verilator 1차 lint(4초): 오류 10건 = FDRE, FDSE, FDCE, FDPE, SRL16E 모델의 Verilog-1995 deassign 미지원 5건, URAM288, RAMB18E2, RAMB36E2, SRL16E의 specify 블록(PATHPULSE$ 식별자) 문법 오류 4건, 제 주석이 Verilator 지시어로 오인된 1건.
+  - 조치: FF 5종은 직접 동작 모델(prim_models.v), 나머지 모델은 specify 블록 제거. 2차 lint(27초): 오류 51건으로 줄었고 모두 CARRY8(3,708건)과 DSP48E2(1,292건) 입력의 "tristate in top-level IO"(모델의 X !== 1'bz 연결 판별). 조치: 판별을 상수로 치환.
+  - 3차 lint: 변환 단계가 10분을 넘겨 메모리 6.5 GB(호스트 7.9 GB, 여유 88 MB)에 도달해 메모리 부족 위험으로 중단. 결과 없음.
+- **관찰**: xsim은 라이선스 한도에, Verilator는 메모리에 막힌다. 작은 FPU 네트리스트는 xsim에서 정상(3,896/3,896).
+- **의견 / 해석 (확신도)**: Verilator 메모리 급증의 원인은 소자마다 INIT 파라미터가 달라서 인스턴스마다 모듈 사본이 만들어지기 때문으로 추정한다(미검증). 선택지: (a) xsim 라이선스 상향(사용자 작업, 이미 만든 run_xsim_net.sh로 바로 실행 가능), (b) WSL 메모리 상향(사용자 작업), (c) LUT, 플립플롭, 캐리 소자를 assign/always 문장으로 바꾸는 변환기를 직접 작성해 모듈 사본을 없앰(수 시간 작업, 변환 오류 위험은 같은 방식으로 변환한 FPU 네트리스트를 xsim 결과 3,896/3,896과 대조해 관리). 권고: (a) 또는 (b)를 먼저 확인. 확신: 선택지의 작업량은 낮음(추정), 메모리 원인은 낮음.
+- **정정 · 한계**: 3차 lint를 중단했기 때문에 메모리를 더 주면 Verilator가 끝까지 변환하는지는 모른다. 직접 만든 FF 모델과 상수로 치환한 모델이 벤더 모델과 같은 동작이라는 것은 FPU 네트리스트 교차 검증으로 아직 확인하지 않았다. 합성 단계 WNS −0.499 ns는 구현 전 값이며 타이밍 판단에 쓰지 않는다(PS 연결 구현 결과는 WNS +0.100).
+- **영향 · 후속**: V-S1은 "미실행(막힘)". 결정 D4를 막힌 경로의 선택으로 바꿈. fpga/synth.tcl의 NETLIST 토큰, run_xsim_net.sh 등은 라이선스가 풀리면 그대로 사용 가능.
+- **원본 데이터 (docs/experiments/raw/)**: xsim_net_license_error.txt, net_speed_a.out, net_lint.out, net_lint2.out, net_lint3.out
 
 ## 3. 판단 이력 (제가 드린 의견의 정정)
 

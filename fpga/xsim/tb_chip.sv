@@ -40,7 +40,7 @@ module tb_chip;
   logic [31:0] sram_img[SRAM_WORDS];
   logic [31:0] dump[SRAM_WORDS];
   longint run_cycles = 0;
-  integer fd, nz, tf, trace_n, pc_from, pc_to;
+  integer fd, nz, tf, trace_n, pc_from, pc_to, loadmax, maxcyc;
 
   task automatic ld_write(input logic [31:0] a, input logic [31:0] d);
     @(negedge clk); ld_req = 1; ld_we = 1; ld_addr = a; ld_wdata = d;
@@ -48,14 +48,19 @@ module tb_chip;
   endtask
 
   initial begin
+    if (!$value$plusargs("LOADMAX=%d", loadmax)) loadmax = 0;   // >0: load only this many SRAM words (speed measurement)
+    if (!$value$plusargs("MAXCYC=%d", maxcyc)) maxcyc = 0;     // >0: stop after this many cycles from reset release (speed measurement)
     $readmemh("imem.hex", imem_img);
     $readmemh("sram.hex", sram_img);
+`ifdef NETLIST
+    #200;   // the Xilinx global set/reset (GSR, 100 ns) holds every flip-flop at the start of a post-synthesis simulation
+`endif
     repeat (10) @(posedge clk);
     for (int i = 0; i < IMEM_WORDS; i++) ld_write(32'h0100_0000 + 4 * i, imem_img[i]);
     nz = 0;
     // every word, zeros included: the 4-state SRAM model starts as X (Verilator's starts as 0) and the firmware assumes zeroed memory;
     // the board flow (pynq/run_chip.py) also writes every word
-    for (int i = 0; i < SRAM_WORDS; i++) begin ld_write(4 * i, sram_img[i]); if (sram_img[i] != 0) nz++; end
+    for (int i = 0; i < ((loadmax > 0) ? loadmax : SRAM_WORDS); i++) begin ld_write(4 * i, sram_img[i]); if (sram_img[i] != 0) nz++; end
     $display("TB loaded imem %0d words, sram %0d non-zero words at %0t", IMEM_WORDS, nz, $time);
     if (!$value$plusargs("TRACE_N=%d", trace_n)) trace_n = 0;
     if (!$value$plusargs("PC_FROM=%d", pc_from)) pc_from = 9900;
@@ -63,6 +68,8 @@ module tb_chip;
     if (trace_n > 0) tf = $fopen("trace_xsim.txt", "w");
     @(negedge clk); rst_n = 1;
     while (!done) begin
+      if (maxcyc > 0 && run_cycles >= maxcyc) begin $display("TB MAXCYC reached run_cycles=%0d", run_cycles); $finish; end
+`ifndef NETLIST   // the traces below look into the RTL hierarchy; the post-synthesis netlist is flattened
       // CPU data port trace (signals sampled just before the rising edge), same format as sim.cpp SIM_TRACE_CPU
       if (trace_n > 0 && run_cycles < trace_n) begin
         if (dut.d_req && dut.d_gnt) $fdisplay(tf, "%0d REQ we=%0d be=%h a=%08h wd=%08h", run_cycles, dut.d_we, dut.d_be, dut.d_addr, dut.d_wdata);
@@ -89,6 +96,7 @@ module tb_chip;
           dut.soc_i.cpu_i.apu_req, dut.soc_i.cpu_i.apu_gnt, dut.soc_i.cpu_i.apu_op,
           dut.soc_i.cpu_i.apu_operands[0], dut.soc_i.cpu_i.apu_operands[1], dut.soc_i.cpu_i.apu_operands[2],
           dut.soc_i.cpu_i.apu_rvalid, dut.soc_i.cpu_i.apu_rdata);
+`endif
       if (trace_n > 0 && run_cycles == trace_n) begin $fclose(tf); $display("TB TRACE written, stopping"); $finish; end
       @(posedge clk); run_cycles++; @(negedge clk);
       if (run_cycles % 500000 == 0) $display("TB running %0d", run_cycles);
