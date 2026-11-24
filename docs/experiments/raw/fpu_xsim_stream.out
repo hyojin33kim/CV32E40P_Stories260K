@@ -1,0 +1,25 @@
+already patched /mnt/e/fpga_work/fpu_test/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv
+inlined rd_ok in /mnt/e/fpga_work/fpu_test/acc/vfu.sv 0 calls
+3896 vectors -> /mnt/e/fpga_work/fpu_test (part 1: 1402, part 2: 1000, part 3: 1494)
+TB_FPU 3896 vectors done
+TB_FPU stream group 0: 1768 ops, 1771 cycles, max in flight 3
+TB_FPU stream group 1: 906 ops, 12172 cycles, max in flight 1
+TB_FPU stream group 2: 689 ops, 692 cycles, max in flight 3
+TB_FPU stream group 3: 533 ops, 536 cycles, max in flight 3
+TB_FPU stream 3896 vectors done, unexpected extra results 0
+TB_FPU 3896 vectors done
+TB_FPU stream group 0: 1768 ops, 1772 cycles, max in flight 4
+TB_FPU stream group 1: 906 ops, 12173 cycles, max in flight 1
+TB_FPU stream group 2: 689 ops, 693 cycles, max in flight 4
+TB_FPU stream group 3: 533 ops, 537 cycles, max in flight 4
+TB_FPU stream 3896 vectors done, unexpected extra results 0
+# puts "FPU TEST FINISHED"
+FPU TEST FINISHED
+rtl: 3896/3896 correct
+net: 3896/3896 correct
+rtl-stream: 3896/3896 correct
+net-stream: 3896/3896 correct
+
+real	1m41.802s
+user	0m0.102s
+sys	0m0.089s

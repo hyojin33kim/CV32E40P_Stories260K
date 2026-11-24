@@ -31,6 +31,7 @@ DESC = {
  'a1_overlimit_512.out': 'GEMV mode D at and beyond the 512-word buffers (build obj_soc): limit cases pass, 7 over-limit cases silently wrong (11-23)',
  'a1_overlimit_1024.out': 'GEMV mode D at and beyond the 1024-word buffers (15M build obj_soc_big, TEST_BIG=1): 2 limit cases pass, 6 over-limit cases wrong, 1025x1025 filtered (cases 0) (11-23)',
  'a1_vfu_overlimit.out': 'VFU softmax/divsoftmax/softmax2 with chunk length 512, 513, 520, 1024 (buffer 512): 512 passes, longer chunks silently wrong (11-23)',
+ 'fpu_xsim_stream.out': 'xsim FPU test with the stream mode: RTL and netlist, single and stream, all 3896/3896, stream statistics per group (11-24)',
  'trace_compare.txt': 'Verilator CPU data-port trace of 200k cycles: 20,133 events (11-23)',
  'trace_compare2.txt': 'first xsim-vs-Verilator trace compare: first difference was a store response (Verilator 0 vs xsim x), later shown to be a don\'t care (11-23)',
  'xsim_fix.out': 'full-chip xsim with the FPU workaround only: run was stopped after about 15 h without reaching DONE (11-23)',

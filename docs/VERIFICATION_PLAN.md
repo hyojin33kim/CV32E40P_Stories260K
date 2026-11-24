@@ -6,7 +6,7 @@
 
 ## 1. 요약
 
-전체 49개: 통과 25, 부분 3, 미실행 18, 미정 2, 제외 1
+전체 49개: 통과 26, 부분 3, 미실행 17, 미정 2, 제외 1
 
 | 단계 | 통과 | 부분 | 미실행 | 미정 | 제외 |
 |---|---|---|---|---|---|
@@ -16,7 +16,7 @@
 | L3 타이밍 | 3 | 0 | 0 | 0 | 1 |
 | L4 합성 후 | 0 | 0 | 1 | 0 | 0 |
 | L5 보드 | 0 | 0 | 6 | 0 | 0 |
-| 격차 | 3 | 2 | 10 | 1 | 0 |
+| 격차 | 4 | 2 | 9 | 1 | 0 |
 
 ## 2. 게이트
 
@@ -95,7 +95,7 @@
 
 | ID | 분류 | 점검 항목 | 방법 / 자극 | 합격 기준 | 실행 위치 | 상태 | 근거 | 비고 |
 |---|---|---|---|---|---|---|---|---|
-| V-G1 | RTL | `assign` 안에서 함수가 인자가 아닌 변수를 읽는 패턴 전수 탐색 | acc/ 와 vendor 외 RTL 소스를 검색해 `rd_ok`와 같은 패턴 확인 | 해당 패턴 없음 또는 인자화 | acc/*.sv | 미실행 | vfu.sv의 rd_ok만 확인됨 | 시뮬레이터 의존성 제거 목적 |
+| V-G1 | RTL | `assign` 안에서 함수가 인자가 아닌 변수를 읽는 패턴 전수 탐색 | 프로젝트 RTL(acc/*.sv)의 모든 function을 읽어 본문이 읽는 신호와 호출 위치(assign, always_comb, always_ff)를 확인 | 해당 패턴 없음 또는 인자화 | acc/gemv_acc.sv, acc/vfu.sv | 부분 | function 4개 중 nact(상수 LL만), i8_to_f32, fgt는 인자와 지역 변수만 읽는 순수 함수이고 always_comb 또는 always_ff에서 호출. rd_ok만 rd_v_q, rd_st_q, rd_elem_q를 읽고 assign 3곳(sum_in, x_req, max_go)에서 호출됨 | 패턴이 rd_ok 한 곳에 남아 있음(수정 여부는 D3). 벤더 코드(cv32e40p, fpnew, common_cells)의 함수는 소스를 전수 읽지 않았고, xsim 전체 칩이 Verilator와 일치한 것(E04)으로 동적 확인된 상태 |
 | V-G2 | RTL | 저장소 RTL의 `rd_ok` 수정 여부 | 인자로 넘기거나 인라인한 뒤 회귀와 재합성 확인 | reproduce quick 42/42 + 타이밍 영향 없음 | acc/vfu.sv | 미정 | 기능 변경 없음(논리 동일) | 수정 여부 결정 대기 |
 | V-G3 | RTL | 커버리지, 어서션, 형식 검증 |  |  |  | 미실행 | 현재 사용하지 않음 | 도입 여부는 별도 결정 |
 | V-G4 | RISC-V | 15M 모델용 펌웨어와 RTL 주소 일반화 | 15M 주소 맵대로 펌웨어와 RTL 파라미터 수정 | 15M 시뮬레이션 통과 | docs/15M_ADDRESS_MAP.md | 미실행 | 주소 맵 문서와 GEMV 형태 시험만 있음 | 모델 파일과 범위 결정 대기 |
@@ -105,7 +105,7 @@
 | V-F1 | FPU | FPU 경계값 벡터(subnormal, Inf, NaN, ±0) | 17개 특수 피연산자의 모든 쌍을 ADD, SUB, MUL, DIV, 비교에, 특수값을 SQRT, I2F, F2I에 입력(1,494개). NaN 결과는 정규 NaN 0x7fc00000, F2I는 포화 규칙 | RISC-V F 규칙의 기대값과 비트 일치 | fpga/xsim/fpu_vectors.py (edge-*) | 통과 | xsim RTL, 네트리스트, Verilator RTL(AFTER, DISTRIBUTED) 모두 3896/3896. 변이 시험(SUB→ADD 등 4건)이 모두 검출됨 | 예외 플래그는 비교하지 않음(V-F2) |
 | V-F2 | FPU | FPU 예외 플래그(rflags) 비교 | 연산별 NV, DZ, OF, UF, NX 기대값을 만들어 rflags와 비교 | 플래그 일치 | fpga/xsim/fpu_vectors.py, tb_fpu.sv | 미실행 | 현재 기대값 파일에 결과만 있음 |  |
 | V-F3 | FPU | 펌웨어가 쓰지만 벡터에 없던 연산: SUB(fsub.s), F2I(fcvt.w.s, RTZ), 비교(flt.s, RTZ) | 정상 범위 SUB 300, F2I 300, FLT 400(무작위, 동일 값, 이웃 값)을 numpy와 비교. 펌웨어는 FMA, fmin, fmax를 쓰지 않음(fw.dis 0건) | 일치 | fpga/xsim/fpu_vectors.py | 통과 | xsim RTL, 네트리스트, Verilator RTL 모두 일치 | fw.dis 사용 횟수: fsub 36, flt 27, fcvt.w.s 1 |
-| V-F4 | FPU | FPU 연속 요청(back-to-back, 파이프라인 중첩) | 같은 연산 그룹(ADDMUL, DIVSQRT, NONCOMP, CONV)의 요청을 gnt가 허용하는 매 cycle 입력하고 결과를 순서대로 수집 | 순서 보존, 값 일치, 요청 없는 결과 0 | fpga/xsim/fpu_verilator.cpp (stream 모드) | 부분 | Verilator RTL(AFTER, DISTRIBUTED) 3896/3896. ADDMUL, NONCOMP, CONV 1.00 cycle/op, 동시 진행 최대 3개, DIVSQRT 13.4 cycle/op | xsim RTL과 합성 네트리스트의 연속 요청 시험은 미구현. 서로 다른 그룹 사이 중첩은 시험하지 않음 |
+| V-F4 | FPU | FPU 연속 요청(back-to-back, 파이프라인 중첩) | 같은 연산 그룹(ADDMUL, DIVSQRT, NONCOMP, CONV)의 요청을 gnt가 허용하는 매 cycle 입력하고 결과를 순서대로 수집(발행과 수집을 분리한 fork) | 순서 보존, 값 일치, 요청 없는 결과 0 | fpga/xsim/fpu_verilator.cpp(stream), fpga/xsim/tb_fpu.sv(STREAM) | 통과 | Verilator RTL(AFTER, DISTRIBUTED), xsim RTL, xsim 합성 네트리스트 모두 3896/3896, 요청 없는 결과 0. ADDMUL, NONCOMP, CONV 1.00 cycle/op, DIVSQRT 13.4 cycle/op. 합성 네트리스트는 그룹마다 1 cycle 길고 동시 진행이 1 더 많음(1,771→1,772 cycle, 3→4) | 서로 다른 그룹 사이 중첩은 시험하지 않음. 네트리스트의 1 cycle 차이 원인은 미확인(가설: 시험대 샘플 시점, 실험 E09) |
 | V-R1 | RISC-V | 코어 ISA 적합성(펌웨어가 쓰는 RV32IMFC 부분집합) | riscv-arch-test에서 펌웨어가 쓰는 명령군만 골라 CPU sim에서 실행 | 서명(signature) 일치 | (환경 구성 필요) | 미실행 | 코어는 현재 펌웨어 실행으로만 간접 확인 |  |
 | V-A1 | RTL | GEMV, VFU 버퍼 한계 경계 | GEMV 모드 D: 한계(n 또는 d = XBUF/YBUF)와 초과(+1, +8, 2배, 양쪽 동시)를 하나씩 실행해 소프트웨어 기준과 비교. VFU softmax, divsoftmax, softmax2: 청크 길이 512, 513, 520, 1024 | 한계 안은 일치, 초과는 정의된 동작(오류 신호 또는 안전한 거부) | w8/overlimit.sh, vfu/overlimit.sh (run_test_w8.py의 TEST_CASES, run_test.py의 TEST_LN) | 부분 | 한계 안 통과(GEMV 512×8, 8×512, 1024 빌드의 1024×8, 8×1024, VFU 길이 512). 초과는 전부 조용히 틀림: GEMV 512 빌드 7/7, 1024 빌드 6/6 사례 실패, VFU 513에서 불일치 3,115, 520에서 5,887, 1024에서 12,279. 멈춤, 센티널 위반 없음 | 합격 기준 "초과는 정의된 동작"을 만족하지 못함(RTL에 보호 없음). 시뮬레이션 전용 어서션 추가 여부는 결정 D7. 1025×1025는 크기 필터(n×d > 1 MiB)로 제외되어 판정 없음. 실험 E08 |
 | V-A2 | RTL | AXI 외부 읽기 경계: 4 KB 경계, 슬레이브 지연·정지·beat 간격, 오류 응답 | 무작위 AXI 슬레이브(ready 확률 1/0.5/0.1과 긴 정지, 지연 0~200 cycle, R beat 간격)에 가속기 line 요청(4 KB 경계 걸침, 긴 연속, 점프, 반복, 내림차순)과 CPU word 읽기를 섞어 입력. 오류 주입 시험은 한 beat에 SLVERR/DECERR | 매 cycle 프로토콜 검사 통과(16 B 정렬, 4 KB 비횡단, arlen≤MAXB, AR 안정, TD, CRED+1), 응답 데이터가 주소 해시와 일치, 오류 시 err_o 설정 후 리셋으로 해제 | acc/tb_axi_ext_rd/run.sh, checks.sh | 통과 | 5개 구성(MAXB/CRED/TD = 16/48/8, 8/16/2, 4/8/2, 32/48/8, 48/63/4) × 일반 21 seed(약 10.8만 line, 6,562 CPU 읽기, burst 약 2.4만) + 오류 주입 11 seed 모두 PASS. 변이 5건(4 KB 검사, 오류 플래그, 크레딧, CPU word 선택, TD 한도 제거)을 모두 검출 | 구성 제약(시험으로 확인): CRED ≥ MAXB(아니면 deadlock), TD는 2 이상의 2의 거듭제곱(TD=1, 3, 6은 응답이 밀림). 마스터 쪽 백프레셔는 rready=1이라 없음. 오류 정책은 현재 동작(sticky 플래그, 실행 계속)을 확인한 것이고 더 엄격한 정책 여부는 결정 대기(D7). 전체 칩에서의 오류 주입은 미시험 |
@@ -123,7 +123,7 @@
 | V-F1 | FPU 경계값 벡터(subnormal, Inf, NaN, ±0) | FPU | 2 | 0.5일 | 없음 | 통과 | xsim RTL, 네트리스트, Verilator RTL(AFTER, DISTRIBUTED) 모두 3896/3896. 변이 시험(SUB→ADD 등 4건)이 모두 검출됨 | fpga/xsim/fpu_vectors.py (edge-*) | 2026-11-23 |
 | V-A1 | GEMV, VFU 버퍼 한계 경계 | RTL | 3 | 0.5일 | 확인 결과: 하드웨어는 막지 않음(조용한 오류). 어서션 추가는 결정 D7 | 부분 | 한계 안 통과(GEMV 512×8, 8×512, 1024 빌드의 1024×8, 8×1024, VFU 길이 512). 초과는 전부 조용히 틀림: GEMV 512 빌드 7/7, 1024 빌드 6/6 사례 실패, VFU 513에서 불일치 3,115, 520에서 5,887, 1024에서 12,279. 멈춤, 센티널 위반 없음 | w8/overlimit.sh, vfu/overlimit.sh (run_test_w8.py의 TEST_CASES, run_test.py의 TEST_LN) | 2026-11-23 |
 | V-A3 | CPU, GEMV, VFU 동시 메모리 접근 충돌 | RTL | 3 | 1일 | 없음 | 미실행 | E2E 실행에서만 간접 확인 | acc/soc_top.sv | - |
-| V-F4 | FPU 연속 요청(back-to-back, 파이프라인 중첩) | FPU | 3 | 0.5일(xsim 연속 요청까지는 +0.5일) | 없음 | 부분 | Verilator RTL(AFTER, DISTRIBUTED) 3896/3896. ADDMUL, NONCOMP, CONV 1.00 cycle/op, 동시 진행 최대 3개, DIVSQRT 13.4 cycle/op | fpga/xsim/fpu_verilator.cpp (stream 모드) | 2026-11-23 |
+| V-F4 | FPU 연속 요청(back-to-back, 파이프라인 중첩) | FPU | 3 | 0.5일(xsim 포함 1일) | 없음 | 통과 | Verilator RTL(AFTER, DISTRIBUTED), xsim RTL, xsim 합성 네트리스트 모두 3896/3896, 요청 없는 결과 0. ADDMUL, NONCOMP, CONV 1.00 cycle/op, DIVSQRT 13.4 cycle/op. 합성 네트리스트는 그룹마다 1 cycle 길고 동시 진행이 1 더 많음(1,771→1,772 cycle, 3→4) | fpga/xsim/fpu_verilator.cpp(stream), fpga/xsim/tb_fpu.sv(STREAM) | 2026-11-24 |
 | V-A4 | 가속기 레지스터 인터페이스 경계: busy 중 쓰기, 잘못된 CTRL 값 | RTL | 4 | 0.5일 | busy 중 쓰기 등 정의되지 않은 동작의 정책 | 미실행 | 펌웨어는 busy 폴링 후에만 씀 | acc/gemv_acc.sv, acc/vfu.sv | - |
 | V-F2 | FPU 예외 플래그(rflags) 비교 | FPU | 4 | 1일 | 플래그 기준 구현 선택(softfloat 등) | 미실행 | 현재 기대값 파일에 결과만 있음 | fpga/xsim/fpu_vectors.py, tb_fpu.sv | - |
 | V-R1 | 코어 ISA 적합성(펌웨어가 쓰는 RV32IMFC 부분집합) | RISC-V | 5 | 1~2일 | 툴체인과 riscv-arch-test 환경 준비 | 미실행 | 코어는 현재 펌웨어 실행으로만 간접 확인 | (환경 구성 필요) | - |
@@ -145,7 +145,7 @@
 | SUB, F2I, 비교(펌웨어가 쓰는 연산) | numpy와 RISC-V 규칙 기준 일치 | 확인 | fw.dis: fsub 36, flt 27, fcvt.w.s 1 사용. 3곳 시뮬레이터 모두 일치 | V-F3 |
 | FMA, fmin, fmax | 펌웨어가 쓰지 않음 | 제외 | fw.dis 0건 |  |
 | 지연(latency) | FPU_LAT 0과 4에서 동작 | 간접 | D1(0), D2(4) 설정 회귀 | V-I1 |
-| 연속 요청 핸드셰이크 | req→gnt→rvalid 중첩, 결과 순서 | 확인 | Verilator RTL만(연속 모드). xsim과 네트리스트는 미구현 | V-F4 |
+| 연속 요청 핸드셰이크 | req→gnt→rvalid 중첩, 결과 순서 | 확인 | Verilator RTL, xsim RTL, 합성 네트리스트 모두 3896/3896(네트리스트는 1 cycle 길게 보임, E09) | V-F4 |
 | 합성 후 네트리스트 | 같은 벡터 | 확인 | 3,896/3,896 | V-T1 |
 
 ### RISC-V 코어

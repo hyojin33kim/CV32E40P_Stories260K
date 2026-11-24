@@ -9,7 +9,7 @@ python3 "$W/fpga/xsim/xsim_workaround.py" "$WD" || exit 1
 cp "$W/fpga/xsim/tb_fpu.sv" "$W/fpga/xsim/run_fpu_test.tcl" "$WD/"
 python3 "$W/fpga/xsim/fpu_vectors.py" "$WD"
 cd "$WD"
-rm -f fpu_out_rtl.hex fpu_out_net.hex   # run_fpu_test.tcl skips a simulation whose result file exists: never compare against stale results
+rm -f fpu_out_rtl.hex fpu_out_net.hex fpu_out_rtl_stream.hex fpu_out_net_stream.hex   # run_fpu_test.tcl skips a simulation whose result file exists: never compare against stale results
 ~/bin/vivado -mode batch -nojournal -log fpu.log -source run_fpu_test.tcl > fpu.out 2>&1
-grep -E "TB_FPU|FPU TEST FINISHED|^ERROR" fpu.out | head
-python3 "$W/fpga/xsim/fpu_compare.py" vec.hex expect.hex cat.txt rtl=fpu_out_rtl.hex net=fpu_out_net.hex
+grep -E "TB_FPU|FPU TEST FINISHED|^ERROR" fpu.out | head -30
+python3 "$W/fpga/xsim/fpu_compare.py" vec.hex expect.hex cat.txt rtl=fpu_out_rtl.hex net=fpu_out_net.hex rtl-stream=fpu_out_rtl_stream.hex net-stream=fpu_out_net_stream.hex

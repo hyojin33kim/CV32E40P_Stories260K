@@ -1,7 +1,8 @@
 # FPU-only check (run from a directory prepared by fpga/xsim/run_fpu_test.sh):
-#   1. xsim RTL simulation of cv32e40p_fp_wrapper        -> fpu_out_rtl.hex
+#   1. xsim RTL simulation of cv32e40p_fp_wrapper        -> fpu_out_rtl.hex, fpu_out_rtl_stream.hex
 #   2. Vivado synthesis of cv32e40p_fp_wrapper (OOC, LAT 4) -> fpu_funcsim.v (post-synthesis functional netlist)
-#   3. xsim simulation of that netlist                   -> fpu_out_net.hex
+#   3. xsim simulation of that netlist                   -> fpu_out_net.hex, fpu_out_net_stream.hex
+# "stream" = back-to-back requests per operation group (V-F4, tb_fpu.sv with STREAM defined)
 set part xczu7ev-ffvc1156-2-e
 set fh [open files.tcl]
 foreach line [split [read $fh] "\n"] {
@@ -10,7 +11,7 @@ foreach line [split [read $fh] "\n"] {
 }
 close $fh
 foreach d $inc_dirs { lappend incs [file normalize $d] }
-proc run_sim {name files define} {
+proc run_sim {name files define outname} {
   global part incs
   create_project -force $name ./$name -part $part
   add_files -norecurse $files
@@ -23,10 +24,11 @@ proc run_sim {name files define} {
   update_compile_order -fileset sim_1
   launch_simulation -simset sim_1 -mode behavioral
   close_sim
-  file copy -force ./$name/$name.sim/sim_1/behav/xsim/fpu_out.hex fpu_out_$name.hex
+  file copy -force ./$name/$name.sim/sim_1/behav/xsim/$outname fpu_out_$name.hex
   close_project
 }
-if {![file exists fpu_out_rtl.hex]} { run_sim rtl $srcs {XSIM} }
+if {![file exists fpu_out_rtl.hex]} { run_sim rtl $srcs {XSIM} fpu_out.hex }
+if {![file exists fpu_out_rtl_stream.hex]} { run_sim rtl_stream $srcs {XSIM STREAM} fpu_out_stream.hex }
 if {![file exists fpu_funcsim.v]} {
 read_verilog -sv $srcs
 synth_design -top cv32e40p_fp_wrapper -part $part -mode out_of_context -include_dirs $incs \
@@ -34,5 +36,6 @@ synth_design -top cv32e40p_fp_wrapper -part $part -mode out_of_context -include_
 write_verilog -force -mode funcsim fpu_funcsim.v
 close_design
 }
-run_sim net [list [file normalize fpu_funcsim.v]] {NETLIST}
+run_sim net [list [file normalize fpu_funcsim.v]] {NETLIST} fpu_out.hex
+run_sim net_stream [list [file normalize fpu_funcsim.v]] {NETLIST STREAM} fpu_out_stream.hex
 puts "FPU TEST FINISHED"
