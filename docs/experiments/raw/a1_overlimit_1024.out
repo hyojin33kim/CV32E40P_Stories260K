@@ -1,0 +1,14 @@
+simulator obj_soc_big/Vsoc_top, XBUF=YBUF=1024
+case 1024x8 (cases 1): PASS | mismatching output words 0 (row-major) / 0 (pre-tiled), sentinel violations 0, finished marker 0x600d600d 
+case 8x1024 (cases 1): PASS | mismatching output words 0 (row-major) / 0 (pre-tiled), sentinel violations 0, finished marker 0x600d600d 
+case 1025x8 (cases 1): FAIL | mismatching output words 7 (row-major) / 7 (pre-tiled), sentinel violations 0, finished marker 0x600d600d 
+case 1032x8 (cases 1): FAIL | mismatching output words 6 (row-major) / 6 (pre-tiled), sentinel violations 0, finished marker 0x600d600d 
+case 2048x4 (cases 1): FAIL | mismatching output words 4 (row-major) / 4 (pre-tiled), sentinel violations 0, finished marker 0x600d600d 
+case 8x1025 (cases 1): FAIL | mismatching output words 4 (row-major) / 4 (pre-tiled), sentinel violations 0, finished marker 0x600d600d 
+case 8x1032 (cases 1): FAIL | mismatching output words 8 (row-major) / 8 (pre-tiled), sentinel violations 0, finished marker 0x600d600d 
+case 4x2048 (cases 1): FAIL | mismatching output words 953 (row-major) / 953 (pre-tiled), sentinel violations 0, finished marker 0x600d600d 
+case 1025x1025 (cases 0): PASS | mismatching output words 0 (row-major) / 0 (pre-tiled), sentinel violations 0, finished marker 0x600d600d 
+
+real	1m0.204s
+user	0m57.665s
+sys	0m0.927s

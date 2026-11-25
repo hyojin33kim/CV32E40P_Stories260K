@@ -1,0 +1,7 @@
+FMT f=0  A(var idx) exp=7 man=7 bias=63 | B exp=7 | C exp=8 | expected exp 8
+FMT f=1  A(var idx) exp=7 man=7 bias=63 | B exp=7 | C exp=11 | expected exp 11
+FMT f=2  A(var idx) exp=7 man=7 bias=63 | B exp=7 | C exp=5 | expected exp 5
+FMT f=3  A(var idx) exp=7 man=7 bias=63 | B exp=7 | C exp=5 | expected exp 5
+FMT f=4  A(var idx) exp=7 man=7 bias=63 | B exp=7 | C exp=8 | expected exp 8
+FMT const idx: A[0].exp=8 A[1].exp=11 A[2].exp=5 A[3].exp=5 A[4].exp=8  raw A=00000008000000170000000b00000034000000050000000a00000005000000020000000800000007
+FMT const idx: B[0].exp=8 B[1].exp=11  raw B=00000008000000170000000b00000034000000050000000a00000005000000020000000800000007

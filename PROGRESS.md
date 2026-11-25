@@ -109,12 +109,12 @@ DDR 모델: Weight는 DDR(latency 40, burst 16, 12.8 B/cycle, outstanding 8), KV
 우선순위(P1~P3)는 제안이며, 상태는 이 저장소의 결과 기준입니다. 상세 근거: `docs/P1_REPORT.md`. 이 표의 시각화 스냅샷은 Artifact 페이지(갱신되지 않음).
 | # | 우선 | 항목 | 상태 | 남은 것 / 막힌 점 |
 |---|---|---|---|---|
-| 1 | P1 | 보드 통합·타이밍 마진 | 부분 | 125 MHz bitgen 완료. 보드 실행(`docs/BOARD_BRINGUP.md`), AREG 합성, 150 MHz PS 시험, xsim↔Verilator 불일치 원인 |
+| 1 | P1 | 보드 통합·타이밍 마진 | 부분 | 125 MHz bitgen 완료. 보드 실행(`docs/BOARD_BRINGUP.md`), AREG 합성, 150 MHz PS 시험. xsim↔Verilator 불일치는 규명 완료(`docs/XSIM_VS_VERILATOR.md`) |
 | 2 | P1 | 정수 lane 정밀도 | 부분(I1 완료) | I1(int8 가중치+행 scale, fp32 MAC) 구현·비트 일치 검증 완료(`w8/W8_I1.md`, nll_delta +0.0023, 무작위 단위 시험 366케이스 불일치 0). I2(int8×int8 정수 MAC·활성화 양자화)는 **별도 세션에서 fixed-point C부터 새로 시작하기로 함(사용자 결정 11-22)**. int8 통과 기준 결정(사용자) 대기. 125 MHz: DDR top 닫힘, 온칩 top(보드용)은 합성 진행 중(`E:/fpga_work/chip_on125`) |
-| 3 | P1 | row/bank 메모리 모델 | 부분 | Python 모델 완료(미검증). `sim.cpp` DDR 모델 반영, 8~16 KB fetch 재설계, 컨트롤러 대조 |
+| 3 | P1 | row/bank 메모리 모델 | 부분 | Python 모델 + `sim_axi_ddr.cpp` row/bank 모델(`SIM_ROWBANK=1`) 완료. tile 1개 스트리밍은 영향 ≤ 2 %(int8 +0.6 %, fp32 +1.9 %), 지연이 지배. **두 master 경쟁 시나리오와 컨트롤러 대조는 미착수** |
 | 4 | P1 | CPU 잔여 작업 | 측정 완료 | VFU 이전은 비권고(상한 3~8 %). RoPE는 별도 설계 필요 |
 | 5 | P2 | 포트 폭 확대 | 미착수 | 15M 이후 구조와 함께 결정 |
-| 6 | P2 | 가중치 외부화(AXI4 master·DMA·pre-tiling) | 부분 | 260K 범위 AXI4 read master 완료·검증(바이트 동일, `acc/S5B_DDR_AXI.md`). **125 MHz 닫힘(WNS +0.155 ns), 150 MHz 미충족(최선 −0.001 ns, 사용자가 150 불필요로 결정)**. 15M 주소 맵·EQ FIFO 확대·pre-tiling·실제 DDR 대조 미착수 |
+| 6 | P2 | 가중치 외부화(AXI4 master·DMA·pre-tiling) | 부분(설계·pre-tiling 완료) | 260K 범위 AXI4 read master 완료·검증(바이트 동일, `acc/S5B_DDR_AXI.md`). **125 MHz 닫힘(WNS +0.155 ns), 150 MHz 미충족(최선 −0.001 ns, 사용자가 150 불필요로 결정)**. 15M 설계 문서 `docs/15M_ADDRESS_MAP.md`(크기·주소 맵 2안·FIFO 근거·결정 사항), pre-tiling 구현·검증 완료(355+14 케이스 불일치 0), 버퍼 1024 파라미터화·15M 형상 시험 통과, EQ 확대 불필요(`eq_max`=0). **미착수:** 주소 맵 RTL 파라미터화와 펌웨어 포팅(15-3), 모델 파일, DDR top에서 pre-tiling 효과 측정, 실제 DDR 대조 |
 | 7 | P2 | 제어 방식(descriptor 큐) | 미착수 | 필요성 미측정(명령당 약 40 cycle은 추정) |
 | 8 | P2 | KV cache | 미착수 | 15M KV fp32(DDR) vs fp16(온칩) 사용자 결정 대기 |
 | 9 | P2 | 관측성(성능 카운터) | 미착수 | 결정 불필요, 바로 시작 가능 |
@@ -128,7 +128,7 @@ DDR 모델: Weight는 DDR(latency 40, burst 16, 12.8 B/cycle, outstanding 8), KV
 ## 미검증
 - 실제 DDR 수치(현재 가정값 → S2에서 문서값, 보드 실측은 ⑤), on-chip 메모리 포함 timing·면적(S6).
 - PS 연결 후 timing(OOC 마진 5 ps), 실제 보드 실행(블록 디자인·PYNQ 스크립트는 한 번도 실행되지 않음).
-- Vivado xsim 전체 칩이 Verilator와 불일치(run_cycles 4,347,318 vs 4,501,912, FPU 단독 xsim 671/1402), 원인 미발견. Verilator가 기준.
+- Vivado xsim 불일치(전체 칩 run_cycles 4,347,318 vs 4,501,912, FPU 단독 671/1402): **원인 규명됨(xsim 평가 문제 2건, `docs/XSIM_VS_VERILATOR.md`)**. 작업 복사본 우회 패치 후 전체 칩 xsim이 DONE 도달, 2 MiB 덤프가 Verilator와 일치. 합성 후 전체 칩 시뮬레이션과 보드 실행은 미확인. Verilator가 기준.
 - DDR row/bank 모델의 타이밍 값은 기억 기반이며 컨트롤러·보드와 대조하지 않음.
 - 정밀도 관문은 fake-quantization(fp32 연산)이며 실제 정수 lane RTL이 아님. 보정(GPTQ 등) int4는 미시험.
 

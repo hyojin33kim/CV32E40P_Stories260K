@@ -1,0 +1,5 @@
+trace build exit=0
+DONE cycles=157437 min_stack_write=0x1ffefc
+ACC reads=0 writes=0 lat=0 gnt_every=1
+20133 .scratch/trv/trace_verilator.txt
+TRACE_COMPARE_DONE

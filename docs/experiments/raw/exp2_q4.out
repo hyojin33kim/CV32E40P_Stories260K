@@ -1,0 +1,9 @@
+  268435456 checked
+  536870912 checked
+  805306368 checked
+  1073741824 checked
+vfu_exp2: 1073741824 inputs [c0000000..ffffffff], 0 mismatches
+
+real	1m18.333s
+user	1m18.548s
+sys	0m0.004s

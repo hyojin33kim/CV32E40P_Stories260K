@@ -43,6 +43,9 @@
 //   0x14 N (<= XBUF)  0x18 D (<= YBUF)  0x1C W_STRIDE (bytes between rows)
 //   0x20 LAST_CYCLES R  0x24 J_STRIDE (bytes between consecutive j; reset 4)
 //   0x28 MODE R (last command: 0 A, 1 B, 2 C, 3 D)   0x2C SC_ADDR (W8 row scales, fp32, d words)
+//   CTRL bit2 = tiled (modes A and D only): the weights are pre-tiled in issue order (w8/pretile.py), so line number i of the
+//   command is read at W_ADDR + 16*i (no row stride; W_STRIDE is ignored). Gives long contiguous bursts: one (rows of a
+//   group) x (RUN lines) block is one contiguous region.
 module gemv_acc
   import cv32e40p_apu_core_pkg::*;
 #(
@@ -101,6 +104,8 @@ module gemv_acc
   logic        w8;                                   // int8 weights (mode D)
   assign w8 = mode_q == MD;
   logic [31:0] ld_iss_q, ld_rsp_q, wb_q, rows_done_q;
+  logic        tiled_q;                              // CTRL bit2 of the running command
+  logic [31:0] is_ln_q;                              // lines issued so far (tiled addressing)
 
   function automatic logic [31:0] nact(logic [31:0] d, logic [31:0] i0);   // rows in a group
     return (d - i0 >= LL) ? LL : d - i0;
@@ -184,7 +189,7 @@ module gemv_acc
     is_addr = '0; is_can = 1'b0; is_tag = '0;
     unique case (mode_q)
       MA, MD: begin
-        is_addr = w_addr_q + (is_i0_q + is_q_q) * stride_q + (is_k_q << 4);
+        is_addr = tiled_q ? w_addr_q + (is_ln_q << 4) : w_addr_q + (is_i0_q + is_q_q) * stride_q + (is_k_q << 4);
         is_can  = (FDL - f_cnt_q[is_q_q[QW-1:0]] - f_res_q[is_q_q[QW-1:0]]) >= 4;
         is_tag  = {is_q_q[QW-1:0], 2'b00, 2'b00};
       end
@@ -423,7 +428,7 @@ module gemv_acc
   // ================================================================ control
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      state_q <= IDLE; mode_q <= MA; ext_q <= 1'b0;
+      state_q <= IDLE; mode_q <= MA; ext_q <= 1'b0; tiled_q <= 1'b0; is_ln_q <= '0;
       {x_addr_q, w_addr_q, y_addr_q, n_q, d_q, stride_q, cyc_q, sc_addr_q} <= '0;
       jstride_q <= 32'd4;
       {ld_iss_q, ld_rsp_q, wb_q, rows_done_q, is_i0_q, is_k_q, is_q_q, is_kb_q, cs_i0_q, cs_j_q} <= '0;
@@ -438,6 +443,7 @@ module gemv_acc
             state_q <= LOADX; cyc_q <= '0; ext_q <= (EXT_BELOW != 0) && w_addr_q < EXT_BELOW;
             {ld_iss_q, ld_rsp_q, wb_q, rows_done_q, is_i0_q, is_k_q, is_q_q, is_kb_q, cs_i0_q, cs_j_q} <= '0;
             ph_q <= '0; x_ok_q <= 1'b0;
+            tiled_q <= s_wdata_i[2]; is_ln_q <= '0;
             if (s_wdata_i[1]) mode_q <= MD;
             else if (jstride_q == 4 && stride_q[3:0] == 0 && w_addr_q[3:0] == 0 && n_q[1:0] == 0)
               mode_q <= MA;
@@ -484,6 +490,7 @@ module gemv_acc
           // ---- issue: advance
           if (issue_fire) begin
             t_wr_q <= t_wr_q + 1;
+            is_ln_q <= is_ln_q + 1;
             unique case (mode_q)
               MA, MD: begin   // (group, run, row, chunk in run); a chunk is 4 j (mode A) or 16 j (mode D)
                 if (is_k_q + 1 - is_kb_q < RUN && ((is_k_q + 1) << (w8 ? 4 : 2)) < n_q) is_k_q <= is_k_q + 1;

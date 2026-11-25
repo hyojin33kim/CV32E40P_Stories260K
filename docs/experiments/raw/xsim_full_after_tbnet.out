@@ -1,0 +1,17 @@
+FIXCLK: 15 always blocks reclocked to forever_cpuclk
+patched /mnt/e/fpga_work/xsim_fix/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv
+inlined rd_ok in /mnt/e/fpga_work/xsim_fix/acc/vfu.sv 5 calls
+xsim.out:#   puts "XSIM FINISHED"
+xsim.out:TB loaded imem 4096 words, sram 265241 non-zero words at 7044475000
+xsim.out:TB DONE run_cycles=157433
+xsim.out:TB WROTE dump.hex
+xsim.out:XSIM FINISHED
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB loaded imem 4096 words, sram 265241 non-zero words at 7044475000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB DONE run_cycles=157433
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB WROTE dump.hex
+DONE cycles=157437 min_stack_write=0x1ffefc
+XSIM (XPM) dump == Verilator chip dump (2 MiB, incl. cycle words)
+
+real	3m36.726s
+user	0m3.001s
+sys	0m0.399s

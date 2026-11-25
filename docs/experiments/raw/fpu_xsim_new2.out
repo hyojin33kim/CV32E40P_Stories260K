@@ -1,0 +1,13 @@
+already patched /mnt/e/fpga_work/fpu_test/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv
+inlined rd_ok in /mnt/e/fpga_work/fpu_test/acc/vfu.sv 0 calls
+3896 vectors -> /mnt/e/fpga_work/fpu_test (part 1: 1402, part 2: 1000, part 3: 1494)
+TB_FPU 3896 vectors done
+TB_FPU 3896 vectors done
+# puts "FPU TEST FINISHED"
+FPU TEST FINISHED
+rtl: 3896/3896 correct
+net: 3896/3896 correct
+
+real	0m52.199s
+user	0m0.125s
+sys	0m0.056s

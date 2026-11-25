@@ -1,6 +1,6 @@
 #!/bin/bash
 # Vivado xsim run of soc_chip (XPM URAM + UNISIM models) on one image, compared with the Verilator chip sim.
-# Usage: [CG=bhv] [TRACE_N=<cycles>] [FIXCLK=0] fpga/xsim/run_xsim.sh <image.bin> [workdir] [gui]
+# Usage: [CG=bhv] [TRACE_N=<cycles>] [FIXCLK=0] [FIXFMT=0] [XW=fmt|rd] [XSIM_PLUS="MAXCYC=400000"] fpga/xsim/run_xsim.sh <image.bin> [workdir] [gui]
 #   image.bin : e.g. repro/hold/image_1.bin or gen/out_8_*/image.bin
 #   workdir   : default /mnt/e/fpga_work/xsim
 #   gui       : open the Vivado GUI (Flow Navigator > Run Simulation for waveforms) instead of batch
@@ -29,6 +29,9 @@ for f in list((base / 'fdsu/rtl').glob('*.v')) + [base / 'fpu/rtl/pa_fpu_dp.v']:
 print(f'FIXCLK: {n} always blocks reclocked to forever_cpuclk')
 PYEOF
 fi
+# FIXFMT=1 (default): xsim evaluates FP_ENCODINGS[<variable>] in fpnew_pkg wrongly (exp_bits 7 for every format), which breaks fp
+# add/mul/int-to-float; rewrite those functions with constant indices in this work copy (docs/XSIM_VS_VERILATOR.md)
+if [ "${FIXFMT:-1}" = 1 ]; then XW_ONLY=${XW:-both} python3 "$W/fpga/xsim/xsim_workaround.py" "$WD" || exit 1; fi   # XW=fmt|rd: only one of the two patches (V-G7)
 python3 - "$IMG" "$WD" <<'EOF'
 import struct, sys
 from pathlib import Path

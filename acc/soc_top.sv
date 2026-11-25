@@ -17,6 +17,9 @@ module soc_top #(
     parameter int CPU_FPU_LAT = 4,  // build_sim.sh: CPU_FPU_LAT=<n>
     parameter int ACC_FPU_LAT = 4,  // build_sim.sh: ACC_FPU_LAT=<n>
     parameter int VFU_FPU_LAT = 4,  // build_sim.sh: VFU_FPU_LAT=<n>
+    parameter int ACC_XBUF = 512,   // gemv_acc x buffer words (>= the longest input vector n; 768 for a 15M-class model)
+    parameter int ACC_YBUF = 512,   // gemv_acc y buffer words (rows per command)
+    parameter int VFU_BUF  = 512,   // vfu buffer words per operand
     parameter logic [31:0] EXT_BELOW = 32'h0   // gemv_acc weight reads of commands with W_ADDR below this are external (0 = none)
 ) (
     input logic clk_i,
@@ -109,7 +112,7 @@ module soc_top #(
   assign acc_addr_o  = vfu_busy ? v_addr : g_addr;
   assign acc_wdata_o = vfu_busy ? v_wdata : g_wdata;
 
-  gemv_acc #(.LANES(ACC_LANES), .RUN(ACC_RUN), .FDEPTH(ACC_FDEPTH), .FPU_LAT(ACC_FPU_LAT), .EXT_BELOW(EXT_BELOW)) acc_i (
+  gemv_acc #(.XBUF(ACC_XBUF), .YBUF(ACC_YBUF), .LANES(ACC_LANES), .RUN(ACC_RUN), .FDEPTH(ACC_FDEPTH), .FPU_LAT(ACC_FPU_LAT), .EXT_BELOW(EXT_BELOW)) acc_i (
       .clk_i, .rst_ni,
       .s_req_i(c_req && is_mmio && !is_vfu), .s_we_i(c_we), .s_addr_i(c_addr[5:0]),
       .s_wdata_i(c_wdata), .s_rdata_o(g_rdata),
@@ -127,7 +130,7 @@ module soc_top #(
       if (acc_req_o && acc_gnt_i && !acc_we_o) perf_acc_rd_o <= perf_acc_rd_o + 32'd1;
     end
 
-  vfu #(.LANES(VFU_LANES), .FPU_LAT(VFU_FPU_LAT)) vfu_i (
+  vfu #(.BUF(VFU_BUF), .LANES(VFU_LANES), .FPU_LAT(VFU_FPU_LAT)) vfu_i (
       .clk_i, .rst_ni,
       .s_req_i(c_req && is_mmio && is_vfu), .s_we_i(c_we), .s_addr_i(c_addr[5:0]),
       .s_wdata_i(c_wdata), .s_rdata_o(v_rdata),

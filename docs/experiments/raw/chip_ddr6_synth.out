@@ -1,0 +1,19 @@
+66 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/chip_ddr6
+== synthesis
+     -0.943      -85.908                    209                94870       -2.490   -17958.449                  10881                94870        2.633        0.000                       0                 25488  
+| CLB LUTs*                  | 60435 |     0 |          0 |    230400 | 26.23 |
+| CLB Registers              | 20984 |     0 |          0 |    460800 |  4.55 |
+| Block RAM Tile    |    7 |     0 |          0 |       312 |  2.24 |
+| URAM              |   32 |     0 |          0 |        96 | 33.33 |
+| DSPs           |   93 |     0 |          0 |      1728 |  5.38 |
+| URAM288  |    32 |            BLOCKRAM |
+== route
+     -0.832     -414.373                   1900                95115        0.015        0.000                      0                95115        2.633        0.000                       0                 25567  
+| CLB LUTs                   | 60338 |     0 |          0 |    230400 | 26.19 |
+| CLB Registers              | 21063 |     0 |          0 |    460800 |  4.57 |
+| CLB Registers                              | 21063 |     0 |          0 |    460800 |  4.57 |
+| Block RAM Tile    |    7 |     0 |          0 |       312 |  2.24 |
+| URAM              |   32 |     0 |          0 |        96 | 33.33 |
+| DSPs           |   93 |     0 |          0 |      1728 |  5.38 |
+| URAM288  |    32 |            BLOCKRAM |
+  Data Path Delay:        7.479ns  (logic 3.141ns (41.999%)  route 4.338ns (58.001%))

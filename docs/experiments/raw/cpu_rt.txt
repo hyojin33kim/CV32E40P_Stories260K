@@ -1,0 +1,10 @@
+60 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/cv32e40p_stories
+== retiming, FPU_ADDMUL_LAT=2
+     -7.933   -20122.930                   5928                 7765        0.010        0.000                      0                 7765        2.225        0.000                       0                  3916  
+  Data Path Delay:        12.637ns  (logic 5.391ns (42.660%)  route 7.246ns (57.340%))
+== retiming, FPU_ADDMUL_LAT=3
+     -7.318   -18743.033                   5576                 8028        0.013        0.000                      0                 8028        2.225        0.000                       0                  4049  
+  Data Path Delay:        12.260ns  (logic 5.061ns (41.280%)  route 7.199ns (58.720%))
+== retiming, FPU_ADDMUL_LAT=4
+     -6.705   -13206.623                   5677                 8287        0.012        0.000                      0                 8287        2.225        0.000                       0                  4180  
+  Data Path Delay:        11.572ns  (logic 4.802ns (41.495%)  route 6.770ns (58.505%))

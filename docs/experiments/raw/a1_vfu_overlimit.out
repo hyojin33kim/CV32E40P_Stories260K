@@ -1,0 +1,24 @@
+chunk length 512:
+   {'test': 'softmax', 'seed': 0, 'n': 4096, 'mismatches': 0, 'sw_cycles': 1215947, 'hw_cycles': 348547}
+   {'test': 'divsoftmax', 'seed': 0, 'n': 4096, 'mismatches': 0, 'sw_cycles': 1298177, 'hw_cycles': 374037}
+   {'test': 'softmax2', 'seed': 0, 'n': 4096, 'mismatches': 0, 'sw_cycles': 621617, 'hw_cycles': 160346, 'sum_mismatches': 0}
+   total 12,288 elements, mismatches 0
+chunk length 513:
+   {'test': 'softmax', 'seed': 0, 'n': 4096, 'mismatches': 14, 'sw_cycles': 1215903, 'hw_cycles': 348803, 
+   {'test': 'divsoftmax', 'seed': 0, 'n': 4096, 'mismatches': 3080, 'sw_cycles': 1298165, 'hw_cycles': 374861, 
+   {'test': 'softmax2', 'seed': 0, 'n': 4096, 'mismatches': 21, 'sw_cycles': 621531, 'hw_cycles': 160375, 'sum_mismatches': 7, 
+   total 12,288 elements, mismatches 3115
+chunk length 520:
+   {'test': 'softmax', 'seed': 0, 'n': 4096, 'mismatches': 2128, 'sw_cycles': 1215970, 'hw_cycles': 348527, 
+   {'test': 'divsoftmax', 'seed': 0, 'n': 4096, 'mismatches': 3640, 'sw_cycles': 1298064, 'hw_cycles': 374056, 
+   {'test': 'softmax2', 'seed': 0, 'n': 4096, 'mismatches': 119, 'sw_cycles': 621622, 'hw_cycles': 160351, 'sum_mismatches': 7, 
+   total 12,288 elements, mismatches 5887
+chunk length 1024:
+   {'test': 'softmax', 'seed': 0, 'n': 4096, 'mismatches': 4096, 'sw_cycles': 1216230, 'hw_cycles': 348371, 
+   {'test': 'divsoftmax', 'seed': 0, 'n': 4096, 'mismatches': 4096, 'sw_cycles': 1298293, 'hw_cycles': 373829, 
+   {'test': 'softmax2', 'seed': 0, 'n': 4096, 'mismatches': 4087, 'sw_cycles': 621620, 'hw_cycles': 160074, 'sum_mismatches': 4, 
+   total 12,288 elements, mismatches 12279
+
+real	1m48.490s
+user	4m20.013s
+sys	0m0.871s

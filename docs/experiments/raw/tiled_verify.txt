@@ -1,0 +1,15 @@
+soc_top build exit=0
+soc_top big build exit=0
+== default sizes (n, d <= 512)
+cases 355, rows 24935, total MAC 699,999, sw cycles 11,380,407, hw cycles 338,105
+mismatching output words 0 (row-major) / 0 (pre-tiled), sentinel violations 0, finished marker 0x600d600d; accelerator cycles row-major 338,105, pre-tiled 338,105
+PASS
+== 15M-class shapes (XBUF = YBUF = 1024)
+cases 14, rows 5921, total MAC 1,487,327, sw cycles 23,002,059, hw cycles 400,930
+mismatching output words 0 (row-major) / 0 (pre-tiled), sentinel violations 0, finished marker 0x600d600d; accelerator cycles row-major 400,930, pre-tiled 400,925
+PASS
+== quick regression
+OK   vfu unit test                        28,672 elements, 0 mismatches
+
+42/42 OK
+TILED_VERIFY_DONE

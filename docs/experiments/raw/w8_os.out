@@ -1,0 +1,25 @@
+{
+  "acc": null,
+  "cflags": " -DOPTA -DW8",
+  "text_bytes": 3512,
+  "logits_kv_tokens_bitexact_vs_Os": null,
+  "steps": 8,
+  "prompt": "Once upon a time",
+  "n_prompt": 5,
+  "sim_wall_s": 82.0,
+  "cycles_total": 42555492,
+  "cycles_first": 5243449,
+  "cycles_last": 5395006,
+  "logits_rel_L2_max": 0.0,
+  "logits_bitexact_steps": 8,
+  "risc_token_is_own_argmax": true,
+  "argmax_mismatch_steps": [],
+  "min_host_top2_margin": 1.623917579650879,
+  "kv_rel_L2_max": 0.0,
+  "kv_bitexact_positions": 8,
+  "kv_beyond_steps_zero": true,
+  "host_free_run_first_divergence": null,
+  "pass": true
+}
+RISC text : Once upon a time, there was a
+host free : Once upon a time, there was a

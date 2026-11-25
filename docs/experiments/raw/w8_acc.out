@@ -1,0 +1,25 @@
+{
+  "acc": "ACC reads=185040 writes=40416 lat=0 gnt_every=1",
+  "cflags": "-O2 -funroll-loops -DOPTA -DW8 -DUSE_ACC -DUSE_ACC_ATTN -DUSE_ACC_VFU -DUSE_ACC_MM -DUSE_ACC_VFU_DIV -DRMS_SRAM -DEMB_WORDS",
+  "text_bytes": 7336,
+  "logits_kv_tokens_bitexact_vs_Os": true,
+  "steps": 8,
+  "prompt": "Once upon a time",
+  "n_prompt": 5,
+  "sim_wall_s": 22.6,
+  "cycles_total": 1190307,
+  "cycles_first": 146873,
+  "cycles_last": 150327,
+  "logits_rel_L2_max": 0.0,
+  "logits_bitexact_steps": 8,
+  "risc_token_is_own_argmax": true,
+  "argmax_mismatch_steps": [],
+  "min_host_top2_margin": 1.623917579650879,
+  "kv_rel_L2_max": 0.0,
+  "kv_bitexact_positions": 8,
+  "kv_beyond_steps_zero": true,
+  "host_free_run_first_divergence": null,
+  "pass": true
+}
+RISC text : Once upon a time, there was a
+host free : Once upon a time, there was a

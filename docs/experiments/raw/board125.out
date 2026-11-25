@@ -1,0 +1,4 @@
+# if {$bp ne ""} { set_property board_part $bp [current_project]; puts "BOARD_PART $bp" } else { puts "BOARD_PART none (no preset)" }
+BOARD_PART xilinx.com:zcu104:part0:1.1
+# puts "PL0_ACTUAL_MHZ [get_property CONFIG.PSU__CRL_APB__PL0_REF_CTRL__ACT_FREQMHZ $ps]"
+PL0_ACTUAL_MHZ 125.000000

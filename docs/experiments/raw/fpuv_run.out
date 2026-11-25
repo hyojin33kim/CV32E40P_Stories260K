@@ -1,0 +1,20 @@
+FPU_VERILATOR 3896 vectors done
+stream ADDMUL   1768 ops,   1771 cycles (1.00 cycles/op), max in flight 3
+stream DIVSQRT   906 ops,  12172 cycles (13.43 cycles/op), max in flight 1
+stream NONCOMP   689 ops,    692 cycles (1.00 cycles/op), max in flight 3
+stream CONV      533 ops,    536 cycles (1.01 cycles/op), max in flight 3
+FPU_VERILATOR_STREAM 3896 vectors, 15171 cycles, max in flight 3, unexpected extra results 0
+FPU_VERILATOR 3896 vectors done
+stream ADDMUL   1768 ops,   1771 cycles (1.00 cycles/op), max in flight 3
+stream DIVSQRT   906 ops,  12172 cycles (13.43 cycles/op), max in flight 1
+stream NONCOMP   689 ops,    692 cycles (1.00 cycles/op), max in flight 3
+stream CONV      533 ops,    536 cycles (1.01 cycles/op), max in flight 3
+FPU_VERILATOR_STREAM 3896 vectors, 15171 cycles, max in flight 3, unexpected extra results 0
+AFTER: 3896/3896 correct
+DISTRIBUTED: 3896/3896 correct
+AFTER-stream: 3896/3896 correct
+DISTRIBUTED-stream: 3896/3896 correct
+
+real	0m2.834s
+user	0m1.729s
+sys	0m0.507s

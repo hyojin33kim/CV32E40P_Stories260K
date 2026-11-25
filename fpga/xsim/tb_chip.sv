@@ -40,7 +40,7 @@ module tb_chip;
   logic [31:0] sram_img[SRAM_WORDS];
   logic [31:0] dump[SRAM_WORDS];
   longint run_cycles = 0;
-  integer fd, nz, tf, trace_n;
+  integer fd, nz, tf, trace_n, pc_from, pc_to, loadmax, maxcyc;
 
   task automatic ld_write(input logic [31:0] a, input logic [31:0] d);
     @(negedge clk); ld_req = 1; ld_we = 1; ld_addr = a; ld_wdata = d;
@@ -48,28 +48,55 @@ module tb_chip;
   endtask
 
   initial begin
+    if (!$value$plusargs("LOADMAX=%d", loadmax)) loadmax = 0;   // >0: load only this many SRAM words (speed measurement)
+    if (!$value$plusargs("MAXCYC=%d", maxcyc)) maxcyc = 0;     // >0: stop after this many cycles from reset release (speed measurement)
     $readmemh("imem.hex", imem_img);
     $readmemh("sram.hex", sram_img);
+`ifdef NETLIST
+    #200;   // the Xilinx global set/reset (GSR, 100 ns) holds every flip-flop at the start of a post-synthesis simulation
+`endif
     repeat (10) @(posedge clk);
     for (int i = 0; i < IMEM_WORDS; i++) ld_write(32'h0100_0000 + 4 * i, imem_img[i]);
     nz = 0;
-    for (int i = 0; i < SRAM_WORDS; i++) if (sram_img[i] != 0) begin ld_write(4 * i, sram_img[i]); nz++; end
+    // every word, zeros included: the 4-state SRAM model starts as X (Verilator's starts as 0) and the firmware assumes zeroed memory;
+    // the board flow (pynq/run_chip.py) also writes every word
+    for (int i = 0; i < ((loadmax > 0) ? loadmax : SRAM_WORDS); i++) begin ld_write(4 * i, sram_img[i]); if (sram_img[i] != 0) nz++; end
     $display("TB loaded imem %0d words, sram %0d non-zero words at %0t", IMEM_WORDS, nz, $time);
     if (!$value$plusargs("TRACE_N=%d", trace_n)) trace_n = 0;
+    if (!$value$plusargs("PC_FROM=%d", pc_from)) pc_from = 9900;
+    if (!$value$plusargs("PC_TO=%d", pc_to)) pc_to = 10300;
     if (trace_n > 0) tf = $fopen("trace_xsim.txt", "w");
     @(negedge clk); rst_n = 1;
     while (!done) begin
+      if (maxcyc > 0 && run_cycles >= maxcyc) begin $display("TB MAXCYC reached run_cycles=%0d", run_cycles); $finish; end
+`ifndef NETLIST   // the traces below look into the RTL hierarchy; the post-synthesis netlist is flattened
       // CPU data port trace (signals sampled just before the rising edge), same format as sim.cpp SIM_TRACE_CPU
       if (trace_n > 0 && run_cycles < trace_n) begin
         if (dut.d_req && dut.d_gnt) $fdisplay(tf, "%0d REQ we=%0d be=%h a=%08h wd=%08h", run_cycles, dut.d_we, dut.d_be, dut.d_addr, dut.d_wdata);
         if (dut.d_rvalid) $fdisplay(tf, "%0d RSP rd=%08h", run_cycles, dut.d_rdata);
       end
-      // FPU (APU) interface for cycles 4100..4200 of the trace window
-      if (trace_n > 0 && run_cycles >= 4100 && run_cycles < 4200)
+      // instruction fetch addresses and the FPU (APU) interface in the window of interest (plusargs +PC_FROM= / +PC_TO=, default 9900..10300)
+      if (trace_n > 0 && run_cycles >= pc_from && run_cycles < pc_to && dut.i_req) $fdisplay(tf, "%0d IF a=%08h", run_cycles, dut.i_addr);
+      if (trace_n > 0 && run_cycles >= pc_from && run_cycles < pc_to && dut.soc_i.vfu_i.st_q == 6)
+        $fdisplay(tf, "%0d XSPROBE x_req=%b isXS=%b src_lt_n=%b rd_ok_fn=%b rd_ok_expl=%b (rd_v=%b rd_st_eq6=%b rd_el_eq_src=%b) cred=%b cred_val=%0d",
+          run_cycles, dut.soc_i.vfu_i.x_req, dut.soc_i.vfu_i.st_q == 3'd6, dut.soc_i.vfu_i.src_q < dut.soc_i.vfu_i.n_q,
+          dut.soc_i.vfu_i.rd_ok(dut.soc_i.vfu_i.XS, dut.soc_i.vfu_i.src_q),
+          dut.soc_i.vfu_i.rd_v_q && dut.soc_i.vfu_i.rd_st_q == 3'd6 && dut.soc_i.vfu_i.rd_elem_q == dut.soc_i.vfu_i.src_q,
+          dut.soc_i.vfu_i.rd_v_q, dut.soc_i.vfu_i.rd_st_q == 3'd6, dut.soc_i.vfu_i.rd_elem_q == dut.soc_i.vfu_i.src_q,
+          ((dut.soc_i.vfu_i.src_q - dut.soc_i.vfu_i.wr_q) + 32'(dut.soc_i.vfu_i.af_cnt_q)) < 32,
+          (dut.soc_i.vfu_i.src_q - dut.soc_i.vfu_i.wr_q) + 32'(dut.soc_i.vfu_i.af_cnt_q));
+      if (trace_n > 0 && run_cycles >= pc_from && run_cycles < pc_to && dut.soc_i.vfu_i.st_q != 0)
+        $fdisplay(tf, "%0d VFU st=%0d cmd=%0d n=%0d rsp=%0d iss=%0d src=%0d wr=%0d afcnt=%0d addn=%0d xreq=%b xgnt=%b subv=%b mulv=%b e2v=%b av=%b rdv=%b rdst=%0d rdel=%0d max=%h",
+          run_cycles, dut.soc_i.vfu_i.st_q, dut.soc_i.vfu_i.cmd_q, dut.soc_i.vfu_i.n_q, dut.soc_i.vfu_i.rsp_q, dut.soc_i.vfu_i.iss_q,
+          dut.soc_i.vfu_i.src_q, dut.soc_i.vfu_i.wr_q, dut.soc_i.vfu_i.af_cnt_q, dut.soc_i.vfu_i.add_n_q,
+          dut.soc_i.vfu_i.x_req, dut.soc_i.vfu_i.x_gnt, dut.soc_i.vfu_i.sub_valid, dut.soc_i.vfu_i.mul_valid, dut.soc_i.vfu_i.e2_valid,
+          dut.soc_i.vfu_i.a_valid, dut.soc_i.vfu_i.rd_v_q, dut.soc_i.vfu_i.rd_st_q, dut.soc_i.vfu_i.rd_elem_q, dut.soc_i.vfu_i.max_q);
+      if (trace_n > 0 && run_cycles >= pc_from && run_cycles < pc_to)
         $fdisplay(tf, "%0d APU req=%0d gnt=%0d op=%h a=%h b=%h c=%h | rv=%0d rd=%h", run_cycles,
           dut.soc_i.cpu_i.apu_req, dut.soc_i.cpu_i.apu_gnt, dut.soc_i.cpu_i.apu_op,
           dut.soc_i.cpu_i.apu_operands[0], dut.soc_i.cpu_i.apu_operands[1], dut.soc_i.cpu_i.apu_operands[2],
           dut.soc_i.cpu_i.apu_rvalid, dut.soc_i.cpu_i.apu_rdata);
+`endif
       if (trace_n > 0 && run_cycles == trace_n) begin $fclose(tf); $display("TB TRACE written, stopping"); $finish; end
       @(posedge clk); run_cycles++; @(negedge clk);
       if (run_cycles % 500000 == 0) $display("TB running %0d", run_cycles);

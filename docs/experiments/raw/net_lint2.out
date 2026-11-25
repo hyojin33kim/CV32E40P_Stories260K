@@ -1,0 +1,9 @@
+%Error-BADVLTPRAGMA: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/fpga/xsim/net_verilator/net_top.sv:1:1: Unknown verilator comment: '/*verilator top of the post-synthesis netlist simulation (D4): the UNISIM models read the global set/reset via the hierarchical*/'
+    1 | /*verilator top of the post-synthesis netlist simulation (D4): the UNISIM models read the global set/reset via the hierarchical*/ 
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                     ... For error description see https://verilator.org/warn/BADVLTPRAGMA?v=5.038
+%Error: Exiting due to 1 error(s)
+
+real	0m3.719s
+user	0m2.520s
+sys	0m0.980s

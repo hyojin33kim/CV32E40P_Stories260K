@@ -1,0 +1,6 @@
+{'test': 'exp', 'seed': 0, 'n': 4096, 'mismatches': 0, 'sw_cycles': 650897, 'hw_cycles': 192087}
+{'test': 'softmax', 'seed': 0, 'n': 4096, 'mismatches': 0, 'sw_cycles': 850775, 'hw_cycles': 230992}
+{'test': 'silu', 'seed': 0, 'n': 4096, 'mismatches': 0, 'sw_cycles': 713500, 'hw_cycles': 208789}
+{'test': 'divs', 'seed': 0, 'n': 4096, 'mismatches': 0, 'sw_cycles': 231881, 'hw_cycles': 177451}
+{'test': 'divsoftmax', 'seed': 0, 'n': 4096, 'mismatches': 0, 'sw_cycles': 933440, 'hw_cycles': 255678}
+total 20,480 elements, mismatches 0

@@ -1,0 +1,8 @@
+%Warning-TIMESCALEMOD: /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/fpga/xsim/net_verilator/net_top.sv:3:8: Timescale missing on this module as other modules have it (IEEE 1800-2023 3.14.2.3)
+    3 | module net_top (
+      |        ^~~~~~~
+                       /mnt/e/fpga_work/chip_net/vl/glbl_vl.v:2:8: ... Location of module with timescale
+    2 | module glbl ();
+      |        ^~~~
+                       ... For warning description see https://verilator.org/warn/TIMESCALEMOD?v=5.038
+                       ... Use "/* verilator lint_off TIMESCALEMOD */" and lint_on around source to disable this message.

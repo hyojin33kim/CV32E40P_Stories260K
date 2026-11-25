@@ -1,0 +1,19 @@
+60 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/cv32e40p_stories
+== FPU_ADDMUL_LAT=0
+      0.094        0.000                      0                 4119        0.037        0.000                      0                 4119        2.225        0.000                       0                  2132  
+| CLB LUTs                | 4603 |     0 |          0 |    230400 |  2.00 |
+| CLB Registers           | 2131 |     0 |          0 |    460800 |  0.46 |
+| CLB Registers                              | 2131 |     0 |          0 |    460800 |  0.46 |
+| DSPs           |    5 |     0 |          0 |      1728 |  0.29 |
+== FPU_ADDMUL_LAT=1
+      0.094        0.000                      0                 4119        0.037        0.000                      0                 4119        2.225        0.000                       0                  2132  
+| CLB LUTs                | 4603 |     0 |          0 |    230400 |  2.00 |
+| CLB Registers           | 2131 |     0 |          0 |    460800 |  0.46 |
+| CLB Registers                              | 2131 |     0 |          0 |    460800 |  0.46 |
+| DSPs           |    5 |     0 |          0 |      1728 |  0.29 |
+== FPU_ADDMUL_LAT=2
+      0.094        0.000                      0                 4119        0.037        0.000                      0                 4119        2.225        0.000                       0                  2132  
+| CLB LUTs                | 4603 |     0 |          0 |    230400 |  2.00 |
+| CLB Registers           | 2131 |     0 |          0 |    460800 |  0.46 |
+| CLB Registers                              | 2131 |     0 |          0 |    460800 |  0.46 |
+| DSPs           |    5 |     0 |          0 |      1728 |  0.29 |
