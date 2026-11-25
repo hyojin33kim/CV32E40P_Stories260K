@@ -24,8 +24,7 @@ ROWS = [
  # ---- L1 unit
  ('V-U1', 'L1 단위', 'RTL', 'VFU(expf, softmax, SiLU, 나눗셈, 나눗셈+softmax)', 'RISC-V 소프트웨어 결과와 비교. 7개 명령 전부, softmax 계열 벡터 길이 1, 2, 8, 512와 무작위 1~512 포함. 규모는 quick/standard/full로 선택', '비트 단위 일치', 'vfu/run_test.py (reproduce.sh)', '통과',
   'PR #3 기록: 1.31M 벡터 불일치 0', 'quick은 작은 규모만 재실행. 이번 세션에서 1.31M을 다시 돌리지는 않음'),
- ('V-U2', 'L1 단위', 'RTL', 'exp2 RTL vs C 모델', '입력 벡터를 RTL과 C 모델에 넣어 비교', '일치', 'acc/tb_exp2/run.sh, opta/test_exp2q.c', '부분',
-  'reproduce.sh Option A 단계에 포함', '개별 수치는 이번 세션에서 재확인하지 않음'),
+ ('V-U2', 'L1 단위', 'RTL', 'exp2 RTL vs C 모델 (입력 전체 2^32)', 'vfu_exp2의 32비트 입력 패턴 전부(inf, NaN 포함, 4,294,967,296개)를 한 cycle에 하나씩 넣고 5 cycle 뒤 출력을 C 모델 exp2q_bits와 비트 비교', '불일치 0', 'acc/tb_exp2/run.sh (Verilator), opta/exp2q.h', '통과', '4개 구간(0x00000000~0x3fffffff, 0x40000000~0x7fffffff, 0x80000000~0xbfffffff, 0xc0000000~0xffffffff) 모두 1,073,741,824개 불일치 0, 합계 4,294,967,296개(구간당 약 1분 15초)', 'C 모델과의 일치이며, 모델이 수학적 2^y에 얼마나 가까운지(정확도)는 별개(opta/test_exp2q.c, reproduce.sh의 exp2_accuracy.txt). 입력을 연속으로 넣는 경우만 시험(정지, 리셋 중간은 아님). vfu_exp2 단독이며 VFU 안에서 앞단과 연결된 경우는 V-U1이 확인. 실험 E12'),
  ('V-U3', 'L1 단위', 'RTL', 'GEMV 모드 D(int8 가중치, 행별 scale) 무작위 시험', '무작위 행렬과 scale, 모드 D 실행 후 C 기준과 비교', '불일치 0', 'w8/test_w8_gemv.c, w8/run_test_w8.py', '통과',
   '366건 불일치 0 (이어서 355건, 14건 추가 시험)', 'fmul+fadd, FMA 미사용 기준'),
  ('V-U4', 'L1 단위', 'RTL', '15M 크기 GEMV(버퍼 1024)', '15M 모델 행렬 크기로 GEMV 실행', '일치', 'w8/test_w8_gemv.c (BIGLAYOUT)', '통과', '기록된 세션 결과', '15M 전체 모델이 아니라 GEMV 한 형태만 확인'),
@@ -67,7 +66,7 @@ ROWS = [
  ('V-G4', '격차', 'RISC-V', '15M 모델용 펌웨어와 RTL 주소 일반화', '15M 주소 맵대로 펌웨어와 RTL 파라미터 수정', '15M 시뮬레이션 통과', 'docs/15M_ADDRESS_MAP.md', '미실행', '주소 맵 문서와 GEMV 형태 시험만 있음', '모델 파일과 범위 결정 대기'),
  ('V-G5', '격차', 'RTL', 'KV cache를 DDR에 두는 쓰기 경로', 'AXI write 경로 설계와 시험', '', '', '미실행', '설계되지 않음(KV fp32 3.375 MiB는 URAM 3.0 MiB에 안 맞음)', 'int8 KV는 0.914 MiB'),
  ('V-G6', '격차', 'RTL', '정수 lane(I2: int8×int8 MAC + 활성화 양자화)', '고정소수점 C 기준부터 새로 시작', '', '', '미실행', '', '별도 세션에서 진행하기로 결정'),
- ('V-G7', '격차', '도구', '이전 xsim 불일치에서 패치별 기여 분리', '패치를 하나씩만 적용해 재실행', '각 패치의 효과 정량화', 'fpga/xsim/run_xsim.sh', '미실행', '', '우선순위 낮음'),
+ ('V-G7', '격차', '도구', '이전 xsim 불일치에서 패치별 기여 분리', '같은 이미지로 전체 칩 xsim을 (A) 패치 없음, (B) rd_ok 인라인만, (C) FPU 표 패치만으로 실행(XW=fmt|rd, FIXFMT=0, XSIM_PLUS="MAXCYC=600000")하고 cycle과 덤프를 비교', '각 패치의 효과 정량화', 'fpga/xsim/run_xsim.sh, xsim_workaround.py (XW_ONLY)', '미실행', '도구는 준비됨(XW_ONLY, XSIM_PLUS, tb_chip.sv의 MAXCYC). 실행은 첫 단계(A)를 시작한 뒤 세션이 끝나 중단되어 결과가 없음', '우선순위 낮음. 두 패치를 모두 적용하면 일치하는 것(E04)은 확인됨. 개별 효과는 모름'),
  # ---- new tests (gaps found in the block-by-block review)
  ('V-F1', '격차', 'FPU', 'FPU 경계값 벡터(subnormal, Inf, NaN, ±0)', '17개 특수 피연산자의 모든 쌍을 ADD, SUB, MUL, DIV, 비교에, 특수값을 SQRT, I2F, F2I에 입력(1,494개). NaN 결과는 정규 NaN 0x7fc00000, F2I는 포화 규칙', 'RISC-V F 규칙의 기대값과 비트 일치', 'fpga/xsim/fpu_vectors.py (edge-*)', '통과', 'xsim RTL, 네트리스트, Verilator RTL(AFTER, DISTRIBUTED) 모두 3896/3896. 변이 시험(SUB→ADD 등 4건)이 모두 검출됨', '예외 플래그는 비교하지 않음(V-F2)'),
  ('V-F2', '격차', 'FPU', 'FPU 예외 플래그(rflags) 비교', '연산별 NV, DZ, OF, UF, NX 기대값을 만들어 rflags와 비교', '플래그 일치', 'fpga/xsim/fpu_vectors.py, tb_fpu.sv', '미실행', '현재 기대값 파일에 결과만 있음', ''),

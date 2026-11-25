@@ -132,6 +132,15 @@ EXPERIMENTS = [
   caveat='3차 lint를 중단했기 때문에 메모리를 더 주면 Verilator가 끝까지 변환하는지는 모른다. 직접 만든 FF 모델과 상수로 치환한 모델이 벤더 모델과 같은 동작이라는 것은 FPU 네트리스트 교차 검증으로 아직 확인하지 않았다. 합성 단계 WNS −0.499 ns는 구현 전 값이며 타이밍 판단에 쓰지 않는다(PS 연결 구현 결과는 WNS +0.100).',
   impact='V-S1은 "미실행(막힘)". 결정 D4를 막힌 경로의 선택으로 바꿈. fpga/synth.tcl의 NETLIST 토큰, run_xsim_net.sh 등은 라이선스가 풀리면 그대로 사용 가능.',
   raw='xsim_net_license_error.txt, net_speed_a.out, net_lint.out, net_lint2.out, net_lint3.out'),
+ dict(id='E12', date='2026-11-25', topic='exp2 RTL 전 입력 전수 확인 (V-U2)',
+  purpose='Option A의 exp2 파이프라인(acc/vfu_exp2.sv)이 C 모델(opta/exp2q.h)과 모든 입력에서 비트 단위로 같은지 확인한다.',
+  setup='acc/tb_exp2/tb.cpp(Verilator, 모듈 vfu_exp2 단독). 32비트 입력 패턴 2^32개 전부(inf, NaN 포함, 모델도 이들을 정의함)를 한 cycle에 하나씩 넣고, 5 cycle 뒤 valid_o와 함께 나오는 결과를 exp2q_bits(입력)과 비교. 4개 구간을 4개 프로세스로 병렬 실행.',
+  result='0x00000000~0x3fffffff: 1,073,741,824개, 불일치 0, 1분 13초. 0x40000000~0x7fffffff: 1,073,741,824개, 불일치 0, 1분 19초. 0x80000000~0xbfffffff: 1,073,741,824개, 불일치 0, 1분 18초. 0xc0000000~0xffffffff: 1,073,741,824개, 불일치 0, 1분 18초. 합계 4,294,967,296개 불일치 0.',
+  observation='첫 구간(0x00000000~0x3fffffff)은 저장소의 이전 기록(acc/tb_exp2/q2.txt, q3.txt, q4.txt)에 없던 구간이다. 나머지 세 구간은 이전 기록과 같은 결과.',
+  opinion='"모든 입력"은 이 모듈의 32비트 입력 공간 전체라는 뜻이고, 비교 대상은 C 모델이다. RTL이 모델과 같다는 것을 완전하게 보인 것이며, 모델 자체가 수학적 2^y와 얼마나 가까운지는 보여 주지 않는다(그 정확도는 opta/test_exp2q.c가 별도로 측정). 확신: 높음(전 입력 비교).',
+  caveat='입력을 매 cycle 연속으로 넣는 경우만 시험했다(valid가 끊기거나 리셋이 중간에 걸리는 경우는 아님). vfu_exp2 단독 시험이라 VFU 안에서 앞단 연산(fsub, fmul)과 연결된 상태는 V-U1이 확인한다. 합성된 네트리스트에서는 시험하지 않았다(2^32개를 네트리스트로 돌리는 것은 현재 xsim 라이선스 한도로 불가, D4).',
+  impact='V-U2 "통과". 이 시험은 이후 exp2 RTL을 바꿀 때마다 약 5분(4구간 병렬)이면 다시 돌릴 수 있다.',
+  raw='exp2_q1.out, exp2_q2.out, exp2_q3.out, exp2_q4.out'),
 ]
 
 # (date, what was said, what was found, where recorded)

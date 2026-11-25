@@ -7,8 +7,11 @@ functions that do so (fp_width, exp_bits, man_bits, bias) with constant-index ca
 Apply it only to a work copy used for xsim (never to the repository's RTL, Verilator and synthesis are not affected).
 
 usage: fpga/xsim/xsim_workaround.py <work dir containing rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv>"""
+import os
 import sys
 from pathlib import Path
+
+ONLY = os.environ.get('XW_ONLY', 'both')   # 'fmt' = FP_ENCODINGS patch only, 'rd' = rd_ok inlining only (V-G7: separate the effect of each patch)
 
 p = Path(sys.argv[1]) / 'rtl' / 'vendor' / 'pulp_platform_fpnew' / 'src' / 'fpnew_pkg.sv'
 s = p.read_text()
@@ -34,7 +37,9 @@ OLD = [
 ("""    return unsigned'(2**(FP_ENCODINGS[fmt].exp_bits-1)-1); // symmetrical bias""",
  """    return unsigned'(2**(exp_bits(fmt)-1)-1); // symmetrical bias"""),
 ]
-if 'xsim mis-evaluates' in s:
+if ONLY not in ('both', 'fmt'):
+    print('fmt patch skipped (XW_ONLY=%s)' % ONLY)
+elif 'xsim mis-evaluates' in s:
     print('already patched', p)
 else:
     for a, b in OLD:
@@ -48,7 +53,7 @@ else:
 # Inline the function so every operand is visible to the assign. Same logic by construction.
 import re
 v = Path(sys.argv[1]) / 'acc' / 'vfu.sv'
-if v.exists():
+if v.exists() and ONLY in ('both', 'rd'):
     t = v.read_text()
     t2, n = re.subn(r'(?<![\w.])rd_ok\(\s*(\w+)\s*,\s*(\w+)\s*\)', r'(rd_v_q && rd_st_q == \1 && rd_elem_q == \2)', t)
     v.write_text(t2); print('inlined rd_ok in', v, n, 'calls')

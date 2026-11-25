@@ -33,6 +33,7 @@ DESC = {
  'a1_vfu_overlimit.out': 'VFU softmax/divsoftmax/softmax2 with chunk length 512, 513, 520, 1024 (buffer 512): 512 passes, longer chunks silently wrong (11-23)',
  'fpu_xsim_stream.out': 'xsim FPU test with the stream mode: RTL and netlist, single and stream, all 3896/3896, stream statistics per group (11-24)',
  'xsim_net_license_error.txt': 'the xsim error that stops the post-synthesis full-chip simulation: BASIC license, 107,091 instances > 50,000 allowed (11-24)',
+ 'exp2_q*': 'exhaustive vfu_exp2 check, one quarter of the 2^32 input patterns per file (RTL vs opta/exp2q.h), with wall time (11-25)',
  'a3_conc.out': 'V-A3: four concurrency scenarios (CPU with GEMV, CPU with VFU, VFU started during GEMV, GEMV started during VFU) (11-24)',
  'net_lint*': 'Verilator lint of the post-synthesis soc_chip netlist with the UNISIM models: successive attempts (deassign, specify, tri-state errors), the last ones ran out of memory (11-24)',
  'net_speed_a.out': 'xsim run of the post-synthesis netlist: wall time and the license error (11-24)',
