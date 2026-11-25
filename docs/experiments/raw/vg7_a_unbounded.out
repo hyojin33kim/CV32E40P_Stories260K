@@ -1,0 +1,518 @@
+INFO: [Common 17-3922] A valid Vivado Design Suite BASIC license has been detected. Your current license is active and will expire on 24-aug-2027.
+#-----------------------------------------------------------
+# Vivado v2026.1 (64-bit)
+# SW Build 6511674 on Tue Jun 16 11:02:23 MDT 2026
+# IP Build 6504888 on Tue Jun 09 09:05:25 MDT 2026
+# SharedData Build 6501428 on Mon Jun 08 17:34:18 MDT 2026
+# Start of session at: Wed Nov 25 12:56:15 2026
+# Process ID         : 28792
+# Current directory  : E:/fpga_work/xsim_vg7_a
+# Command line       : vivado.exe -mode batch -nojournal -log xsim.log -source run_xsim.tcl
+# Log file           : E:/fpga_work/xsim_vg7_a/xsim.log
+# Journal file       : 
+# Running On         : hyojin-desktop
+# Platform           : Windows 11
+# Operating System   : 26200
+# Processor Detail   : AMD Ryzen 5 5600X 6-Core Processor             
+# CPU Frequency      : 3693 MHz
+# CPU Physical cores : 6
+# CPU Logical cores  : 12
+# Host memory        : 17099 MB
+# Swap memory        : 4294 MB
+# Total Virtual      : 21394 MB
+# Available Virtual  : 5029 MB
+#-----------------------------------------------------------
+source run_xsim.tcl
+# set gui [expr {[llength $argv] > 0 && [lindex $argv 0] eq "gui"}]
+# set trace_n [expr {[llength $argv] > 1 && [lindex $argv 0] eq "trace" ? [lindex $argv 1] : 0}]
+# create_project -force xsim_chip ./xsim_proj -part xczu7ev-ffvc1156-2-e
+create_project: Time (s): cpu = 00:00:08 ; elapsed = 00:00:08 . Memory (MB): peak = 612.301 ; gain = 268.617
+# set fh [open files.tcl]
+# foreach line [split [read $fh] "\n"] {
+#   if {[string match "read_verilog*" $line]} { add_files -norecurse [lindex $line end]
+#   } elseif {[string match "set inc_dirs*" $line]} { eval $line }
+# }
+CRITICAL WARNING: [Vivado 12-3645] Please note that adding or importing multiple files, one at a time, can be performance intensive.  Both add_files and import_files commands accept multiple files as input, and passing a collection of multiple files to a single add_files or import_files commands can offer significant performance improvement.
+# close $fh
+# foreach d $inc_dirs { lappend incs [file normalize $d] }
+# set_property include_dirs $incs [current_fileset]
+# set_property include_dirs $incs [get_filesets sim_1]
+# add_files -fileset sim_1 tb_chip.sv
+# set_property top tb_chip [get_filesets sim_1]
+# set_property top_lib xil_defaultlib [get_filesets sim_1]
+# set_property verilog_define {USE_XPM XSIM} [get_filesets sim_1]   
+# set_property -name {xsim.simulate.runtime} -value {-all} -objects [get_filesets sim_1]
+# set_property -name {xsim.simulate.log_all_signals} -value {false} -objects [get_filesets sim_1]
+# if {$trace_n > 0} { set_property -name {xsim.simulate.xsim.more_options} -value "-testplusarg TRACE_N=$trace_n" -objects [get_filesets sim_1] }
+# if {[info exists ::env(XSIM_PLUS)] && $::env(XSIM_PLUS) ne ""} {   ;# e.g. XSIM_PLUS="MAXCYC=400000" (tb_chip.sv plusargs)
+#   set pl {}; foreach a $::env(XSIM_PLUS) { lappend pl "-testplusarg $a" }
+#   set_property -name {xsim.simulate.xsim.more_options} -value [join $pl " "] -objects [get_filesets sim_1]
+# }
+# foreach f {imem.hex sram.hex} { add_files -fileset sim_1 -norecurse $f }
+# update_compile_order -fileset sim_1
+# if {$gui} {
+#   start_gui
+# } else {
+#   launch_simulation -simset sim_1 -mode behavioral
+#   close_sim
+#   puts "XSIM FINISHED"
+# }
+Command: launch_simulation  -simset sim_1 -mode behavioral
+INFO: [Vivado 12-25911] Executing simulation for 'XSim' simulator
+INFO: [Vivado 12-28535] Process started - Wed Nov 25 12:56:36 2026
+
+INFO: [Vivado 12-12493] Simulation top is 'tb_chip'
+INFO: [Vivado 12-5682] Launching behavioral simulation in 'E:/fpga_work/xsim_vg7_a/xsim_proj/xsim_chip.sim/sim_1/behav/xsim'
+INFO: [SIM-utils-51] Simulation object is 'sim_1'
+INFO: [SIM-utils-72] Using boost library from 'H:/2026.1/Vivado/tps/boost_1_72_0'
+INFO: [USF-XSim-7] Finding pre-compiled libraries...
+INFO: [USF-XSim-11] File 'H:/2026.1/Vivado/data/xsim/xsim.ini' copied to run dir:'E:/fpga_work/xsim_vg7_a/xsim_proj/xsim_chip.sim/sim_1/behav/xsim'
+INFO: [SIM-utils-54] Inspecting design source files for 'tb_chip' in fileset 'sim_1'...
+INFO: [SIM-utils-43] Exported 'E:/fpga_work/xsim_vg7_a/xsim_proj/xsim_chip.sim/sim_1/behav/xsim/imem.hex'
+INFO: [SIM-utils-43] Exported 'E:/fpga_work/xsim_vg7_a/xsim_proj/xsim_chip.sim/sim_1/behav/xsim/sram.hex'
+INFO: [USF-XSim-97] Finding global include files...
+INFO: [USF-XSim-98] Fetching design files from 'sim_1'...
+INFO: [USF-XSim-2] XSim::Compile design
+INFO: [USF-XSim-61] Executing 'COMPILE and ANALYZE' step in 'E:/fpga_work/xsim_vg7_a/xsim_proj/xsim_chip.sim/sim_1/behav/xsim'
+"xvlog --incr --relax -L uvm -prj tb_chip_vlog.prj"
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/vendor/opene906/E906_RTL_FACTORY/gen_rtl/clk/rtl/gated_clk_cell.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module gated_clk_cell
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/vendor/opene906/E906_RTL_FACTORY/gen_rtl/fdsu/rtl/pa_fdsu_ctrl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module pa_fdsu_ctrl
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/vendor/opene906/E906_RTL_FACTORY/gen_rtl/fdsu/rtl/pa_fdsu_ff1.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module pa_fdsu_ff1
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/vendor/opene906/E906_RTL_FACTORY/gen_rtl/fdsu/rtl/pa_fdsu_pack_single.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module pa_fdsu_pack_single
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/vendor/opene906/E906_RTL_FACTORY/gen_rtl/fdsu/rtl/pa_fdsu_prepare.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module pa_fdsu_prepare
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/vendor/opene906/E906_RTL_FACTORY/gen_rtl/fdsu/rtl/pa_fdsu_round_single.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module pa_fdsu_round_single
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/vendor/opene906/E906_RTL_FACTORY/gen_rtl/fdsu/rtl/pa_fdsu_special.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module pa_fdsu_special
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/vendor/opene906/E906_RTL_FACTORY/gen_rtl/fdsu/rtl/pa_fdsu_srt_single.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module pa_fdsu_srt_single
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/vendor/opene906/E906_RTL_FACTORY/gen_rtl/fdsu/rtl/pa_fdsu_top.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module pa_fdsu_top
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/vendor/opene906/E906_RTL_FACTORY/gen_rtl/fpu/rtl/pa_fpu_dp.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module pa_fpu_dp
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/vendor/opene906/E906_RTL_FACTORY/gen_rtl/fpu/rtl/pa_fpu_frbus.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module pa_fpu_frbus
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/vendor/opene906/E906_RTL_FACTORY/gen_rtl/fpu/rtl/pa_fpu_src_type.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module pa_fpu_src_type
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_common_cells/src/cf_math_pkg.sv" into library xil_defaultlib
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_aligner.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_aligner
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/include/cv32e40p_pkg.sv" into library xil_defaultlib
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_alu.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_alu
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_alu_div.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_alu_div
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/include/cv32e40p_apu_core_pkg.sv" into library xil_defaultlib
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_apu_disp.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_apu_disp
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/fpga/cv32e40p_clock_gate_fpga.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_clock_gate
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_compressed_decoder.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_compressed_decoder
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_controller.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_controller
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_core.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_core
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_cs_registers.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_cs_registers
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/include/cv32e40p_fpu_pkg.sv" into library xil_defaultlib
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_decoder.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_decoder
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_ex_stage.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_ex_stage
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_ff_one.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_ff_one
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_fifo.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_fifo
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv" into library xil_defaultlib
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_fp_wrapper.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_fp_wrapper
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_hwloop_regs.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_hwloop_regs
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_id_stage.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_id_stage
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_if_stage.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_if_stage
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_int_controller.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_int_controller
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_load_store_unit.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_load_store_unit
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_mult.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_mult
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_obi_interface.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_obi_interface
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_popcnt.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_popcnt
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_prefetch_buffer.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_prefetch_buffer
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_prefetch_controller.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_prefetch_controller
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_register_file_ff.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_register_file
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_sleep_unit.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_sleep_unit
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_top.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cv32e40p_top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/src/fpnew_cast_multi.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fpnew_cast_multi
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/src/fpnew_classifier.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fpnew_classifier
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/src/fpnew_divsqrt_th_32.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fpnew_divsqrt_th_32
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma_multi.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fpnew_fma_multi
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/src/fpnew_noncomp.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fpnew_noncomp
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_block.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fpnew_opgroup_block
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_fmt_slice.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fpnew_opgroup_fmt_slice
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_multifmt_slice.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fpnew_opgroup_multifmt_slice
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/src/fpnew_rounding.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fpnew_rounding
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_fpnew/src/fpnew_top.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fpnew_top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/acc/gemv_acc.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module gemv_acc
+WARNING: [VRFC 10-3380] identifier 'state_q' is used before its declaration [E:/fpga_work/xsim_vg7_a/acc/gemv_acc.sv:96]
+WARNING: [VRFC 10-3380] identifier 'state_q' is used before its declaration [E:/fpga_work/xsim_vg7_a/acc/gemv_acc.sv:97]
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_common_cells/src/lzc.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module lzc
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/rtl/vendor/pulp_platform_common_cells/src/rr_arb_tree.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module rr_arb_tree
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/acc/soc_chip.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module soc_chip
+WARNING: [VRFC 10-2938] 'b_en_x' is already implicitly declared on line 131 [E:/fpga_work/xsim_vg7_a/acc/soc_chip.sv:164]
+WARNING: [VRFC 10-3380] identifier 'i_req' is used before its declaration [E:/fpga_work/xsim_vg7_a/acc/soc_chip.sv:91]
+WARNING: [VRFC 10-3380] identifier 'i_req' is used before its declaration [E:/fpga_work/xsim_vg7_a/acc/soc_chip.sv:92]
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/acc/soc_top.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module soc_top
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/acc/sram_dp.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module sram_dp
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/acc/vfu.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vfu
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/acc/vfu_exp2.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vfu_exp2
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/acc/vfu_lane.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module vfu_lane
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "E:/fpga_work/xsim_vg7_a/tb_chip.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module tb_chip
+INFO: [VRFC 10-2263] Analyzing Verilog file "E:/fpga_work/xsim_vg7_a/xsim_proj/xsim_chip.sim/sim_1/behav/xsim/glbl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module glbl
+run_program: Time (s): cpu = 00:00:00 ; elapsed = 00:00:09 . Memory (MB): peak = 619.875 ; gain = 0.000
+INFO: [USF-XSim-69] 'compile' step finished in '9' seconds
+INFO: [USF-XSim-3] XSim::Elaborate design
+INFO: [USF-XSim-61] Executing 'ELABORATE' step in 'E:/fpga_work/xsim_vg7_a/xsim_proj/xsim_chip.sim/sim_1/behav/xsim'
+"xelab --incr --debug typical --relax --mt 2 -L xil_defaultlib -L uvm -L unisims_ver -L unimacro_ver -L secureip -L xpm --snapshot tb_chip_behav xil_defaultlib.tb_chip xil_defaultlib.glbl -log elaborate.log"
+Vivado Simulator v2026.1
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+Running: H:/2026.1/Vivado/bin/unwrapped/win64.o/xelab.exe --incr --debug typical --relax --mt 2 -L xil_defaultlib -L uvm -L unisims_ver -L unimacro_ver -L secureip -L xpm --snapshot tb_chip_behav xil_defaultlib.tb_chip xil_defaultlib.glbl -log elaborate.log 
+INFO: [XSIM 43-3493] Using 2 slave threads.
+Starting static elaboration
+Pass Through NonSizing Optimizer
+Completed static elaboration
+Starting simulation data flow analysis
+WARNING: [VRFC 10-2649] an enum variable may only be assigned the same enum typed variable or one of its values [E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_fp_wrapper.sv:106]
+WARNING: [VRFC 10-2649] an enum variable may only be assigned the same enum typed variable or one of its values [E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_fp_wrapper.sv:107]
+WARNING: [VRFC 10-2649] an enum variable may only be assigned the same enum typed variable or one of its values [E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_fp_wrapper.sv:109]
+WARNING: [VRFC 10-2649] an enum variable may only be assigned the same enum typed variable or one of its values [E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_fp_wrapper.sv:110]
+WARNING: [VRFC 10-2649] an enum variable may only be assigned the same enum typed variable or one of its values [E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_fp_wrapper.sv:111]
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling package xil_defaultlib.cv32e40p_apu_core_pkg
+Compiling package xil_defaultlib.cv32e40p_pkg
+Compiling package xil_defaultlib.cv32e40p_fpu_pkg
+Compiling package xil_defaultlib.fpnew_pkg
+Compiling module unisims_ver.BUFGCE
+Compiling module xil_defaultlib.cv32e40p_clock_gate
+Compiling module xil_defaultlib.cv32e40p_sleep_unit_default
+Compiling module xil_defaultlib.cv32e40p_prefetch_controller(COR...
+Compiling module xil_defaultlib.cv32e40p_fifo(DEPTH=32'b010)
+Compiling module xil_defaultlib.cv32e40p_obi_interface_default
+Compiling module xil_defaultlib.cv32e40p_prefetch_buffer(COREV_P...
+Compiling module xil_defaultlib.cv32e40p_aligner
+Compiling module xil_defaultlib.cv32e40p_compressed_decoder(FPU=...
+Compiling module xil_defaultlib.cv32e40p_if_stage(FPU=1)
+Compiling module xil_defaultlib.cv32e40p_register_file(ADDR_WIDT...
+Compiling module xil_defaultlib.cv32e40p_decoder(COREV_PULP=0,FP...
+Compiling module xil_defaultlib.cv32e40p_controller(FPU=1)
+Compiling module xil_defaultlib.cv32e40p_int_controller_default
+Compiling module xil_defaultlib.cv32e40p_id_stage(COREV_PULP=0,A...
+Compiling module xil_defaultlib.cv32e40p_popcnt
+Compiling module xil_defaultlib.cv32e40p_ff_one_default
+Compiling module xil_defaultlib.cv32e40p_alu_div_default
+Compiling module xil_defaultlib.cv32e40p_alu
+Compiling module xil_defaultlib.cv32e40p_mult
+Compiling module xil_defaultlib.cv32e40p_apu_disp
+Compiling module xil_defaultlib.cv32e40p_ex_stage(FPU=1)
+Compiling module xil_defaultlib.cv32e40p_obi_interface(TRANS_STA...
+Compiling module xil_defaultlib.cv32e40p_load_store_unit_default
+Compiling module xil_defaultlib.cv32e40p_cs_registers(APU=1,FPU=...
+Compiling module xil_defaultlib.cv32e40p_core(FPU=1,FPU_ADDMUL_L...
+Compiling module xil_defaultlib.fpnew_classifier(FpFormat=FP32_f...
+Compiling module xil_defaultlib.lzc(WIDTH=32'b0110011,MODE=1'b1)
+Compiling module xil_defaultlib.fpnew_rounding(AbsWidth=32'b0111...
+Compiling module xil_defaultlib.fpnew_fma_multi(FpFmtConfig=5'b1...
+Compiling module xil_defaultlib.fpnew_opgroup_multifmt_slice(OpG...
+Compiling module xil_defaultlib.lzc(WIDTH=32'b0101)
+Compiling module xil_defaultlib.rr_arb_tree(NumIn=32'b0101,DataT...
+Compiling module xil_defaultlib.fpnew_opgroup_block(OpGroup=ADDM...
+Compiling module xil_defaultlib.pa_fdsu_special
+Compiling module xil_defaultlib.pa_fdsu_ff1
+Compiling module xil_defaultlib.pa_fdsu_prepare
+Compiling module xil_defaultlib.gated_clk_cell
+Compiling module xil_defaultlib.pa_fdsu_srt_single
+Compiling module xil_defaultlib.pa_fdsu_round_single
+Compiling module xil_defaultlib.pa_fdsu_pack_single
+Compiling module xil_defaultlib.pa_fdsu_ctrl
+Compiling module xil_defaultlib.pa_fdsu_top
+Compiling module xil_defaultlib.pa_fpu_src_type
+Compiling module xil_defaultlib.pa_fpu_dp
+Compiling module xil_defaultlib.pa_fpu_frbus
+Compiling module xil_defaultlib.fpnew_divsqrt_th_32(NumPipeRegs=...
+Compiling module xil_defaultlib.fpnew_opgroup_multifmt_slice(OpG...
+Compiling module xil_defaultlib.rr_arb_tree(NumIn=32'b0101,DataT...
+Compiling module xil_defaultlib.fpnew_opgroup_block(OpGroup=DIVS...
+Compiling module xil_defaultlib.fpnew_classifier(FpFormat=FP32_f...
+Compiling module xil_defaultlib.fpnew_noncomp(FpFormat=FP32_fpne...
+Compiling module xil_defaultlib.fpnew_opgroup_fmt_slice(OpGroup=...
+Compiling module xil_defaultlib.rr_arb_tree(NumIn=32'b0101,DataT...
+Compiling module xil_defaultlib.fpnew_opgroup_block(OpGroup=NONC...
+Compiling module xil_defaultlib.fpnew_classifier(FpFormat=FP32_f...
+Compiling module xil_defaultlib.lzc(WIDTH=32'b0100000,MODE=1'b1)
+Compiling module xil_defaultlib.fpnew_rounding(AbsWidth=32'b0100...
+Compiling module xil_defaultlib.fpnew_cast_multi(FpFmtConfig=5'b...
+Compiling module xil_defaultlib.fpnew_opgroup_multifmt_slice(OpG...
+Compiling module xil_defaultlib.rr_arb_tree(NumIn=32'b0101,DataT...
+Compiling module xil_defaultlib.fpnew_opgroup_block(OpGroup=CONV...
+Compiling module xil_defaultlib.lzc(WIDTH=32'b0100)
+Compiling module xil_defaultlib.rr_arb_tree(NumIn=32'b0100,DataT...
+Compiling module xil_defaultlib.fpnew_top(Features='{32'b0100000...
+Compiling module xil_defaultlib.cv32e40p_fp_wrapper(FPU_ADDMUL_L...
+Compiling module xil_defaultlib.cv32e40p_top(FPU=1,FPU_ADDMUL_LA...
+Compiling module xil_defaultlib.fpnew_noncomp(FpFormat=FP32_fpne...
+Compiling module xil_defaultlib.fpnew_opgroup_fmt_slice(OpGroup=...
+Compiling module xil_defaultlib.rr_arb_tree(NumIn=32'b0101,DataT...
+Compiling module xil_defaultlib.fpnew_opgroup_block(OpGroup=NONC...
+Compiling module xil_defaultlib.fpnew_cast_multi(FpFmtConfig=5'b...
+Compiling module xil_defaultlib.fpnew_opgroup_multifmt_slice(OpG...
+Compiling module xil_defaultlib.rr_arb_tree(NumIn=32'b0101,DataT...
+Compiling module xil_defaultlib.fpnew_opgroup_block(OpGroup=CONV...
+Compiling module xil_defaultlib.rr_arb_tree(NumIn=32'b0100,DataT...
+Compiling module xil_defaultlib.fpnew_top(Features='{32'b0100000...
+Compiling module xil_defaultlib.cv32e40p_fp_wrapper(FPU_ADDMUL_L...
+Compiling module xil_defaultlib.gemv_acc(RUN=8,FPU_LAT=4)
+Compiling module xil_defaultlib.vfu_exp2
+Compiling module xil_defaultlib.vfu_lane(FPU_LAT=4)
+Compiling module xil_defaultlib.vfu(FPU_LAT=4)
+Compiling module xil_defaultlib.soc_top
+Compiling module xpm.xpm_memory_base(MEMORY_SIZE=1677...
+Compiling module xpm.xpm_memory_tdpram(MEMORY_SIZE=16...
+Compiling module xil_defaultlib.sram_dp(RLAT_B=2)
+Compiling module xil_defaultlib.soc_chip_default
+Compiling module xil_defaultlib.tb_chip
+Compiling module xil_defaultlib.glbl
+Built simulation snapshot tb_chip_behav
+run_program: Time (s): cpu = 00:00:00 ; elapsed = 00:00:25 . Memory (MB): peak = 619.875 ; gain = 0.000
+INFO: [USF-XSim-69] 'elaborate' step finished in '26' seconds
+INFO: [USF-XSim-4] XSim::Simulate design
+INFO: [USF-XSim-61] Executing 'SIMULATE' step in 'E:/fpga_work/xsim_vg7_a/xsim_proj/xsim_chip.sim/sim_1/behav/xsim'
+INFO: [USF-XSim-98] *** Running xsim
+   with args "tb_chip_behav -key {Behavioral:sim_1:Functional:tb_chip} -tclbatch {tb_chip.tcl} -log {simulate.log}"
+INFO: [USF-XSim-8] Loading simulator feature
+Time resolution is 1 ps
+source tb_chip.tcl
+## set curr_wave [current_wave_config]
+## if { [string length $curr_wave] == 0 } {
+##   if { [llength [get_objects]] > 0} {
+##     add_wave /
+##     set_property needs_save false [current_wave_config]
+##   } else {
+##      send_msg_id Add_Wave-1 WARNING "No top level signals found. Simulator will start without a wave window. If you want to open a wave window go to 'File->New Waveform Configuration' or type 'create_wave_config' in the TCL console."
+##   }
+## }
+WARNING: [Wavedata 42-489] Can't add object "/tb_chip/imem_img" to the wave window because it has 131072 bits, which exceeds the display limit of 65536 bits.  To change the display limit, use the command "set_property display_limit <new limit> [current_wave_config]".
+WARNING: [Wavedata 42-489] Can't add object "/tb_chip/sram_img" to the wave window because it has 16777216 bits, which exceeds the display limit of 65536 bits.  To change the display limit, use the command "set_property display_limit <new limit> [current_wave_config]".
+WARNING: [Wavedata 42-489] Can't add object "/tb_chip/dump" to the wave window because it has 16777216 bits, which exceeds the display limit of 65536 bits.  To change the display limit, use the command "set_property display_limit <new limit> [current_wave_config]".
+## run all
+WARNING: 0ns : none of the conditions were true for unique case from File:E:/fpga_work/xsim_vg7_a/rtl/cv32e40p_load_store_unit.sv:419
+Info: [XPM_MEMORY 20-3] XPM_MEMORY behaviorally models the port operation ordering of true dual port UltraRAM configurations by slightly delaying the common clock for port B operations only. Refer to UltraRAM documentation for details. tb_chip.dut.sram_i.xpm_i.xpm_memory_base_inst.config_drc
+Time: 1 ps  Iteration: 0  Process: /tb_chip/dut/sram_i/xpm_i/xpm_memory_base_inst/Initial310_5138  Scope: tb_chip.dut.sram_i.xpm_i.xpm_memory_base_inst.config_drc  File: H:/2026.1/Vivado/data/ip/xpm/xpm_memory/hdl/xpm_memory.sv Line: 538
+TB loaded imem 4096 words, sram 265241 non-zero words at 7044475000
+TB running 500000
+TB running 1000000
+TB running 1500000
+TB running 2000000
+TB running 2500000
+TB running 3000000
+TB running 3500000
+TB running 4000000
+TB running 4500000
+TB running 5000000
+TB running 5500000
+TB running 6000000
+TB running 6500000
+TB running 7000000
+TB running 7500000
+TB running 8000000
+TB running 8500000
+TB running 9000000
+TB running 9500000
+TB running 10000000
+TB running 10500000
+TB running 11000000
+TB running 11500000
+TB running 12000000
+TB running 12500000
+TB running 13000000
+TB running 13500000
+TB running 14000000
+TB running 14500000
+TB running 15000000
+TB running 15500000
+TB running 16000000
+TB running 16500000
+TB running 17000000
+TB running 17500000
+TB running 18000000
+TB running 18500000
+TB running 19000000
+TB running 19500000
+TB running 20000000
+TB running 20500000
+TB running 21000000
+TB running 21500000
+TB running 22000000
+TB running 22500000
+TB running 23000000
+TB running 23500000
+TB running 24000000
+TB running 24500000
+TB running 25000000
+TB running 25500000
+TB running 26000000
+TB running 26500000
+TB running 27000000
+TB running 27500000
+TB running 28000000
+TB running 28500000
+TB running 29000000
+TB running 29500000
+TB running 30000000
+TB running 30500000
+TB running 31000000
+TB running 31500000
+TB running 32000000
+TB running 32500000
+TB running 33000000
+TB running 33500000
+TB running 34000000
+TB running 34500000
+TB running 35000000
+TB running 35500000
+TB running 36000000
+TB running 36500000
+TB running 37000000
+TB running 37500000
+TB running 38000000
+TB running 38500000
+TB running 39000000
+TB running 39500000
+TB running 40000000
+TB running 40500000
+TB running 41000000
+TB running 41500000
+TB running 42000000
+TB running 42500000
+TB running 43000000
+TB running 43500000
+TB running 44000000
+TB running 44500000
+TB running 45000000
+TB running 45500000
+TB running 46000000
+TB running 46500000
+TB running 47000000
+TB running 47500000
+TB running 48000000
+TB running 48500000
+TB running 49000000
+TB running 49500000
+TB running 50000000
+TB running 50500000
+TB running 51000000
+TB running 51500000
+TB running 52000000
+TB running 52500000
+TB running 53000000
+TB running 53500000
+TB running 54000000
+TB running 54500000
+TB running 55000000
+TB running 55500000
+TB running 56000000
+TB running 56500000
+TB running 57000000
+TB running 57500000
+TB running 58000000
+TB running 58500000
+TB running 59000000
+TB running 59500000
+TB running 60000000
+TB running 60500000
+TB running 61000000
+TB running 61500000
+TB running 62000000
+TB running 62500000
+TB running 63000000
+TB running 63500000
+TB running 64000000
+TB running 64500000
+TB running 65000000
+TB running 65500000
+TB running 66000000
+TB running 66500000
+TB running 67000000
+TB running 67500000
+TB running 68000000
+TB running 68500000
+TB running 69000000
+TB running 69500000
+TB running 70000000
+TB running 70500000
+TB running 71000000
+TB running 71500000
+TB running 72000000
+TB running 72500000
+TB running 73000000
+TB running 73500000
+TB running 74000000
+TB running 74500000
+TB running 75000000
+TB running 75500000
+TB running 76000000
+TB running 76500000
+TB running 77000000
+TB running 77500000
+TB running 78000000
+TB running 78500000
+TB running 79000000
+TB running 79500000
+TB running 80000000
+TB running 80500000
+TB running 81000000
+TB running 81500000
+TB running 82000000
+TB running 82500000
+TB running 83000000
+TB running 83500000
+TB running 84000000
+TB running 84500000
+TB running 85000000

@@ -22,8 +22,9 @@ set_property verilog_define {USE_XPM XSIM} [get_filesets sim_1]   ;# XSIM: vendo
 set_property -name {xsim.simulate.runtime} -value {-all} -objects [get_filesets sim_1]
 set_property -name {xsim.simulate.log_all_signals} -value {false} -objects [get_filesets sim_1]
 if {$trace_n > 0} { set_property -name {xsim.simulate.xsim.more_options} -value "-testplusarg TRACE_N=$trace_n" -objects [get_filesets sim_1] }
-if {[info exists ::env(XSIM_PLUS)] && $::env(XSIM_PLUS) ne ""} {   ;# e.g. XSIM_PLUS="MAXCYC=400000" (tb_chip.sv plusargs)
-  set pl {}; foreach a $::env(XSIM_PLUS) { lappend pl "-testplusarg $a" }
+if {[file exists plusargs.txt]} {   ;# e.g. "MAXCYC=400000" written by run_xsim.sh from XSIM_PLUS (env vars do not reach Windows vivado)
+  set fh [open plusargs.txt]; set pa [string trim [read $fh]]; close $fh
+  set pl {}; foreach a $pa { lappend pl "-testplusarg $a" }
   set_property -name {xsim.simulate.xsim.more_options} -value [join $pl " "] -objects [get_filesets sim_1]
 }
 foreach f {imem.hex sram.hex} { add_files -fileset sim_1 -norecurse $f }

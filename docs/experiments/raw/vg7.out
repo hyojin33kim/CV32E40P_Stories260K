@@ -1,1 +1,35 @@
-== A: no workaround (FIXFMT=0)
+== A no workaround  start 16:33:48
+xsim.out:#   puts "XSIM FINISHED"
+xsim.out:TB loaded imem 4096 words, sram 265241 non-zero words at 7044475000
+xsim.out:TB running 500000
+xsim.out:TB MAXCYC reached run_cycles=600000
+xsim.out:XSIM FINISHED
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB loaded imem 4096 words, sram 265241 non-zero words at 7044475000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 500000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB MAXCYC reached run_cycles=600000
+no dump.hex
+== A end 16:37:19
+== B rd_ok only  start 16:37:19
+xsim.out:#   puts "XSIM FINISHED"
+xsim.out:TB loaded imem 4096 words, sram 265241 non-zero words at 7044475000
+xsim.out:TB DONE run_cycles=149074
+xsim.out:TB WROTE dump.hex
+xsim.out:XSIM FINISHED
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB loaded imem 4096 words, sram 265241 non-zero words at 7044475000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB DONE run_cycles=149074
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB WROTE dump.hex
+DONE cycles=157437 min_stack_write=0x1ffefc
+XSIM dump DIFF: 5718 bytes
+== B end 16:40:40
+== C FP_ENCODINGS only  start 16:40:40
+xsim.out:#   puts "XSIM FINISHED"
+xsim.out:TB loaded imem 4096 words, sram 265241 non-zero words at 7044475000
+xsim.out:TB running 500000
+xsim.out:TB MAXCYC reached run_cycles=600000
+xsim.out:XSIM FINISHED
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB loaded imem 4096 words, sram 265241 non-zero words at 7044475000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB running 500000
+xsim_proj/xsim_chip.sim/sim_1/behav/xsim/simulate.log:TB MAXCYC reached run_cycles=600000
+no dump.hex
+== C end 16:44:07
+VG7_DONE

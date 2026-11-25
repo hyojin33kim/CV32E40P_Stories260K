@@ -44,6 +44,8 @@ hexfile('imem.hex', 0x1000000, 4096)
 hexfile('sram.hex', 0x0, 524288)
 EOF
 cd "$WD"
+# plusargs go through a file: the WSL wrapper ~/bin/vivado starts Windows vivado via cmd.exe and WSLENV is empty, so env vars never arrive (found 11-25, MAXCYC had no effect before)
+rm -f plusargs.txt; [ -n "${XSIM_PLUS:-}" ] && echo "$XSIM_PLUS" > plusargs.txt
 if [ "$MODE" = gui ]; then
   ~/bin/vivado -mode batch -nojournal -log xsim.log -source run_xsim.tcl -tclargs gui
   exit

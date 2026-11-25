@@ -6,7 +6,7 @@
 
 ## 1. 요약
 
-전체 49개: 통과 27, 부분 3, 미실행 16, 미정 2, 제외 1
+전체 49개: 통과 28, 부분 3, 미실행 15, 미정 2, 제외 1
 
 | 단계 | 통과 | 부분 | 미실행 | 미정 | 제외 |
 |---|---|---|---|---|---|
@@ -16,7 +16,7 @@
 | L3 타이밍 | 3 | 0 | 0 | 0 | 1 |
 | L4 합성 후 | 0 | 0 | 1 | 0 | 0 |
 | L5 보드 | 0 | 0 | 6 | 0 | 0 |
-| 격차 | 4 | 3 | 8 | 1 | 0 |
+| 격차 | 5 | 3 | 7 | 1 | 0 |
 
 ## 2. 게이트
 
@@ -101,7 +101,7 @@
 | V-G4 | RISC-V | 15M 모델용 펌웨어와 RTL 주소 일반화 | 15M 주소 맵대로 펌웨어와 RTL 파라미터 수정 | 15M 시뮬레이션 통과 | docs/15M_ADDRESS_MAP.md | 미실행 | 주소 맵 문서와 GEMV 형태 시험만 있음 | 모델 파일과 범위 결정 대기 |
 | V-G5 | RTL | KV cache를 DDR에 두는 쓰기 경로 | AXI write 경로 설계와 시험 |  |  | 미실행 | 설계되지 않음(KV fp32 3.375 MiB는 URAM 3.0 MiB에 안 맞음) | int8 KV는 0.914 MiB |
 | V-G6 | RTL | 정수 lane(I2: int8×int8 MAC + 활성화 양자화) | 고정소수점 C 기준부터 새로 시작 |  |  | 미실행 |  | 별도 세션에서 진행하기로 결정 |
-| V-G7 | 도구 | 이전 xsim 불일치에서 패치별 기여 분리 | 같은 이미지로 전체 칩 xsim을 (A) 패치 없음, (B) rd_ok 인라인만, (C) FPU 표 패치만으로 실행(XW=fmt\|rd, FIXFMT=0, XSIM_PLUS="MAXCYC=600000")하고 cycle과 덤프를 비교 | 각 패치의 효과 정량화 | fpga/xsim/run_xsim.sh, xsim_workaround.py (XW_ONLY) | 미실행 | 도구는 준비됨(XW_ONLY, XSIM_PLUS, tb_chip.sv의 MAXCYC). 실행은 첫 단계(A)를 시작한 뒤 세션이 끝나 중단되어 결과가 없음 | 우선순위 낮음. 두 패치를 모두 적용하면 일치하는 것(E04)은 확인됨. 개별 효과는 모름 |
+| V-G7 | 도구 | 이전 xsim 불일치에서 패치별 기여 분리 | 같은 이미지로 전체 칩 xsim을 (A) 패치 없음, (B) rd_ok 인라인만, (C) FPU 표 패치만으로 실행(MAXCYC=600000, 40분 상한)하고 DONE과 덤프를 비교 | 각 패치의 효과 정량화 | fpga/xsim/run_xsim.sh, xsim_workaround.py (XW), .scratch/vg7.sh | 통과 | A 패치 없음: 600,000 cycle까지 DONE 없음. B rd_ok만: DONE 149,074 cycle, 덤프 5,718 바이트 다름. C FPU 표만: 600,000 cycle까지 DONE 없음. 두 패치 모두(E04): 157,433 cycle, 덤프 일치 | 멈춤은 rd_ok, 틀린 값은 FPU 표 때문으로 분리됨(E13). 실행 중 도구 오류 발견: 환경변수가 Windows vivado에 전달되지 않아 MAXCYC가 적용 안 됨, plusargs.txt로 수정 |
 | V-F1 | FPU | FPU 경계값 벡터(subnormal, Inf, NaN, ±0) | 17개 특수 피연산자의 모든 쌍을 ADD, SUB, MUL, DIV, 비교에, 특수값을 SQRT, I2F, F2I에 입력(1,494개). NaN 결과는 정규 NaN 0x7fc00000, F2I는 포화 규칙 | RISC-V F 규칙의 기대값과 비트 일치 | fpga/xsim/fpu_vectors.py (edge-*) | 통과 | xsim RTL, 네트리스트, Verilator RTL(AFTER, DISTRIBUTED) 모두 3896/3896. 변이 시험(SUB→ADD 등 4건)이 모두 검출됨 | 예외 플래그는 비교하지 않음(V-F2) |
 | V-F2 | FPU | FPU 예외 플래그(rflags) 비교 | 연산별 NV, DZ, OF, UF, NX 기대값을 만들어 rflags와 비교 | 플래그 일치 | fpga/xsim/fpu_vectors.py, tb_fpu.sv | 미실행 | 현재 기대값 파일에 결과만 있음 |  |
 | V-F3 | FPU | 펌웨어가 쓰지만 벡터에 없던 연산: SUB(fsub.s), F2I(fcvt.w.s, RTZ), 비교(flt.s, RTZ) | 정상 범위 SUB 300, F2I 300, FLT 400(무작위, 동일 값, 이웃 값)을 numpy와 비교. 펌웨어는 FMA, fmin, fmax를 쓰지 않음(fw.dis 0건) | 일치 | fpga/xsim/fpu_vectors.py | 통과 | xsim RTL, 네트리스트, Verilator RTL 모두 일치 | fw.dis 사용 횟수: fsub 36, flt 27, fcvt.w.s 1 |

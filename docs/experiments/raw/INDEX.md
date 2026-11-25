@@ -33,7 +33,7 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `exp2_q2.out` | 11-25 10:36 | 188 | exhaustive vfu_exp2 check, one quarter of the 2^32 input patterns per file (RTL vs opta/exp2q.h), with wall time (11-25) | `268435456 checked` |
 | `exp2_q3.out` | 11-25 10:36 | 188 | exhaustive vfu_exp2 check, one quarter of the 2^32 input patterns per file (RTL vs opta/exp2q.h), with wall time (11-25) | `268435456 checked` |
 | `exp2_q4.out` | 11-25 10:36 | 188 | exhaustive vfu_exp2 check, one quarter of the 2^32 input patterns per file (RTL vs opta/exp2q.h), with wall time (11-25) | `268435456 checked` |
-| `fpfmt_repro.txt` | 11-25 11:47 | 672 | FMT lines of the minimal xsim reproduction fpga/xsim/tb_fpfmt.sv (variable index gives exp=7/bias=63 for every format) | `FMT f=0  A(var idx) exp=7 man=7 bias=63 / B exp=7 / C exp=8 / expected exp 8` |
+| `fpfmt_repro.txt` | 11-25 16:44 | 672 | FMT lines of the minimal xsim reproduction fpga/xsim/tb_fpfmt.sv (variable index gives exp=7/bias=63 for every format) | `FMT f=0  A(var idx) exp=7 man=7 bias=63 / B exp=7 / C exp=8 / expected exp 8` |
 | `fpu_after.out` | 11-22 21:01 | 339 | xsim FPU test (1,402 vectors) before the workaround: RTL 671/1402 (MUL 301, I2F 201, ADD 229 wrong), synthesized netlist 1402/1402 (11-22) | `1402 vectors -> /mnt/e/fpga_work/fpu_test` |
 | `fpu_net.out` | 11-22 20:58 | 313 | same experiment, netlist run repeated: RTL 671/1402, netlist 1402/1402 (11-22) | `1402 vectors -> /mnt/e/fpga_work/fpu_test` |
 | `fpu_workaround.out` | 11-22 21:17 | 221 | xsim FPU test with xsim_workaround.py: RTL 1402/1402, netlist 1402/1402 (11-22) | `1402 vectors -> /mnt/e/fpga_work/fpu_test` |
@@ -64,6 +64,8 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `reproduce_quick.out` | 11-21 21:59 | 5513 | reproduce.sh quick output | `=== build simulators (CPU, CPU profiler, CPU + accelerator SoC)` |
 | `reproduce_quick2.out` | 11-22 13:04 | 5513 | reproduce.sh quick output | `=== build simulators (CPU, CPU profiler, CPU + accelerator SoC)` |
 | `reproduce_quick3.out` | 11-22 20:54 | 5513 | reproduce.sh quick output | `=== build simulators (CPU, CPU profiler, CPU + accelerator SoC)` |
+| `reproduce_quick4_final.out` | 11-25 12:15 | 5558 | reproduce.sh quick output | `=== build simulators (CPU, CPU profiler, CPU + accelerator SoC)` |
+| `reproduce_quick5_merged.out` | 11-25 12:50 | 5558 | reproduce.sh quick output | `=== build simulators (CPU, CPU profiler, CPU + accelerator SoC)` |
 | `soc_v2.txt` | 11-15 13:18 | 1482 | Vivado timing summary of the SoC v2 variant (11-15) | `60 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/so` |
 | `sweep_ddr.txt` | 11-14 18:51 | 4168 | DDR sweep ddr_full_opt (speedup vs ideal-memory SW baseline, OVH=4) (11-14) | `# DDR sweep `ddr_full_opt` (speedup vs ideal-memory SW baseline; OVH=4)` |
 | `tiled_verify.txt` | 11-22 20:54 | 738 | pre-tiled weights (CTRL bit2) GEMV test (11-22) | `soc_top build exit=0` |
@@ -71,7 +73,8 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `trace_compare2.txt` | 11-23 12:45 | 198 | first xsim-vs-Verilator trace compare: first difference was a store response (Verilator 0 vs xsim x), later shown to be a don't care (11-23) | `4562 .scratch/trv/trace_xsim.txt` |
 | `vfu_test_big.txt` | 11-14 08:47 | 1671 | VFU unit test output (mismatch counts, software and hardware cycles) | `{'test': 'exp', 'seed': 0, 'n': 65536, 'mismatches': 0, 'sw_cycles': 9261117, 'hw_cycles': 4111332}` |
 | `vfu_test_l4.txt` | 11-14 10:39 | 2103 | VFU unit test output (mismatch counts, software and hardware cycles) | `{'test': 'exp', 'seed': 0, 'n': 65536, 'mismatches': 0, 'sw_cycles': 9269325, 'hw_cycles': 2972919}` |
-| `vg7.out` | 11-25 10:36 | 31 | V-G7 run that was interrupted when the session ended: only the header of the first step (A, no workaround), NO RESULT (11-25) | `== A: no workaround (FIXFMT=0)` |
+| `vg7.out` | 11-25 16:44 | 1738 | V-G7: three full-chip xsim runs (A no patch, B rd_ok only, C FPU table only), MAXCYC=600000: A and C no DONE, B DONE 149,074 cycles dump differs 5,718 bytes (11-25) | `== A no workaround  start 16:33:48` |
+| `vg7_a_unbounded.out` | 11-25 16:07 | 31876 | first V-G7 run of step A, MAXCYC did not take effect (env var not passed to Windows vivado): ran about 3 h to 85M cycles before it was stopped, no result (11-25) | `INFO: [Common 17-3922] A valid Vivado Design Suite BASIC license has been detected. Your current license is ac` |
 | `vt_v3a.txt` | 11-15 12:57 | 534 | VFU unit test output (v3 variants, 11-15) | `{'test': 'exp', 'seed': 0, 'n': 4096, 'mismatches': 0, 'sw_cycles': 650897, 'hw_cycles': 192087}` |
 | `vt_v3b.txt` | 11-15 12:57 | 534 | VFU unit test output (v3 variants, 11-15) | `{'test': 'exp', 'seed': 0, 'n': 4096, 'mismatches': 0, 'sw_cycles': 650897, 'hw_cycles': 264381}` |
 | `w8_acc.out` | 11-21 21:27 | 828 | int8 weight (I1) end-to-end run result (JSON, 11-21) | `{` |
@@ -80,7 +83,7 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `xsim_fix.out` | 11-23 12:32 | 1767 | full-chip xsim with the FPU workaround only: run was stopped after about 15 h without reaching DONE (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_full.out` | 11-23 13:58 | 828 | full-chip xsim with both workarounds: DONE run_cycles=157433, dump equal to Verilator (sim.cpp 157437) (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_full_after_tbnet.out` | 11-24 23:18 | 828 | full-chip RTL xsim rerun after the tb_chip.sv changes for the netlist: DONE run_cycles=157433, dump equal to Verilator (11-24) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
-| `xsim_hang_window_trace.txt` | 11-25 11:47 | 20146 | xsim trace of cycles 9900..10300: instruction fetch (IF), VFU state (VFU) and the x_req term probe (XSPROBE); shows x_req=0 while every term is 1 | `9909 IF a=01000ec8` |
+| `xsim_hang_window_trace.txt` | 11-25 16:44 | 20146 | xsim trace of cycles 9900..10300: instruction fetch (IF), VFU state (VFU) and the x_req term probe (XSPROBE); shows x_req=0 while every term is 1 | `9909 IF a=01000ec8` |
 | `xsim_net_license_error.txt` | 11-24 23:13 | 300 | the xsim error that stops the post-synthesis full-chip simulation: BASIC license, 107,091 instances > 50,000 allowed (11-24) | `ERROR: The current Vivado Simulator license tier you have, BASIC, does not meet the requirement to run the num` |
 | `xsim_pc.out` | 11-23 12:48 | 185 | run that produced the instruction fetch trace (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_probe.out` | 11-23 13:48 | 185 | run that produced the XSPROBE lines (x_req terms) (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
