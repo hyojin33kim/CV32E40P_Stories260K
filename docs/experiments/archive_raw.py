@@ -34,6 +34,8 @@ DESC = {
  'fpu_xsim_stream.out': 'xsim FPU test with the stream mode: RTL and netlist, single and stream, all 3896/3896, stream statistics per group (11-24)',
  'xsim_net_license_error.txt': 'the xsim error that stops the post-synthesis full-chip simulation: BASIC license, 107,091 instances > 50,000 allowed (11-24)',
  'exp2_q*': 'exhaustive vfu_exp2 check, one quarter of the 2^32 input patterns per file (RTL vs opta/exp2q.h), with wall time (11-25)',
+ 'vg7.out': 'V-G7 run that was interrupted when the session ended: only the header of the first step (A, no workaround), NO RESULT (11-25)',
+ 'xsim_full_after_tbnet.out': 'full-chip RTL xsim rerun after the tb_chip.sv changes for the netlist: DONE run_cycles=157433, dump equal to Verilator (11-24)',
  'a3_conc.out': 'V-A3: four concurrency scenarios (CPU with GEMV, CPU with VFU, VFU started during GEMV, GEMV started during VFU) (11-24)',
  'net_lint*': 'Verilator lint of the post-synthesis soc_chip netlist with the UNISIM models: successive attempts (deassign, specify, tri-state errors), the last ones ran out of memory (11-24)',
  'net_speed_a.out': 'xsim run of the post-synthesis netlist: wall time and the license error (11-24)',

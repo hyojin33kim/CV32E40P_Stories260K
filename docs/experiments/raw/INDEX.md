@@ -71,7 +71,7 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `trace_compare2.txt` | 11-23 12:45 | 198 | first xsim-vs-Verilator trace compare: first difference was a store response (Verilator 0 vs xsim x), later shown to be a don't care (11-23) | `4562 .scratch/trv/trace_xsim.txt` |
 | `vfu_test_big.txt` | 11-14 08:47 | 1671 | VFU unit test output (mismatch counts, software and hardware cycles) | `{'test': 'exp', 'seed': 0, 'n': 65536, 'mismatches': 0, 'sw_cycles': 9261117, 'hw_cycles': 4111332}` |
 | `vfu_test_l4.txt` | 11-14 10:39 | 2103 | VFU unit test output (mismatch counts, software and hardware cycles) | `{'test': 'exp', 'seed': 0, 'n': 65536, 'mismatches': 0, 'sw_cycles': 9269325, 'hw_cycles': 2972919}` |
-| `vg7.out` | 11-25 10:36 | 31 | (no description recorded) | `== A: no workaround (FIXFMT=0)` |
+| `vg7.out` | 11-25 10:36 | 31 | V-G7 run that was interrupted when the session ended: only the header of the first step (A, no workaround), NO RESULT (11-25) | `== A: no workaround (FIXFMT=0)` |
 | `vt_v3a.txt` | 11-15 12:57 | 534 | VFU unit test output (v3 variants, 11-15) | `{'test': 'exp', 'seed': 0, 'n': 4096, 'mismatches': 0, 'sw_cycles': 650897, 'hw_cycles': 192087}` |
 | `vt_v3b.txt` | 11-15 12:57 | 534 | VFU unit test output (v3 variants, 11-15) | `{'test': 'exp', 'seed': 0, 'n': 4096, 'mismatches': 0, 'sw_cycles': 650897, 'hw_cycles': 264381}` |
 | `w8_acc.out` | 11-21 21:27 | 828 | int8 weight (I1) end-to-end run result (JSON, 11-21) | `{` |
@@ -79,7 +79,7 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `w8_os.out` | 11-21 20:53 | 675 | int8 weight (I1) end-to-end run result (JSON, 11-21) | `{` |
 | `xsim_fix.out` | 11-23 12:32 | 1767 | full-chip xsim with the FPU workaround only: run was stopped after about 15 h without reaching DONE (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_full.out` | 11-23 13:58 | 828 | full-chip xsim with both workarounds: DONE run_cycles=157433, dump equal to Verilator (sim.cpp 157437) (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
-| `xsim_full_after_tbnet.out` | 11-24 23:18 | 828 | (no description recorded) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
+| `xsim_full_after_tbnet.out` | 11-24 23:18 | 828 | full-chip RTL xsim rerun after the tb_chip.sv changes for the netlist: DONE run_cycles=157433, dump equal to Verilator (11-24) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_hang_window_trace.txt` | 11-25 11:47 | 20146 | xsim trace of cycles 9900..10300: instruction fetch (IF), VFU state (VFU) and the x_req term probe (XSPROBE); shows x_req=0 while every term is 1 | `9909 IF a=01000ec8` |
 | `xsim_net_license_error.txt` | 11-24 23:13 | 300 | the xsim error that stops the post-synthesis full-chip simulation: BASIC license, 107,091 instances > 50,000 allowed (11-24) | `ERROR: The current Vivado Simulator license tier you have, BASIC, does not meet the requirement to run the num` |
 | `xsim_pc.out` | 11-23 12:48 | 185 | run that produced the instruction fetch trace (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
