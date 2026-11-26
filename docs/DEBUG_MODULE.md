@@ -2,6 +2,8 @@
 
 Status words as in docs/VERIFICATION_PLAN.md: **done** = run here and the result is in this file; **not run** = not checked.
 
+For what is still needed to debug the chip on the board (OpenOCD, GDB, JTAG path, bitstream, start order), see `docs/DEBUG_CHIP_LEVEL.md`.
+
 ## What it is
 The CV32E40P core supports execution-based debug (RISC-V Debug Spec 0.13.2, one trigger; cores docs `cv32e40p-master/docs/source/debug.rst`). A Debug Module (DM)
 and a Debug Transport Module (DTM, JTAG) are needed to use it. They come from `pulp-platform/riscv-dbg` (`dbg/`, versions in `dbg/VENDOR.md`).
