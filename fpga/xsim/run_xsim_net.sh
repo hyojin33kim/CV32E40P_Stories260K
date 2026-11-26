@@ -1,13 +1,16 @@
 #!/bin/bash
 # Post-synthesis functional simulation of the full chip (D4, V-S1): the netlist of soc_chip written by fpga/synth.tcl (token NETLIST)
 # on one image through the loader port, compared with the Verilator chip sim.
-# Usage: [PLUS="MAXCYC=3000 LOADMAX=20000"] fpga/xsim/run_xsim_net.sh <image.bin> [workdir (default /mnt/e/fpga_work/chip_net)]
+# Usage: [PLUS="MAXCYC=3000 LOADMAX=20000"] fpga/xsim/run_xsim_net.sh <image.bin> [workdir (default $FPGA_WORK/chip_net)]
 #   workdir must contain netlist_net.v:  PIPE_DIST=1 fpga/prepare.py <workdir>; cd <workdir>;
 #     vivado -mode batch -source synth.tcl -tclargs soc_chip 8.0 0 net NETLIST
 #   PLUS: plusargs for tb_chip.sv; with MAXCYC or LOADMAX the run is a speed measurement and no dump is compared.
 set -u
+# portable: VIVADO = vivado command (default ~/bin/vivado of the WSL setup if it exists, else vivado on PATH); FPGA_WORK = parent of the default work dirs
+[ -n "${VIVADO:-}" ] || { if [ -x ~/bin/vivado ]; then VIVADO=~/bin/vivado; else VIVADO=vivado; fi; }
+FPGA_WORK=${FPGA_WORK:-/mnt/e/fpga_work}
 W=$(cd "$(dirname "$0")/../.." && pwd)
-IMG=$(readlink -f "$1"); WD=${2:-/mnt/e/fpga_work/chip_net}
+IMG=$(readlink -f "$1"); WD=${2:-$FPGA_WORK/chip_net}
 [ -f "$WD/netlist_net.v" ] || { echo "no $WD/netlist_net.v (run the synthesis with the NETLIST token first)"; exit 2; }
 cp "$W/fpga/xsim/tb_chip.sv" "$W/fpga/xsim/run_xsim_net.tcl" "$WD/"
 python3 - "$IMG" "$WD" <<'EOF'
@@ -24,7 +27,7 @@ EOF
 cd "$WD"
 rm -rf xsim_net_proj
 START=$(date +%s)
-~/bin/vivado -mode batch -nojournal -log xsim_net.log -source run_xsim_net.tcl ${PLUS:+-tclargs $PLUS} > xsim_net.out 2>&1
+"$VIVADO" -mode batch -nojournal -log xsim_net.log -source run_xsim_net.tcl ${PLUS:+-tclargs $PLUS} > xsim_net.out 2>&1
 END=$(date +%s)
 SIMDIR=xsim_net_proj/xsim_net.sim/sim_1/behav/xsim
 echo "wall time $((END - START)) s (vivado project creation, elaboration and simulation)"

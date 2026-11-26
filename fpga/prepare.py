@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Copy the synthesizable RTL to a Windows-visible work directory and write files.tcl.
 
-usage: [PIPE_DIST=1] fpga/prepare.py <work dir under /mnt/<drive>/...>
+usage: [PIPE_DIST=1] fpga/prepare.py <work dir; under /mnt/<drive>/... when Windows Vivado is used through WSL>
 PIPE_DIST=1 (default) patches the work-dir copy of cv32e40p_fp_wrapper.sv to PipeConfig
 DISTRIBUTED (register placement only; the repo RTL and the simulator keep AFTER, which has
 the same latency).

@@ -2,12 +2,15 @@
 # Vivado xsim run of soc_chip (XPM URAM + UNISIM models) on one image, compared with the Verilator chip sim.
 # Usage: [CG=bhv] [TRACE_N=<cycles>] [FIXCLK=0] [FIXFMT=0] [XW=fmt|rd] [XSIM_PLUS="MAXCYC=400000"] fpga/xsim/run_xsim.sh <image.bin> [workdir] [gui]
 #   image.bin : e.g. repro/hold/image_1.bin or gen/out_8_*/image.bin
-#   workdir   : default /mnt/e/fpga_work/xsim
+#   workdir   : default $FPGA_WORK/xsim
 #   gui       : open the Vivado GUI (Flow Navigator > Run Simulation for waveforms) instead of batch
 # Batch result: <workdir>/xsim_dump.bin and a byte compare with obj_chip/Vsoc_chip on the same image.
 set -u
+# portable: VIVADO = vivado command (default ~/bin/vivado of the WSL setup if it exists, else vivado on PATH); FPGA_WORK = parent of the default work dirs
+[ -n "${VIVADO:-}" ] || { if [ -x ~/bin/vivado ]; then VIVADO=~/bin/vivado; else VIVADO=vivado; fi; }
+FPGA_WORK=${FPGA_WORK:-/mnt/e/fpga_work}
 W=$(cd "$(dirname "$0")/../.." && pwd)
-IMG=$(readlink -f "$1"); WD=${2:-/mnt/e/fpga_work/xsim}; MODE=${3:-}
+IMG=$(readlink -f "$1"); WD=${2:-$FPGA_WORK/xsim}; MODE=${3:-}
 PIPE_DIST=1 python3 "$W/fpga/prepare.py" "$WD" > /dev/null
 cp "$W/fpga/xsim/tb_chip.sv" "$W/fpga/xsim/run_xsim.tcl" "$WD/"
 # CG=bhv: behavioural latch clock gate (the Verilator sim's) instead of the FPGA BUFGCE in this run
@@ -47,11 +50,11 @@ cd "$WD"
 # plusargs go through a file: the WSL wrapper ~/bin/vivado starts Windows vivado via cmd.exe and WSLENV is empty, so env vars never arrive (found 11-25, MAXCYC had no effect before)
 rm -f plusargs.txt; [ -n "${XSIM_PLUS:-}" ] && echo "$XSIM_PLUS" > plusargs.txt
 if [ "$MODE" = gui ]; then
-  ~/bin/vivado -mode batch -nojournal -log xsim.log -source run_xsim.tcl -tclargs gui
+  "$VIVADO" -mode batch -nojournal -log xsim.log -source run_xsim.tcl -tclargs gui
   exit
 fi
 rm -f xsim_proj/xsim_chip.sim/sim_1/behav/xsim/dump.hex
-~/bin/vivado -mode batch -nojournal -log xsim.log -source run_xsim.tcl ${TRACE_N:+-tclargs trace $TRACE_N} > xsim.out 2>&1
+"$VIVADO" -mode batch -nojournal -log xsim.log -source run_xsim.tcl ${TRACE_N:+-tclargs trace $TRACE_N} > xsim.out 2>&1
 if [ -n "${TRACE_N:-}" ]; then cp xsim_proj/xsim_chip.sim/sim_1/behav/xsim/trace_xsim.txt . 2>/dev/null; echo "trace -> $WD/trace_xsim.txt"; exit; fi
 SIMDIR=xsim_proj/xsim_chip.sim/sim_1/behav/xsim
 grep -E "^TB |XSIM FINISHED|ERROR|Fatal" xsim.out $SIMDIR/simulate.log 2>/dev/null | head -20
