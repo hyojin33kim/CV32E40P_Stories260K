@@ -59,7 +59,7 @@
 | V-I6 | RTL | DDR top vs 온칩 top | 같은 이미지를 두 top에서 실행 | 덤프 바이트 동일 | sim_axi_ddr.cpp (chip_axi_ddr_top) | 통과 | 8/64 토큰 동일 | 지연 모델과 row/bank 모델 포함 |
 | V-I7 | 보드 흐름 | PS 역할 시뮬레이션 | AXI4-Lite 레지스터 + AXI4 메모리 모델로 보드 흐름 재현 | 결과와 CYCLES 일치 | sim_axi.cpp, sim_axi_ddr.cpp | 통과 | 시뮬레이션 일치 | 실제 PS/PYNQ는 아님 |
 | V-I8 | RTL | xsim 전체 칩 vs Verilator | XPM URAM과 UNISIM 모델로 전체 칩을 xsim에서 실행 | 2 MiB 덤프 일치, DONE 도달 | fpga/xsim/run_xsim.sh | 통과 | run_cycles 157,433 (sim.cpp 157,437), 덤프 일치 | 작업 복사본 우회 패치 2건 필요(docs/XSIM_VS_VERILATOR.md) |
-| V-I9 | 전체 | 빠른 회귀 reproduce.sh quick | 42개 항목 일괄 | 42/42 OK | reproduce.sh quick | 통과 | RTL 변경마다 42/42 | 마지막 커밋은 문서와 xsim 파일만 변경 |
+| V-I9 | 전체 | 빠른 회귀 reproduce.sh quick | 42개 항목 일괄 | 42/42 OK | reproduce.sh quick | 통과 | RTL 변경마다 42/42 | 11-26: acc/chip_axi_top.sv에 DBG_PROBE(기본 0) 추가 후 42/42 OK(약 36분, 실패 0건, 원본 raw/repro_dbgprobe.out). 이전 11-25 병합 상태에서도 42/42 |
 | V-N1 | 수치 | int8 정확도 | fp32 대비 nll과 argmax 일치율 측정 | 제안: nll_delta ≤0.01, argmax ≥0.97 | w8/eval_w8.py, quant/ | 미정 | 측정 nll_delta +0.0023, argmax 0.987 | 합격 기준은 사용자 결정 대기 |
 | V-P1 | 성능 | 성능 카운터(gemv busy, vfu busy, acc stall, 읽은 line, tq_full, eq_max) | 카운터 레지스터 읽기 | 값이 시뮬레이션 모델과 일치 | acc/chip_axi_top.sv (0x200_0020..0x34) | 통과 | 구현과 시뮬레이션 확인 | 보드에서의 읽기는 미실행 |
 | V-P2 | 성능 | DRAM 지연과 row/bank 영향 | SIM_ROWBANK=1 (page, map, core MHz 환경변수) | 영향을 정량화 | sim_axi_ddr.cpp | 통과 | 단일 타일 영향 2% 이하 | 두 master가 동시에 접근하는 경우는 미시험 |
@@ -84,11 +84,11 @@
 
 | ID | 분류 | 점검 항목 | 방법 / 자극 | 합격 기준 | 실행 위치 | 상태 | 근거 | 비고 |
 |---|---|---|---|---|---|---|---|---|
-| V-B0 | 보드 | 보드 준비 | bit와 hwh 이름 정리, 기준 덤프 생성, SHA256 기록 | 파일과 체크섬 목록 | docs/BOARD_BRINGUP.md 3절 step 0 | 부분 |  | 11-26: 묶음 폴더 준비(pynq/pack_board_kit.sh -> /mnt/e/fpga_work/board_kit: bit, hwh, run_chip.py, image_1/128/512, Verilator 기준 덤프, SHA256SUMS; 기준 DONE 157,437 / 214,257 / 382,970 cycle, 저장된 덤프와 일치). 확인 필요: (1) bit는 커밋 d3b41bf에서 빌드, 이후 acc/gemv_acc.sv와 soc_top.sv가 바뀜(CTRL bit2 tiled, 버퍼 파라미터; 기본값에서 동작 동일하다고 읽었으나 해당 bit로 증명하지 않음), (2) .hwh가 .bit와 같은 블록 디자인에서 나왔는지, (3) docs/BOARD_BRINGUP.md 3절은 없는 이미지(out_16_...)와 512토큰 약 4.5M cycle을 적고 있어 실제 image_512(382,970 cycle)와 다름: 문서 갱신 필요 |
+| V-B0 | 보드 | 보드 준비 | bit와 hwh 이름 정리, 기준 덤프 생성, SHA256 기록 | 파일과 체크섬 목록 | docs/BOARD_BRINGUP.md 3절 step 0 | 부분 |  | 11-26: 묶음 폴더 준비(pynq/pack_board_kit.sh -> /mnt/e/fpga_work/board_kit: bit, hwh, run_chip.py, image_1/128/512, Verilator 기준 덤프, SHA256SUMS; 기준 DONE 157,437 / 214,257 / 382,970 cycle, 저장된 덤프와 일치). 확인 필요: (1) bit는 커밋 d3b41bf에서 빌드, 이후 acc/gemv_acc.sv와 soc_top.sv가 바뀜(CTRL bit2 tiled, 버퍼 파라미터; 기본값에서 동작 동일하다고 읽었으나 해당 bit로 증명하지 않음), (2) .hwh가 .bit와 같은 블록 디자인에서 나왔는지, (3) docs/BOARD_BRINGUP.md 0, 3, 4절은 11-26에 정정함(image_N은 문맥 길이 N에서 한 단계이며 image_512는 382,970 cycle, 이전 문서의 512토큰 약 4.5M cycle은 다른 실행) |
 | V-B1 | 보드 | PYNQ 부팅과 오버레이 | Overlay("board.bit"), ip_dict 확인, base 0xA000_0000, PL 125 MHz | 오류 없이 로드 | docs/BOARD_BRINGUP.md step 1 | 미실행 |  | 보드와 PYNQ 이미지 확보 필요 |
 | V-B2 | 보드 | AXI 경로만(CTRL=0) | SRAM과 imem에 패턴을 쓰고 읽기 | 읽은 값이 쓴 값과 동일 | docs/BOARD_BRINGUP.md step 2 | 미실행 |  |  |
-| V-B3 | 보드 | 16 토큰 이미지 실행 | python3 run_chip.py board.bit image.bin dump_sim.bin | DONE_V, CYCLES가 시뮬레이션과 동일, 2 MiB 덤프 바이트 동일 | pynq/run_chip.py | 미실행 |  | run_chip.py는 한 번도 실행된 적 없음 |
-| V-B4 | 보드 | 512 토큰 이미지 실행 | 약 4.5M cycle(125 MHz에서 약 36 ms, 추정) | 위와 같은 세 가지 기준 | docs/BOARD_BRINGUP.md step 4 | 미실행 |  |  |
+| V-B3 | 보드 | image_1 실행(문맥 길이 1에서 한 단계) | python3 run_chip.py board.bit image_1.bin dump_sim_1.bin | 2 MiB 덤프 바이트 동일, DONE_V 동일, CYCLES는 시뮬레이터 값(157,437과 157,433)과 나란히 기록 | pynq/run_chip.py | 미실행 |  | run_chip.py는 한 번도 실행된 적 없음 |
+| V-B4 | 보드 | image_128과 image_512 실행(문맥 길이 128, 512에서 한 단계) | sim.cpp 기준 214,257과 382,970 cycle(125 MHz에서 약 1.7 ms와 3.1 ms, 계산값) | 위와 같은 세 가지 기준 | docs/BOARD_BRINGUP.md step 4 | 미실행 |  |  |
 | V-B5 | 보드 | 결과 기록 | cycle, 시간, 일치 여부를 PROGRESS.md와 P1_REPORT.md에 반영 | 문서 갱신 | docs/BOARD_BRINGUP.md step 5 | 미실행 |  |  |
 
 ### 격차
