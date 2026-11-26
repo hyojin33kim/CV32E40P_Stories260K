@@ -36,7 +36,7 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `exp2_q2.out` | 11-25 10:36 | 188 | exhaustive vfu_exp2 check, one quarter of the 2^32 input patterns per file (RTL vs opta/exp2q.h), with wall time (11-25) | `268435456 checked` |
 | `exp2_q3.out` | 11-25 10:36 | 188 | exhaustive vfu_exp2 check, one quarter of the 2^32 input patterns per file (RTL vs opta/exp2q.h), with wall time (11-25) | `268435456 checked` |
 | `exp2_q4.out` | 11-25 10:36 | 188 | exhaustive vfu_exp2 check, one quarter of the 2^32 input patterns per file (RTL vs opta/exp2q.h), with wall time (11-25) | `268435456 checked` |
-| `fpfmt_repro.txt` | 11-26 23:43 | 672 | FMT lines of the minimal xsim reproduction fpga/xsim/tb_fpfmt.sv (variable index gives exp=7/bias=63 for every format) | `FMT f=0  A(var idx) exp=7 man=7 bias=63 / B exp=7 / C exp=8 / expected exp 8` |
+| `fpfmt_repro.txt` | 11-26 23:46 | 672 | FMT lines of the minimal xsim reproduction fpga/xsim/tb_fpfmt.sv (variable index gives exp=7/bias=63 for every format) | `FMT f=0  A(var idx) exp=7 man=7 bias=63 / B exp=7 / C exp=8 / expected exp 8` |
 | `fpu_after.out` | 11-22 21:01 | 339 | xsim FPU test (1,402 vectors) before the workaround: RTL 671/1402 (MUL 301, I2F 201, ADD 229 wrong), synthesized netlist 1402/1402 (11-22) | `1402 vectors -> /mnt/e/fpga_work/fpu_test` |
 | `fpu_net.out` | 11-22 20:58 | 313 | same experiment, netlist run repeated: RTL 671/1402, netlist 1402/1402 (11-22) | `1402 vectors -> /mnt/e/fpga_work/fpu_test` |
 | `fpu_workaround.out` | 11-22 21:17 | 221 | xsim FPU test with xsim_workaround.py: RTL 1402/1402, netlist 1402/1402 (11-22) | `1402 vectors -> /mnt/e/fpga_work/fpu_test` |
@@ -78,6 +78,8 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `tb_dm6b.out` | 11-26 20:46 | 824 | Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26) | `loaded` |
 | `tb_dm6c.out` | 11-26 20:55 | 824 | Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26) | `loaded` |
 | `tb_dm6d.out` | 11-26 21:36 | 824 | Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26) | `loaded` |
+| `tb_dm_bp.out` | 11-26 23:45 | 927 | Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26) | `loaded` |
+| `tb_dm_eb.out` | 11-26 23:45 | 873 | Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26) | `loaded` |
 | `tb_dm_mut.out` | 11-26 20:29 | 1356 | Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26) | `loaded` |
 | `tb_dm_step.out` | 11-26 23:42 | 838 | Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26) | `loaded` |
 | `tiled_verify.txt` | 11-22 20:54 | 738 | pre-tiled weights (CTRL bit2) GEMV test (11-22) | `soc_top build exit=0` |
@@ -95,7 +97,7 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `xsim_fix.out` | 11-23 12:32 | 1767 | full-chip xsim with the FPU workaround only: run was stopped after about 15 h without reaching DONE (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_full.out` | 11-23 13:58 | 828 | full-chip xsim with both workarounds: DONE run_cycles=157433, dump equal to Verilator (sim.cpp 157437) (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_full_after_tbnet.out` | 11-24 23:18 | 828 | full-chip RTL xsim rerun after the tb_chip.sv changes for the netlist: DONE run_cycles=157433, dump equal to Verilator (11-24) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
-| `xsim_hang_window_trace.txt` | 11-26 23:43 | 20146 | xsim trace of cycles 9900..10300: instruction fetch (IF), VFU state (VFU) and the x_req term probe (XSPROBE); shows x_req=0 while every term is 1 | `9909 IF a=01000ec8` |
+| `xsim_hang_window_trace.txt` | 11-26 23:46 | 20146 | xsim trace of cycles 9900..10300: instruction fetch (IF), VFU state (VFU) and the x_req term probe (XSPROBE); shows x_req=0 while every term is 1 | `9909 IF a=01000ec8` |
 | `xsim_net_license_error.txt` | 11-24 23:13 | 300 | the xsim error that stops the post-synthesis full-chip simulation: BASIC license, 107,091 instances > 50,000 allowed (11-24) | `ERROR: The current Vivado Simulator license tier you have, BASIC, does not meet the requirement to run the num` |
 | `xsim_pc.out` | 11-23 12:48 | 185 | run that produced the instruction fetch trace (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_probe.out` | 11-23 13:48 | 185 | run that produced the XSPROBE lines (x_req terms) (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |

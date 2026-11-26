@@ -4,7 +4,9 @@
 //   2. JTAG: IDCODE, DTMCS, activate the Debug Module (dmcontrol.dmactive)
 //   3. at several points of the run: halt request, wait for allhalted, read dpc/dcsr/x2 and a write-read-restore check of x5, resume, wait for allresumeack
 //   4. run to DONE, read the SRAM back, compare with the reference dump (words that differ are listed: cycle counters differ after a halt)
-// usage: <sim> <image.bin> <ref_dump.bin> [+HALTS=n] [+FIRST=cycles] [+STEP=cycles] [+VERBOSE=1]
+//   +EBREAK=1: the instruction c.lui t0,0x6 at 0x0100_0088 (executed once at boot) is replaced by c.ebreak; the core is halted at reset, dcsr.ebreakm is set,
+//   the hit is checked (cause 1, dpc), the replaced instruction is emulated through the debugger (t0 = 0x6000, dpc + 2) and the run continues.
+// usage: <sim> <image.bin> <ref_dump.bin> [+HALTS=n] [+FIRST=cycles] [+STEP=cycles] [+VERBOSE=1] [+EBREAK=1] [+EXTRA=0]
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -111,6 +113,8 @@ int main(int argc, char** argv) {
   f = fopen(argv[2], "rb"); if (!f) { perror(argv[2]); return 2; }
   if (fread(ref.data(), 4, SRAM_WORDS, f) != (size_t)SRAM_WORDS) { fprintf(stderr, "short reference\n"); return 2; }
   fclose(f);
+  bool ebreak_mode = arg(argc, argv, "+EBREAK=", 0);
+  if (ebreak_mode) { img[IMEM_BASE + 0x88] = 0x02; img[IMEM_BASE + 0x89] = 0x90; }   // c.ebreak = 0x9002 (little endian)
   auto word = [&](size_t off) { uint32_t w; memcpy(&w, &img[off], 4); return w; };
 
   Verilated::commandArgs(argc, argv);
@@ -143,7 +147,33 @@ int main(int argc, char** argv) {
   printf("dmstatus (core in reset) = 0x%08x\n", st0);
 
   // ---- release the core and run, with halt/resume cycles
+  if (ebreak_mode) wr(DMCONTROL, 0x80000001);                                   // haltreq while the core is still in reset
   t->rst_ni = 1;
+  if (ebreak_mode) {
+    bool hr = wait_status(0x300, 0x300, 400);
+    CHECK(hr, "ebreak test: core halted right after reset release");
+    wr(DMCONTROL, 0x00000001);
+    uint32_t dpc0 = reg_read(0x7b1), dcsr = reg_read(0x7b0);
+    CHECK(dpc0 == 0x01000080u, "dpc after reset halt = 0x%08x (boot address 0x01000080)", dpc0);
+    reg_write(0x7b0, dcsr | (1u << 15));                                         // ebreakm
+    wr(DMCONTROL, 0x40000001);
+    CHECK(wait_status(0x20000, 0x20000, 200), "ebreak test: resume acknowledged");
+    wr(DMCONTROL, 0x00000001);
+    bool hit = wait_status(0x300, 0x300, 400);
+    CHECK(hit, "ebreak test: halted again at the ebreak");
+    if (hit) {
+      uint32_t c2 = reg_read(0x7b0), d2 = reg_read(0x7b1);
+      printf("ebreak hit: dpc=0x%08x dcsr cause %u\n", d2, (c2 >> 6) & 7);
+      CHECK(((c2 >> 6) & 7) == 1, "ebreak: dcsr.cause = %u (1 = ebreak)", (c2 >> 6) & 7);
+      CHECK(d2 == 0x01000088u, "ebreak: dpc 0x%08x == address of the ebreak 0x01000088", d2);
+      reg_write(0x1005, 0x6000);                                                 // emulate the replaced instruction c.lui t0,0x6
+      reg_write(0x7b1, d2 + 2);
+      reg_write(0x7b0, c2 & ~(1u << 15));
+      wr(DMCONTROL, 0x40000001);
+      CHECK(wait_status(0x20000, 0x20000, 200), "ebreak test: final resume acknowledged");
+      wr(DMCONTROL, 0x00000001);
+    }
+  }
   for (long h = 0; h < halts && !done; h++) {
     long target = first + h * step;
     while (!done && run_cycles < target) tick();
@@ -186,6 +216,7 @@ int main(int argc, char** argv) {
         // single step: dcsr.step = bit 2; every resume executes one instruction and halts again with cause 4
         reg_write(0x7b0, dcsr0 | 4);
         uint32_t prev = dpc_first;
+        uint32_t vis[8]; int nvis = 0; vis[nvis++] = dpc_first;
         for (int k = 0; k < 4; k++) {
           wr(DMCONTROL, 0x40000001);
           bool ack = wait_status(0x20000, 0x20000, 200);
@@ -197,7 +228,7 @@ int main(int argc, char** argv) {
           printf("step %d: dpc 0x%08x -> 0x%08x, dcsr cause %u\n", k, prev, dpc, (dcsr >> 6) & 7);
           CHECK(((dcsr >> 6) & 7) == 4, "step %d: dcsr.cause = %u (4 = step)", k, (dcsr >> 6) & 7);
           CHECK((dpc & ~0x3fffu) == IMEM_BASE && dpc != prev, "step %d: dpc moved to 0x%08x", k, dpc);
-          prev = dpc;
+          prev = dpc; vis[nvis++] = dpc;
         }
         reg_write(0x7b0, dcsr0 & ~4u);
         // hardware breakpoint: trigger 0, match control (type 2), execute, machine mode, action 1 = enter debug mode, at the current pc
@@ -218,6 +249,23 @@ int main(int argc, char** argv) {
           printf("trigger hit: dpc=0x%08x dcsr cause %u\n", dpc, (dcsr >> 6) & 7);
           CHECK(((dcsr >> 6) & 7) == 2, "trigger: dcsr.cause = %u (2 = trigger)", (dcsr >> 6) & 7);
           CHECK(dpc == P, "trigger: dpc 0x%08x == breakpoint address 0x%08x", dpc, P);
+        }
+        // breakpoint at an address that is reached by running: another pc of the loop seen during the single steps
+        uint32_t A = 0;
+        for (int k = 0; k < nvis; k++) if (vis[k] != P) { A = vis[k]; break; }
+        CHECK(A != 0, "second breakpoint: an address different from 0x%08x was seen", P);
+        if (A) {
+          reg_write(0x7a2, A);
+          wr(DMCONTROL, 0x40000001);
+          bool a2 = wait_status(0x20000, 0x20000, 200);
+          wr(DMCONTROL, 0x00000001);
+          bool h2 = a2 && wait_status(0x300, 0x300, 400);
+          CHECK(h2, "second breakpoint: halted after running to 0x%08x", A);
+          if (h2) {
+            uint32_t c3 = reg_read(0x7b0), d3 = reg_read(0x7b1);
+            printf("second breakpoint: dpc=0x%08x (set 0x%08x, resumed from 0x%08x) dcsr cause %u\n", d3, A, P, (c3 >> 6) & 7);
+            CHECK(((c3 >> 6) & 7) == 2 && d3 == A, "second breakpoint: cause %u dpc 0x%08x", (c3 >> 6) & 7, d3);
+          }
         }
         reg_write(0x7a1, 0x28000040u);                                         // execute bit off: trigger disabled
         wr(DMCONTROL, 0x40000001);
