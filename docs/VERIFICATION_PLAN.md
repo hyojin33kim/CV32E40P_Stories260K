@@ -78,7 +78,7 @@
 
 | ID | 분류 | 점검 항목 | 방법 / 자극 | 합격 기준 | 실행 위치 | 상태 | 근거 | 비고 |
 |---|---|---|---|---|---|---|---|---|
-| V-S1 | RTL | 합성 후 전체 칩 네트리스트 기능 시뮬레이션 | soc_chip 합성(fpga/synth.tcl의 NETLIST 토큰)으로 기능 네트리스트를 만들어 같은 이미지에 실행하고 덤프 비교 | 덤프 일치, DONE 도달 | fpga/xsim/run_xsim_net.sh, fpga/xsim/net_verilator/ | 미실행 | 합성은 완료(5분 45초, 네트리스트 45 MB, LUT 60,189, URAM 64, DSP 93). xsim은 시작 못 함: BASIC 라이선스의 인스턴스 한도 50,000개 < 네트리스트 107,091개. Verilator도 막힘: 변환만으로 6.5 GB 이상(호스트 7.9 GB)이고 10분 넘게 끝나지 않아 중단. FPU 단위만 네트리스트로 확인(3,896/3,896) | 막힌 이유와 선택지는 결정 D4. 하드웨어가 Verilator와 같다는 근거를 보강하는 가장 큰 빈칸으로 남음. 실험 E11 |
+| V-S1 | RTL | 합성 후 전체 칩 네트리스트 기능 시뮬레이션 | soc_chip 합성(fpga/synth.tcl의 NETLIST 토큰)으로 기능 네트리스트를 만들어 같은 이미지에 실행하고 덤프 비교 | 덤프 일치, DONE 도달 | fpga/xsim/run_xsim_net.sh, fpga/xsim/net_verilator/ | 미실행 | 합성은 완료(5분 45초, 네트리스트 45 MB, LUT 60,189, URAM 64, DSP 93). xsim은 시작 못 함: BASIC 라이선스의 인스턴스 한도 50,000개 < 네트리스트 107,091개. Verilator도 막힘: 변환만으로 6.5 GB 이상(호스트 7.9 GB)이고 10분 넘게 끝나지 않아 중단. FPU 단위만 네트리스트로 확인(3,896/3,896) | 막힌 이유와 선택지는 결정 D4. 11-26: 회사 Linux 서버에서 Verilator로 실행하기로 함. 준비 완료(fpga/xsim/net_verilator/: net_sim.cpp 포트 드라이버를 RTL soc_chip에서 시험해 run_cycles=157,433, 덤프 일치 확인, pack_handoff.sh로 묶음 5 MB, run_net_vl.sh). 네트리스트 변환 자체는 이 PC에서 돌리지 못해 미확인(README.md 참조). 하드웨어가 Verilator와 같다는 근거를 보강하는 가장 큰 빈칸으로 남음. 실험 E11 |
 
 ### L5 보드
 
