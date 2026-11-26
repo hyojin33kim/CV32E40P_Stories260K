@@ -26,7 +26,8 @@ module chip_axi_top #(
     parameter int SRAM_RLAT_B = 2,
     parameter int SRAM_CASCADE = 0,
     parameter bit SRAM_BREG    = 1'b1,
-    parameter bit SRAM_AREG    = 1'b0
+    parameter bit SRAM_AREG    = 1'b0,
+    parameter bit DBG_PROBE    = 1'b0   // 1: mark the CPU bus, accelerator port and run/done as mark_debug nets for a Vivado ILA (docs/BOARD_ILA.md); 0: no change at all
 ) (
     input  logic        clk_i,
     input  logic        rst_ni,          // system reset (PS PL reset)
@@ -65,6 +66,8 @@ module chip_axi_top #(
   logic [31:0] a_addr, a_wdata;
   logic        ld_req, ld_we, ld_rvalid;
   logic [31:0] pf_gemv, pf_vfu, pf_stall, pf_rd, pf_tq, pf_eq;
+  logic        dbg_ireq, dbg_dreq, dbg_dwe;           // chip observation outputs (CPU instruction fetch and data port)
+  logic [31:0] dbg_iaddr, dbg_daddr;
   logic [31:0] ld_addr, ld_wdata, ld_rdata;
 
   soc_chip #(.ACC_LANES(ACC_LANES), .VFU_LANES(VFU_LANES), .ACC_RUN(ACC_RUN), .ACC_FDEPTH(ACC_FDEPTH),
@@ -77,9 +80,23 @@ module chip_axi_top #(
       .data_be_o(d_be), .data_addr_o(d_addr), .data_wdata_o(d_wdata), .data_rdata_i(32'h0),
       .acc_req_o(a_req), .acc_we_o(a_we), .acc_addr_o(a_addr), .acc_wdata_o(a_wdata),
       .acc_gnt_i(1'b1), .acc_rvalid_i(1'b0), .acc_rdata_i('0),
-      .dbg_instr_req_o(), .dbg_instr_addr_o(), .dbg_data_req_o(), .dbg_data_we_o(), .dbg_data_addr_o(),
+      .dbg_instr_req_o(dbg_ireq), .dbg_instr_addr_o(dbg_iaddr), .dbg_data_req_o(dbg_dreq), .dbg_data_we_o(dbg_dwe), .dbg_data_addr_o(dbg_daddr),
       .perf_gemv_busy_o(pf_gemv), .perf_vfu_busy_o(pf_vfu), .perf_acc_stall_o(pf_stall), .perf_acc_rd_o(pf_rd),
       .perf_tq_full_o(pf_tq), .perf_eq_max_o(pf_eq));
+
+  // ILA probes (DBG_PROBE = 1 only). Without the parameter these nets only feed unconnected logic and synthesis removes them, as before.
+  if (DBG_PROBE) begin : g_dbg
+    (* mark_debug = "true" *) logic        pr_ireq;     assign pr_ireq  = dbg_ireq;
+    (* mark_debug = "true" *) logic [31:0] pr_iaddr;    assign pr_iaddr = dbg_iaddr;      // PC being fetched
+    (* mark_debug = "true" *) logic        pr_dreq;     assign pr_dreq  = dbg_dreq;
+    (* mark_debug = "true" *) logic        pr_dwe;      assign pr_dwe   = dbg_dwe;
+    (* mark_debug = "true" *) logic [31:0] pr_daddr;    assign pr_daddr = dbg_daddr;      // CPU data port address (0x2000_0000 write = DONE)
+    (* mark_debug = "true" *) logic        pr_areq;     assign pr_areq  = a_req;          // accelerator memory port
+    (* mark_debug = "true" *) logic        pr_awe;      assign pr_awe   = a_we;
+    (* mark_debug = "true" *) logic [31:0] pr_aaddr;    assign pr_aaddr = a_addr;
+    (* mark_debug = "true" *) logic        pr_run;      assign pr_run   = run_q;
+    (* mark_debug = "true" *) logic        pr_done;     assign pr_done  = done_q;
+  end
 
   // external CPU accesses: answered next cycle; a write to 0x2000_0000 is DONE
   assign d_gnt = 1'b1;

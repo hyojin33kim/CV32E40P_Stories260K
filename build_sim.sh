@@ -11,6 +11,7 @@
 #                        CPU/ACC/VFU FPU latency 4, ACC_RUN 8
 #   CFG=d1             : ideal / legacy (all FPU latency 0, ACC_RUN 16; not FPGA-realizable)
 #                        -> default directories get a _d1 suffix (obj_d1, obj_soc_d1, ...)
+#   VXARGS="-GDBG_PROBE=1" : extra Verilator arguments for TOP=chip_axi_top (e.g. the ILA probe nets, docs/BOARD_ILA.md)
 #   MDIR=<dir>         : output directory override
 #   LOG=<file>         : Verilator log (default verilator_build[_soc].log)
 #   ACC_LANES=<n>      : gemv_acc MAC lanes for TOP=soc_top (default 4)
@@ -44,7 +45,7 @@ case "${CHIP_WEIGHTS:-onchip}" in
   *) echo "CHIP_WEIGHTS must be onchip or ddr"; exit 2;;
 esac
 if [ "$TOP" = chip_axi_top ]; then   # board flow (S5): AXI4-Lite loading, sim_axi.cpp, weights on chip
-  "$VERILATOR" --cc --exe --build -j 4 -Wno-fatal -Wno-BLKANDNBLK --top-module chip_axi_top -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT -GSRAM_RLAT=${SRAM_RLAT:-1} -GSRAM_RLAT_B=${SRAM_RLAT_B:-2} -GSRAM_AREG=${SRAM_AREG:-0} "${ACCSRC[@]}" "$PWD/acc/sram_dp.sv" "$PWD/acc/soc_chip.sv" "$PWD/acc/chip_axi_top.sv" -f cv32e40p-master/cv32e40p_fpu_manifest.flist "$PWD/sim_axi.cpp" --Mdir "$PWD/${MDIR:-obj_axi$SUF}" > "${LOG:-verilator_build_axi.log}" 2>&1
+  "$VERILATOR" --cc --exe --build -j 4 -Wno-fatal -Wno-BLKANDNBLK --top-module chip_axi_top ${VXARGS:-} -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT -GSRAM_RLAT=${SRAM_RLAT:-1} -GSRAM_RLAT_B=${SRAM_RLAT_B:-2} -GSRAM_AREG=${SRAM_AREG:-0} "${ACCSRC[@]}" "$PWD/acc/sram_dp.sv" "$PWD/acc/soc_chip.sv" "$PWD/acc/chip_axi_top.sv" -f cv32e40p-master/cv32e40p_fpu_manifest.flist "$PWD/sim_axi.cpp" --Mdir "$PWD/${MDIR:-obj_axi$SUF}" > "${LOG:-verilator_build_axi.log}" 2>&1
   exit
 elif [ "$TOP" = chip_axi_ddr_top ]; then   # board flow, weights in DDR through an AXI4 master (S5b): sim_axi_ddr.cpp
   "$VERILATOR" --cc --exe --build -j 4 -Wno-fatal -Wno-BLKANDNBLK --top-module chip_axi_ddr_top -GACC_LANES=${ACC_LANES:-4} -GVFU_LANES=${VFU_LANES:-4} -GACC_RUN=$ACC_RUN -GACC_FDEPTH=${ACC_FDEPTH:-256} -GCPU_FPU_LAT=$CPU_FPU_LAT -GACC_FPU_LAT=$ACC_FPU_LAT -GVFU_FPU_LAT=$VFU_FPU_LAT -GSRAM_RLAT=${SRAM_RLAT:-1} -GSRAM_RLAT_B=${SRAM_RLAT_B:-2} -GSRAM_AREG=${SRAM_AREG:-0} -GAXI_MAXB=${AXI_MAXB:-16} -GAXI_WT=${AXI_WT:-3} -GAXI_CRED=${AXI_CRED:-48} "${ACCSRC[@]}" "$PWD/acc/sram_dp.sv" "$PWD/acc/soc_chip.sv" "$PWD/acc/axi_ext_rd.sv" "$PWD/acc/chip_axi_ddr_top.sv" -f cv32e40p-master/cv32e40p_fpu_manifest.flist "$PWD/sim_axi_ddr.cpp" --Mdir "$PWD/${MDIR:-obj_axi_ddr$SUF}" > "${LOG:-verilator_build_axi_ddr.log}" 2>&1
