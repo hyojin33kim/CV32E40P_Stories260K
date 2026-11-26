@@ -1,0 +1,16 @@
+loaded
+dmstatus (core in reset) = 0x000c3082
+halt 0 at run cycle ~25424: dpc=0x010000e8 dcsr=0x400000c3 (cause 3) sp=0x001ffef0 halted_o=1
+halt 1 at run cycle ~47424: dpc=0x0100024e dcsr=0x400000c3 (cause 3) sp=0x001ffef0 halted_o=1
+halt 2 at run cycle ~69424: dpc=0x010000fe dcsr=0x400000c3 (cause 3) sp=0x001ffef0 halted_o=1
+step 0: dpc 0x01000102 -> 0x01000106, dcsr cause 4
+step 1: dpc 0x01000106 -> 0x010000fe, dcsr cause 4
+step 2: dpc 0x010000fe -> 0x01000102, dcsr cause 4
+step 3: dpc 0x01000102 -> 0x01000106, dcsr cause 4
+trigger: tdata1 reads 0x28001044, address 0x01000106
+trigger hit: dpc=0x01000106 dcsr cause 2
+DONE run_cycles=230383 (ticks include JTAG time)
+  word 0x1ad000: got 0x0003601c ref 0x00024326
+  word 0x1aff00: got 0x0003601c ref 0x00024326
+dump differs from the reference in 2 words
+PASSED: 0 check failure(s)

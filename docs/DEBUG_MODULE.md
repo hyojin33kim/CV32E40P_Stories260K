@@ -43,6 +43,9 @@ System bus access (SBA, reading memory without the core) is **not connected**: e
 - IDCODE 0x00000DB3, DTMCS (version 1, abits 7), `dmcontrol.dmactive`, `dmstatus.version` = 2 (debug spec 0.13).
 - 6 halts at run cycles ~25k, 47k, 69k, 91k, 113k, 135k (the core is somewhere else each time: `dpc` values differ): `allhalted`, `dcsr.cause` = 3 (haltreq), `dpc` inside imem,
   `sp` inside the SRAM, `debug_halted_o`; abstract register reads (dpc, dcsr, x2) and a write, read-back and restore of x5; resume with `allresumeack`; `debug_halted_o` cleared.
+- Single step (`dcsr.step`): 4 steps in a row, each halts again with `dcsr.cause` = 4 and `dpc` moves (0x01000102 -> 0x01000106 -> 0x010000fe -> 0x01000102 -> 0x01000106, a short wait loop).
+- Hardware breakpoint (the one trigger, match control, execute, action 1): `tdata1` reads back 0x28001044; after resume the core halts at once at the set address with `dcsr.cause` = 2 and `dpc` equal to the address.
+  The breakpoint was set at the current `dpc`, so it fires at the first fetch after the resume; a breakpoint at a later address that is reached by running was not tested.
 - The firmware then runs to DONE. The 2 MiB dump differs from the reference dump in exactly 2 words: 0x1aff00 (the firmware cycle word, which `reproduce.sh`
   excludes from its HOLD comparison) and 0x1ad000 (same value in every run; it follows the cycle word, but this file does not prove what it is). Everything else is equal.
 - Mutation check: a broken response path for debug data accesses (`dm_rsp_d_q` forced to 0) makes the test fail (register reads and abstract commands fail).
@@ -62,7 +65,7 @@ The board bitstream `board_release_125_int8` does NOT contain the Debug Module: 
 - The BSCANE2 variant (`dmi_bscane_tap.sv`) in simulation: Verilator has no BSCANE2; it was only synthesized.
 - OpenOCD/GDB on the board: JTAG chain position of the PL, IR codes of USER3/USER4 for ZCU104, and OpenOCD's `riscv` configuration are not known here. No OpenOCD configuration is
   provided because it could not be tested. The USB-JTAG cable cannot be used by Vivado and OpenOCD at the same time.
-- Hardware breakpoints (the single trigger, `DEBUG_TRIGGER_EN`; `fpga/prepare.py NO_TRIGGERS=1` removes it), single step, `ebreak`: not exercised by `tb_dm`.
+- `ebreak` entering debug mode (`dcsr.ebreakm`): not tested (the firmware has no `ebreak` and the core cannot write the imem). The trigger exists in this build (`DEBUG_TRIGGER_EN`; `NO_TRIGGERS=1` in `fpga/prepare.py` removes it); the routed timing above includes it.
 - Halting while an accelerator command runs and comparing intermediate memory: the accelerators keep running while the core is halted; only the final result was compared.
 - The board itself (a bitstream with the Debug Module was not built; the routed timing above is from an out-of-context run, as for the existing bitstream's V-M1/V-M2).
 - The Debug Module's `dmstatus`, `hartinfo` and the `unavailable` bit while the core is held in reset (RUN = 0) were read in simulation (`dmstatus` 0x000c3082) but not interpreted bit by bit.

@@ -172,6 +172,60 @@ int main(int argc, char** argv) {
     wr(DMCONTROL, 0x00000001);
     CHECK(!t->debug_halted_o, "debug_halted_o cleared after resume");
   }
+  // ---- single step and hardware breakpoint (trigger) at one more halt
+  if (arg(argc, argv, "+EXTRA=", 1) && !done) {
+    long target = first + halts * step;
+    while (!done && run_cycles < target) tick();
+    if (!done) {
+      wr(DMCONTROL, 0x80000001);
+      bool h = wait_status(0x300, 0x300, 200);
+      CHECK(h, "extra halt: allhalted");
+      if (h) {
+        wr(DMCONTROL, 0x00000001);
+        uint32_t dcsr0 = reg_read(0x7b0), dpc_first = reg_read(0x7b1);
+        // single step: dcsr.step = bit 2; every resume executes one instruction and halts again with cause 4
+        reg_write(0x7b0, dcsr0 | 4);
+        uint32_t prev = dpc_first;
+        for (int k = 0; k < 4; k++) {
+          wr(DMCONTROL, 0x40000001);
+          bool ack = wait_status(0x20000, 0x20000, 200);
+          wr(DMCONTROL, 0x00000001);
+          bool hh = ack && wait_status(0x300, 0x300, 200);
+          CHECK(hh, "step %d: resume acknowledged and halted again", k);
+          if (!hh) break;
+          uint32_t dcsr = reg_read(0x7b0), dpc = reg_read(0x7b1);
+          printf("step %d: dpc 0x%08x -> 0x%08x, dcsr cause %u\n", k, prev, dpc, (dcsr >> 6) & 7);
+          CHECK(((dcsr >> 6) & 7) == 4, "step %d: dcsr.cause = %u (4 = step)", k, (dcsr >> 6) & 7);
+          CHECK((dpc & ~0x3fffu) == IMEM_BASE && dpc != prev, "step %d: dpc moved to 0x%08x", k, dpc);
+          prev = dpc;
+        }
+        reg_write(0x7b0, dcsr0 & ~4u);
+        // hardware breakpoint: trigger 0, match control (type 2), execute, machine mode, action 1 = enter debug mode, at the current pc
+        uint32_t P = reg_read(0x7b1);
+        reg_write(0x7a0, 0);
+        reg_write(0x7a2, P);
+        reg_write(0x7a1, 0x28001044u);
+        uint32_t td1 = reg_read(0x7a1);
+        printf("trigger: tdata1 reads 0x%08x, address 0x%08x\n", td1, P);
+        CHECK((td1 >> 28) == 2, "tdata1.type = %u (2 = match control)", td1 >> 28);
+        wr(DMCONTROL, 0x40000001);
+        bool ack = wait_status(0x20000, 0x20000, 200);
+        wr(DMCONTROL, 0x00000001);
+        bool hit = ack && wait_status(0x300, 0x300, 400);
+        CHECK(hit, "trigger: halted again after resume");
+        if (hit) {
+          uint32_t dcsr = reg_read(0x7b0), dpc = reg_read(0x7b1);
+          printf("trigger hit: dpc=0x%08x dcsr cause %u\n", dpc, (dcsr >> 6) & 7);
+          CHECK(((dcsr >> 6) & 7) == 2, "trigger: dcsr.cause = %u (2 = trigger)", (dcsr >> 6) & 7);
+          CHECK(dpc == P, "trigger: dpc 0x%08x == breakpoint address 0x%08x", dpc, P);
+        }
+        reg_write(0x7a1, 0x28000040u);                                         // execute bit off: trigger disabled
+        wr(DMCONTROL, 0x40000001);
+        CHECK(wait_status(0x20000, 0x20000, 200), "final resume acknowledged");
+        wr(DMCONTROL, 0x00000001);
+      }
+    }
+  }
   long guard = 0;
   while (!done && guard < 3000000) { tick(); guard++; }
   CHECK(done, "firmware reached DONE (run_cycles=%ld)", run_cycles);
