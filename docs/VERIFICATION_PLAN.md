@@ -6,7 +6,7 @@
 
 ## 1. 요약
 
-전체 49개: 통과 28, 부분 3, 미실행 15, 미정 2, 제외 1
+전체 49개: 통과 28, 부분 4, 미실행 14, 미정 2, 제외 1
 
 | 단계 | 통과 | 부분 | 미실행 | 미정 | 제외 |
 |---|---|---|---|---|---|
@@ -15,7 +15,7 @@
 | L2 통합 | 11 | 0 | 1 | 1 | 0 |
 | L3 타이밍 | 3 | 0 | 0 | 0 | 1 |
 | L4 합성 후 | 0 | 0 | 1 | 0 | 0 |
-| L5 보드 | 0 | 0 | 6 | 0 | 0 |
+| L5 보드 | 0 | 1 | 5 | 0 | 0 |
 | 격차 | 5 | 3 | 7 | 1 | 0 |
 
 ## 2. 게이트
@@ -84,7 +84,7 @@
 
 | ID | 분류 | 점검 항목 | 방법 / 자극 | 합격 기준 | 실행 위치 | 상태 | 근거 | 비고 |
 |---|---|---|---|---|---|---|---|---|
-| V-B0 | 보드 | 보드 준비 | bit와 hwh 이름 정리, 기준 덤프 생성, SHA256 기록 | 파일과 체크섬 목록 | docs/BOARD_BRINGUP.md 3절 step 0 | 미실행 |  | .hwh가 .bit와 같은 블록 디자인에서 나왔는지 확인 필요 |
+| V-B0 | 보드 | 보드 준비 | bit와 hwh 이름 정리, 기준 덤프 생성, SHA256 기록 | 파일과 체크섬 목록 | docs/BOARD_BRINGUP.md 3절 step 0 | 부분 |  | 11-26: 묶음 폴더 준비(pynq/pack_board_kit.sh -> /mnt/e/fpga_work/board_kit: bit, hwh, run_chip.py, image_1/128/512, Verilator 기준 덤프, SHA256SUMS; 기준 DONE 157,437 / 214,257 / 382,970 cycle, 저장된 덤프와 일치). 확인 필요: (1) bit는 커밋 d3b41bf에서 빌드, 이후 acc/gemv_acc.sv와 soc_top.sv가 바뀜(CTRL bit2 tiled, 버퍼 파라미터; 기본값에서 동작 동일하다고 읽었으나 해당 bit로 증명하지 않음), (2) .hwh가 .bit와 같은 블록 디자인에서 나왔는지, (3) docs/BOARD_BRINGUP.md 3절은 없는 이미지(out_16_...)와 512토큰 약 4.5M cycle을 적고 있어 실제 image_512(382,970 cycle)와 다름: 문서 갱신 필요 |
 | V-B1 | 보드 | PYNQ 부팅과 오버레이 | Overlay("board.bit"), ip_dict 확인, base 0xA000_0000, PL 125 MHz | 오류 없이 로드 | docs/BOARD_BRINGUP.md step 1 | 미실행 |  | 보드와 PYNQ 이미지 확보 필요 |
 | V-B2 | 보드 | AXI 경로만(CTRL=0) | SRAM과 imem에 패턴을 쓰고 읽기 | 읽은 값이 쓴 값과 동일 | docs/BOARD_BRINGUP.md step 2 | 미실행 |  |  |
 | V-B3 | 보드 | 16 토큰 이미지 실행 | python3 run_chip.py board.bit image.bin dump_sim.bin | DONE_V, CYCLES가 시뮬레이션과 동일, 2 MiB 덤프 바이트 동일 | pynq/run_chip.py | 미실행 |  | run_chip.py는 한 번도 실행된 적 없음 |
