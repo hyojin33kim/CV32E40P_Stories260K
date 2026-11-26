@@ -1,0 +1,10 @@
+NS running 100000 cycles, 2 s, 60569 cycles/s
+NS running 150000 cycles, 3 s, 59450 cycles/s
+NS DONE run_cycles=157433, 2.6 s
+NS WROTE /home/hyojinkim/work/3_Company_PJT/CSO/Server/LLM/CV32E40P_Stories260K/.claude/worktrees/g0-repro/.scratch/drv_rtl/drv_dump.bin (2097152 bytes), total 23.2 s
+DONE cycles=157437 min_stack_write=0x1ffefc
+driver dump == Verilator chip dump (2 MiB)
+
+real	0m35.421s
+user	0m48.968s
+sys	0m2.736s

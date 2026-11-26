@@ -20,6 +20,7 @@ Only addresses and strobes are probed, no data buses (width and BRAM use). Add `
 - Verilator, `chip_axi_top` board-flow simulation, image_1: with the default (`DBG_PROBE=0`) and with `-GDBG_PROBE=1` (`VXARGS="-GDBG_PROBE=1" TOP=chip_axi_top ./build_sim.sh`)
   the DONE cycles are 157,433 and the 2 MiB dump equals the reference dump (`board_kit/dump_sim_1.bin`) in both builds.
 - With `--public-flat-rw` the model has 0 probe nets for `DBG_PROBE=0` and 10 for `DBG_PROBE=1`.
+- `./reproduce.sh quick` after this change: 42/42 OK (11-26, `docs/experiments/raw/repro_dbgprobe.out`).
 - NOT checked: Vivado synthesis, timing (the current routed WNS is only +0.100 ns, WHS +0.008 ns), BRAM use of the ILA, ILA operation on the board.
   The steps below are the usual Vivado flow written from general knowledge; they were not run on this project.
 

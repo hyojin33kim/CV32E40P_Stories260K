@@ -1,7 +1,7 @@
 # ZCU104 board bring-up plan (living document)
 
 Notion copy: https://app.notion.com/p/41f12d20bf0a817d922dce27e2289c95 (the repo file is the source; update both).
-Last updated 2026-11-21. Status words: **done** = verified by a command or report in this repo; **planned** = not run yet;
+Last updated 2026-11-21; steps 0, 3 and 4 corrected 2026-11-26 (image names, `image_N` = one forward step at context N, kit script). Status words: **done** = verified by a command or report in this repo; **planned** = not run yet;
 **unknown** = not checked. Update the status table as steps are executed.
 
 ## 0. Newest bitstream (2026-11-22) — use this one
@@ -34,17 +34,17 @@ verified** is the synthesized full chip and the board: **the board result decide
 | 0 | PC prep: rename `board_wrapper.bit` -> `board.bit` (keep `board.hwh`, same base name); build the reference dump with the Verilator chip sim; copy files; record SHA256 | files and checksums listed | planned |
 | 1 | Boot the board (PYNQ), `Overlay("board.bit")`; `ol.ip_dict` shows the chip; base 0xA000_0000 (64 MiB range from the block design); PL clock 125 MHz | loads without error | planned |
 | 2 | AXI path only (`CTRL=0`): write/read back patterns in SRAM and imem | read-back equals written | planned |
-| 3 | Run the 16-token image: `python3 run_chip.py board.bit image.bin dump_sim.bin` (root) | `DONE_V` equal to sim, `CYCLES` equal to sim, 2 MiB dump byte-identical | planned |
-| 4 | Run the 512-token image (about 4.5 M cycles, about 36 ms at 125 MHz: estimate) | same three criteria | planned |
+| 3 | Run the first image (one forward step at context 1): `python3 run_chip.py board.bit image_1.bin dump_sim_1.bin` (root); kit: `pynq/pack_board_kit.sh` | 2 MiB dump byte-identical to `dump_sim_1.bin`; `DONE_V` equal to sim; `CYCLES` recorded next to the simulators' counts (sim.cpp 157,437, xsim testbench 157,433: counting differs by a few cycles) | planned |
+| 4 | Run `image_128.bin` (sim.cpp 214,257 cycles) and `image_512.bin` (one step at context 512, 382,970 cycles, about 3.1 ms at 125 MHz: arithmetic, not measured). A full 512-token generation is a different run (about 4.5 M cycles was an earlier estimate; no image for it is in the kit) | same criteria | planned |
 | 5 | Record cycles, wall time, match; update `PROGRESS.md`, `docs/P1_REPORT.md`, this file; push | docs updated | planned |
 
 ### Step 0 commands (PC, repo root)
 ```
 TOP=soc_chip ./build_sim.sh          # if obj_chip/Vsoc_chip is missing
-obj_chip/Vsoc_chip gen/out_16_O2u_opta_accfull_d2_L0_G1/image.bin /tmp/dump.bin    # note the DONE cycles it prints
+obj_chip/Vsoc_chip prof/chip_full_opta_d2/image_1.bin /tmp/dump.bin    # note the DONE cycles it prints (157,437); easier: pynq/pack_board_kit.sh does steps 0-2 and makes /mnt/e/fpga_work/board_kit
 cp <fpga work>/board_proj/board.runs/impl_1/board_wrapper.bit board.bit
 cp <fpga work>/board_proj/board.gen/sources_1/bd/board/hw_handoff/board.hwh board.hwh
-sha256sum board.bit board.hwh gen/out_16_O2u_opta_accfull_d2_L0_G1/image.bin /tmp/dump.bin
+sha256sum board.bit board.hwh prof/chip_full_opta_d2/image_1.bin /tmp/dump.bin
 ```
 Copy to the board: `board.bit`, `board.hwh`, `pynq/run_chip.py`, `image.bin`, `dump.bin` (as `dump_sim.bin`).
 (The `.hwh` found earlier was older than the `.bit` (09:08 vs 19:33); confirm it comes from the same block design.)
