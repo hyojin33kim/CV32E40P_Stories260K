@@ -1,0 +1,22 @@
+// File list of the Debug Module (paths relative to the repository root; add dbg/riscv-dbg/src/dmi_bscane_tap.sv instead of dmi_jtag_tap.sv for the FPGA)
++incdir+dbg/common_cells/include
+dbg/common_cells/src/cdc_reset_ctrlr_pkg.sv
+dbg/common_cells/src/cdc_reset_ctrlr.sv
+dbg/common_cells/src/cdc_4phase.sv
+dbg/common_cells/src/cdc_2phase.sv
+dbg/common_cells/src/cdc_2phase_clearable.sv
+dbg/common_cells/src/sync.sv
+dbg/common_cells/src/fifo_v3.sv
+dbg/tech_cells_generic/tc_clk.sv
+dbg/riscv-dbg/src/dm_pkg.sv
+dbg/riscv-dbg/debug_rom/debug_rom.sv
+dbg/riscv-dbg/debug_rom/debug_rom_one_scratch.sv
+dbg/riscv-dbg/src/dm_csrs.sv
+dbg/riscv-dbg/src/dm_mem.sv
+dbg/riscv-dbg/src/dm_sba.sv
+dbg/riscv-dbg/src/dm_top.sv
+dbg/riscv-dbg/src/dm_obi_top.sv
+dbg/riscv-dbg/src/dmi_cdc.sv
+dbg/riscv-dbg/src/dmi_jtag_tap.sv
+dbg/riscv-dbg/src/dmi_jtag.sv
+dbg/soc_chip_dm.sv

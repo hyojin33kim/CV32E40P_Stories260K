@@ -1,0 +1,30 @@
+loaded
+ok:   IDCODE 0x00000db3 (want 0x00000db3)
+ok:   DTMCS 0x00001071 (version 1, abits 7)
+ok:   dmcontrol after activate 0x00000001
+ok:   dmstatus.version = 2 (want 2: debug spec 0.13)
+dmstatus (core in reset) = 0x000c3082
+ok:   halt 0: allhalted
+ok:   abstract read 0x7b1 cmderr=0
+ok:   abstract read 0x7b0 cmderr=0
+ok:   abstract read 0x1002 cmderr=0
+halt 0 at run cycle ~25424: dpc=0x010000e8 dcsr=0x400000c3 (cause 3) sp=0x001ffef0 halted_o=1
+ok:   dpc 0x010000e8 inside imem
+ok:   dcsr.cause = 3 (3 = haltreq)
+ok:   sp 0x001ffef0 inside the SRAM
+ok:   debug_halted_o
+ok:   abstract read 0x1005 cmderr=0
+ok:   abstract write 0x1005 cmderr=0
+ok:   abstract read 0x1005 cmderr=0
+ok:   x5 write/read 0x12345678
+ok:   abstract write 0x1005 cmderr=0
+ok:   abstract read 0x1005 cmderr=0
+ok:   x5 restored
+ok:   resume 0: allresumeack
+ok:   debug_halted_o cleared after resume
+ok:   firmware reached DONE (run_cycles=169663)
+DONE run_cycles=169663 (ticks include JTAG time)
+  word 0x1ad000: got 0x000272ec ref 0x00024326
+  word 0x1aff00: got 0x000272ec ref 0x00024326
+dump differs from the reference in 2 words
+PASSED: 0 check failure(s)

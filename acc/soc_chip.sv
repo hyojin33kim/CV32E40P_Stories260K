@@ -33,7 +33,11 @@ module soc_chip #(
     // 0: weights outside (< 0x0010_0000) through the external acc_*/data_* ports (DDR), SRAM =
     //   0x0010_0000 .. 0x0020_0000 (1 MiB) - the S5a layout, kept for larger models.
     parameter bit    WEIGHTS_ONCHIP = 1'b1,
-    parameter string IMEM_INIT   = ""
+    parameter string IMEM_INIT   = "",
+    // 1: RISC-V Debug Module (dbg/riscv-dbg, JTAG transport) at DM_BASE .. +4 KiB: debug ROM and program buffer are fetched through the
+    //    instruction port, its data registers are accessed through the data port. 0 (default): none, nothing below changes. docs/DEBUG_MODULE.md
+    parameter bit    DM_EN = 1'b0,
+    parameter logic [31:0] DM_BASE = 32'h1A11_0000
 ) (
     input logic clk_i,
     input logic rst_ni,
@@ -78,7 +82,17 @@ module soc_chip #(
     output logic [31:0] perf_acc_stall_o,
     output logic [31:0] perf_acc_rd_o,
     output logic [31:0] perf_tq_full_o,      // cycles the accelerator request tag FIFO is full
-    output logic [31:0] perf_eq_max_o        // high-water mark of the external line FIFO (lines)
+    output logic [31:0] perf_eq_max_o,       // high-water mark of the external line FIFO (lines)
+    // Debug Module bus (used when DM_EN = 1; dbg/soc_chip_dm.sv connects the Debug Module, otherwise tie the input to 0 and leave the outputs open).
+    // dm_slave_*: one 32-bit slave port for the region DM_BASE .. +4 KiB, response (dm_slave_rdata_i) exactly one cycle after dm_slave_req_o.
+    input  logic        dm_debug_req_i,
+    output logic        dm_slave_req_o,
+    output logic        dm_slave_we_o,
+    output logic [31:0] dm_slave_addr_o,
+    output logic [ 3:0] dm_slave_be_o,
+    output logic [31:0] dm_slave_wdata_o,
+    input  logic [31:0] dm_slave_rdata_i,
+    output logic        debug_halted_o
 );
   localparam logic [31:0] SRAM_BASE = WEIGHTS_ONCHIP ? 32'h0000_0000 : 32'h0010_0000;
   localparam int          SRAM_LINES = WEIGHTS_ONCHIP ? 131072 : 65536;
@@ -88,7 +102,7 @@ module soc_chip #(
   // imem read port: CPU fetch, or the loader while the core is in reset
   logic        im_ren;
   logic [11:0] im_raddr;
-  assign im_ren   = i_req || (ld_imem && !ld_we_i);
+  assign im_ren   = i_req || (ld_imem && !ld_we_i);   // also for a debug-region fetch: the read is harmless and its data unused (keeps the decode off the BRAM enable path)
   assign im_raddr = i_req ? i_addr[13:2] : ld_addr_i[13:2];
   // loader decode (core in reset only)
   logic        ld_imem, ld_sram;
@@ -101,6 +115,9 @@ module soc_chip #(
   // ---------------------------------------------------------------- core + accelerators
   logic        i_req, i_gnt, i_rvalid;
   logic [31:0] i_addr, i_rdata;
+  logic        dm_i_sel, dm_d_sel, dm_d_go, dm_i_go, dm_rsp_i_q, dm_rsp_d_q, d_idle;
+  logic        dm_busy_i_q, dm_busy_d_q;           // a debug-region access was granted last cycle: same-port requests wait one cycle (in-order responses)
+  logic [31:0] dm_rdata;
   // CPU data port (public for the simulator's SIM_TRACE_CPU trace; no effect on the hardware)
   logic        d_req /*verilator public_flat_rd*/;
   logic        d_gnt /*verilator public_flat_rd*/;
@@ -118,6 +135,8 @@ module soc_chip #(
             .CPU_FPU_LAT(CPU_FPU_LAT), .ACC_FPU_LAT(ACC_FPU_LAT), .VFU_FPU_LAT(VFU_FPU_LAT),
             .EXT_BELOW(WEIGHTS_ONCHIP ? 32'h0 : SRAM_BASE)) soc_i (
       .clk_i, .rst_ni, .pulp_clock_en_i(1'b1),
+      .debug_req_i(dm_debug_req_i), .dm_halt_addr_i(DM_BASE + 32'h800), .dm_exception_addr_i(DM_BASE + 32'h810),
+      .debug_havereset_o(), .debug_running_o(), .debug_halted_o(debug_halted_o),
       // clock gates forced open during reset (as sim.cpp drives soc_top): the FPU divider's
       // gated clock must see the reset, otherwise its first request is never granted
       .scan_cg_en_i(!rst_ni),
@@ -134,6 +153,55 @@ module soc_chip #(
   assign dbg_instr_req_o = i_req; assign dbg_instr_addr_o = i_addr;
   assign dbg_data_req_o = d_req; assign dbg_data_we_o = d_we; assign dbg_data_addr_o = d_addr;
 
+
+  // ---------------------------------------------------------------- Debug Module bus (DM_EN)
+  // Region DM_BASE .. +4 KiB (dm_mem: debug ROM at +0x800, program buffer, abstract command and data registers). The core fetches the debug code
+  // through the instruction port and reads/writes the data registers through the data port; one slave port serves both, the data port first.
+  // The data port is granted only when no other data response is in flight (the CPU data responses stay in order).
+  // Both ports are registered before they reach the Debug Module (a first version with the region decode in the grant and in front of the DM missed 125 MHz:
+  // the core's instruction address path, already the critical one, got longer). Instruction side: i_gnt depends only on a register (dm_busy_i_q); a fetch in the
+  // debug region is captured at the grant (stage I), the next fetch waits until its response (response order stays). Data side: the debug-region grant is decoded
+  // from d_addr like the SRAM grant, the access is captured in stage D. The Debug Module gets one request per cycle, data first.
+  logic        stI_v_q, stD_v_q, stD_we_q, iss_i, iss_d;
+  logic [31:0] stI_addr_q, stD_addr_q, stD_wdata_q;
+  logic [ 3:0] stD_be_q;
+  if (DM_EN) begin : g_dm
+    assign dm_i_sel = i_req && (i_addr & ~32'hFFF) == DM_BASE;
+    assign dm_d_sel = d_req && (d_addr & ~32'hFFF) == DM_BASE;
+    assign dm_i_go  = i_req && i_gnt && dm_i_sel;                 // captured into stage I (feeds registers only)
+    assign dm_d_go  = dm_d_sel && d_idle && !dm_busy_d_q && !stD_v_q;
+    assign iss_d    = stD_v_q;
+    assign iss_i    = stI_v_q && !stD_v_q;
+    always_ff @(posedge clk_i or negedge rst_ni)
+      if (!rst_ni) begin
+        dm_busy_i_q <= 1'b0; dm_busy_d_q <= 1'b0; stI_v_q <= 1'b0; stD_v_q <= 1'b0; dm_rsp_i_q <= 1'b0; dm_rsp_d_q <= 1'b0;
+      end else begin
+        dm_rsp_i_q <= iss_i; dm_rsp_d_q <= iss_d;
+        if (dm_i_go) begin stI_v_q <= 1'b1; dm_busy_i_q <= 1'b1; end
+        else if (iss_i) stI_v_q <= 1'b0;
+        if (dm_rsp_i_q) dm_busy_i_q <= 1'b0;
+        if (dm_d_go) begin stD_v_q <= 1'b1; dm_busy_d_q <= 1'b1; end
+        else if (iss_d) stD_v_q <= 1'b0;
+        if (dm_rsp_d_q) dm_busy_d_q <= 1'b0;
+      end
+    always_ff @(posedge clk_i) begin
+      if (dm_i_go) stI_addr_q <= i_addr;
+      if (dm_d_go) begin stD_we_q <= d_we; stD_addr_q <= d_addr; stD_be_q <= d_be; stD_wdata_q <= d_wdata; end
+    end
+    assign dm_slave_req_o   = iss_d || iss_i;
+    assign dm_slave_we_o    = iss_d && stD_we_q;
+    assign dm_slave_addr_o  = iss_d ? stD_addr_q : stI_addr_q;
+    assign dm_slave_be_o    = iss_d ? stD_be_q : 4'hf;
+    assign dm_slave_wdata_o = stD_wdata_q;
+    assign dm_rdata         = dm_slave_rdata_i;
+  end else begin : g_nodm
+    assign dm_i_sel = 1'b0; assign dm_d_sel = 1'b0; assign dm_d_go = 1'b0; assign dm_i_go = 1'b0;
+    assign dm_rsp_i_q = 1'b0; assign dm_rsp_d_q = 1'b0; assign dm_rdata = '0; assign dm_busy_i_q = 1'b0; assign dm_busy_d_q = 1'b0;
+    assign iss_i = 1'b0; assign iss_d = 1'b0; assign stI_v_q = 1'b0; assign stD_v_q = 1'b0; assign stD_we_q = 1'b0;
+    assign stI_addr_q = '0; assign stD_addr_q = '0; assign stD_wdata_q = '0; assign stD_be_q = '0;
+    assign dm_slave_req_o = 1'b0; assign dm_slave_we_o = 1'b0; assign dm_slave_addr_o = '0; assign dm_slave_be_o = '0; assign dm_slave_wdata_o = '0;
+  end
+
   // ---------------------------------------------------------------- instruction memory
   // BRAM, not URAM: the fetch address comes straight from the core's prefetcher, and URAM's
   // EN/ADDR setup missed 150 MHz by 1.58 ns (11-16 synthesis)
@@ -141,15 +209,19 @@ module soc_chip #(
   if (IMEM_INIT != "") begin : g_init
     initial $readmemh(IMEM_INIT, imem);
   end
-  assign i_gnt = 1'b1;
+  logic [31:0] im_rdata_q;
+  logic        im_rv_q;
+  assign i_gnt = !dm_busy_i_q;
   always_ff @(posedge clk_i or negedge rst_ni)
-    if (!rst_ni) i_rvalid <= 1'b0; else i_rvalid <= i_req;
+    if (!rst_ni) im_rv_q <= 1'b0; else im_rv_q <= i_req && i_gnt && !dm_i_sel;
+  assign i_rvalid = im_rv_q || dm_rsp_i_q;
+  assign i_rdata  = dm_rsp_i_q ? dm_rdata : im_rdata_q;
   always_ff @(posedge clk_i) begin
     if (ld_imem && ld_we_i) imem[ld_addr_i[13:2]] <= ld_wdata_i;
-    if (im_ren) i_rdata <= imem[im_raddr];      // one read port (BRAM inference needs a single read)
+    if (im_ren) im_rdata_q <= imem[im_raddr];      // one read port (BRAM inference needs a single read)
   end
 `ifndef SYNTHESIS
-  always_ff @(posedge clk_i) if (rst_ni && i_req && (i_addr & ~32'h3fff) != IMEM_BASE)
+  always_ff @(posedge clk_i) if (rst_ni && i_req && (i_addr & ~32'h3fff) != IMEM_BASE && !dm_i_sel)
     $error("instruction fetch outside imem: %h", i_addr);
 `endif
 
@@ -205,15 +277,16 @@ module soc_chip #(
   logic [ALAT-1:0] s_pipe_q;                   // SRAM responses in flight (shift register)
   logic [1:0]  e_pend_q;                       // external responses pending
   logic        s_busy, e_busy;
+  assign d_idle = (s_pipe_q == '0) && (e_pend_q == '0);        // no data response in flight (used by the debug region grant)
   assign d_sram = d_addr >= SRAM_BASE && d_addr < SRAM_END;
   assign s_busy = |(s_pipe_q >> 1);            // SRAM responses due after this cycle
   assign e_busy = (e_pend_q - (data_rvalid_i ? 2'd1 : 2'd0)) != 0;
-  assign sa_en  = d_req && d_sram && !e_busy;
-  assign data_req_o   = d_req && !d_sram && !s_busy;
+  assign sa_en  = d_req && d_sram && !e_busy && !dm_busy_d_q;
+  assign data_req_o   = d_req && !d_sram && !dm_d_sel && !s_busy && !dm_busy_d_q;
   assign data_we_o    = d_we; assign data_be_o = d_be; assign data_addr_o = d_addr; assign data_wdata_o = d_wdata;
-  assign d_gnt    = d_sram ? !e_busy : (data_gnt_i && !s_busy);
-  assign d_rvalid = s_pipe_q[0] || data_rvalid_i;
-  assign d_rdata  = s_pipe_q[0] ? sa_rdata : data_rdata_i;
+  assign d_gnt    = dm_d_sel ? dm_d_go : (d_sram ? !e_busy : (data_gnt_i && !s_busy)) && !dm_busy_d_q;
+  assign d_rvalid = s_pipe_q[0] || data_rvalid_i || dm_rsp_d_q;
+  assign d_rdata  = dm_rsp_d_q ? dm_rdata : s_pipe_q[0] ? sa_rdata : data_rdata_i;
   always_ff @(posedge clk_i or negedge rst_ni)
     if (!rst_ni) begin s_pipe_q <= '0; e_pend_q <= '0; end
     else begin
@@ -305,7 +378,7 @@ module soc_chip #(
     ld_s_q <= ALAT'({ld_sram && !ld_we_i, ld_s_q} >> 1);
   end
   assign ld_rvalid_o = ld_i_q || ld_s_q[0];
-  assign ld_rdata_o  = ld_i_q ? i_rdata : sa_rdata;
+  assign ld_rdata_o  = ld_i_q ? im_rdata_q : sa_rdata;
 `ifndef SYNTHESIS
   always_ff @(posedge clk_i) begin
     if (rst_ni && a_req && a_we && a_ext) $error("accelerator write to DDR address %h", a_addr);

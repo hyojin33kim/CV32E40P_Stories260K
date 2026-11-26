@@ -1,0 +1,39 @@
+loaded
+dmstatus (core in reset) = 0x000c3082
+FAIL: DMI read 0x04
+FAIL: DMI write 0x17
+FAIL: DMI read 0x04
+FAIL: DMI write 0x17
+FAIL: DMI read 0x04
+halt 0 at run cycle ~107288: dpc=0x00000000 dcsr=0x00000000 (cause 0) sp=0x00000000 halted_o=1
+FAIL: dpc 0x00000000 inside imem
+FAIL: dcsr.cause = 0 (3 = haltreq)
+FAIL: DMI write 0x17
+FAIL: DMI read 0x04
+FAIL: DMI write 0x04
+FAIL: DMI write 0x17
+FAIL: DMI write 0x17
+FAIL: DMI read 0x04
+FAIL: x5 write/read 0x00000000
+FAIL: DMI write 0x04
+FAIL: DMI write 0x17
+FAIL: DMI write 0x17
+FAIL: DMI read 0x04
+FAIL: resume 0: allresumeack
+FAIL: debug_halted_o cleared after resume
+FAIL: firmware reached DONE (run_cycles=3346952)
+DONE run_cycles=3346952 (ticks include JTAG time)
+  word 0x120000: got 0x00000000 ref 0x3d28e22e
+  word 0x120004: got 0x00000000 ref 0x3e73f5fd
+  word 0x120008: got 0x00000000 ref 0x3eb17018
+  word 0x12000c: got 0x00000000 ref 0xbfae9f4c
+  word 0x120010: got 0x00000000 ref 0x4121193b
+  word 0x120014: got 0x00000000 ref 0x3da1c25c
+  word 0x120018: got 0x00000000 ref 0xbfe63177
+  word 0x12001c: got 0x00000000 ref 0xc1818ba4
+  word 0x120020: got 0x00000000 ref 0xbf7296a2
+  word 0x120024: got 0x00000000 ref 0x3eb2304a
+  word 0x120028: got 0x00000000 ref 0xc040e9d3
+  word 0x12002c: got 0x00000000 ref 0xbf8e4e5e
+dump differs from the reference in 1381 words
+FAILED: 21 check failure(s)

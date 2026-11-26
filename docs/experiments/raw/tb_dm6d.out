@@ -1,0 +1,13 @@
+loaded
+dmstatus (core in reset) = 0x000c3082
+halt 0 at run cycle ~25424: dpc=0x010000e8 dcsr=0x400000c3 (cause 3) sp=0x001ffef0 halted_o=1
+halt 1 at run cycle ~47424: dpc=0x0100024e dcsr=0x400000c3 (cause 3) sp=0x001ffef0 halted_o=1
+halt 2 at run cycle ~69424: dpc=0x010000fe dcsr=0x400000c3 (cause 3) sp=0x001ffef0 halted_o=1
+halt 3 at run cycle ~91424: dpc=0x01000102 dcsr=0x400000c3 (cause 3) sp=0x001ffef0 halted_o=1
+halt 4 at run cycle ~113424: dpc=0x010000fe dcsr=0x400000c3 (cause 3) sp=0x001ffef0 halted_o=1
+halt 5 at run cycle ~135424: dpc=0x01000236 dcsr=0x400000c3 (cause 3) sp=0x001ffef0 halted_o=1
+DONE run_cycles=229256 (ticks include JTAG time)
+  word 0x1ad000: got 0x00035bb5 ref 0x00024326
+  word 0x1aff00: got 0x00035bb5 ref 0x00024326
+dump differs from the reference in 2 words
+PASSED: 0 check failure(s)

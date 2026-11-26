@@ -23,18 +23,20 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `chip_ddr6_synth.out` | 11-22 11:33 | 1571 | Vivado out-of-context synthesis/implementation timing summary of the DDR top (one file per attempt) | `66 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/ch` |
 | `chip_ddr7_synth.out` | 11-22 12:07 | 1571 | Vivado out-of-context synthesis/implementation timing summary of the DDR top (one file per attempt) | `66 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/ch` |
 | `chip_ddr_synth.out` | 11-21 21:06 | 1570 | Vivado out-of-context synthesis/implementation timing summary of the DDR top (one file per attempt) | `66 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/ch` |
+| `chip_dm.out` | 11-26 23:06 | 1597 | DM build 125 MHz synthesis and implementation summary printed by fpga/run_chip.sh, final RTL (11-26) | `84 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include', 'dbg/common_cells/incl` |
 | `chip_on125_synth.out` | 11-22 12:33 | 1572 | Vivado out-of-context timing summary of the on-chip top at 125 MHz (11-22) | `64 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/ch` |
 | `cpu_lat.txt` | 11-15 10:27 | 1769 | Vivado timing summary for CPU/FPU latency variants (11-15) | `60 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/cv` |
 | `cpu_lat2.txt` | 11-15 10:54 | 1778 | Vivado timing summary for CPU/FPU latency variants (11-15) | `60 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/cv` |
 | `cpu_pipe.txt` | 11-15 12:25 | 2025 | Vivado timing summary for CPU/FPU pipeline variants (11-15) | `== cpu_grt3` |
 | `cpu_pipe2.txt` | 11-15 12:45 | 1383 | Vivado timing summary for CPU/FPU pipeline variants (11-15) | `== DISTRIBUTED addmul 4 others 6` |
 | `cpu_rt.txt` | 11-15 11:45 | 1121 | Vivado timing summary (11-15) | `60 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/cv` |
+| `dm_chip_route_summary.txt` | 11-26 23:08 | 1840 | RISC-V Debug Module build at 125 MHz: routed timing summary (WNS +0.110 ns), utilization, synthesis LUT/register lines (11-26) | `Vivado 2026.1, out of context, chip_axi_top, 125 MHz (8.0 ns), DM=1 fpga/run_chip.sh DM_BUILD, final RTL (v3),` |
 | `drv_rtl.out` | 11-26 13:39 | 423 | (no description recorded) | `NS running 100000 cycles, 2 s, 60569 cycles/s` |
 | `exp2_q1.out` | 11-24 23:26 | 188 | exhaustive vfu_exp2 check, one quarter of the 2^32 input patterns per file (RTL vs opta/exp2q.h), with wall time (11-25) | `268435456 checked` |
 | `exp2_q2.out` | 11-25 10:36 | 188 | exhaustive vfu_exp2 check, one quarter of the 2^32 input patterns per file (RTL vs opta/exp2q.h), with wall time (11-25) | `268435456 checked` |
 | `exp2_q3.out` | 11-25 10:36 | 188 | exhaustive vfu_exp2 check, one quarter of the 2^32 input patterns per file (RTL vs opta/exp2q.h), with wall time (11-25) | `268435456 checked` |
 | `exp2_q4.out` | 11-25 10:36 | 188 | exhaustive vfu_exp2 check, one quarter of the 2^32 input patterns per file (RTL vs opta/exp2q.h), with wall time (11-25) | `268435456 checked` |
-| `fpfmt_repro.txt` | 11-26 18:20 | 672 | FMT lines of the minimal xsim reproduction fpga/xsim/tb_fpfmt.sv (variable index gives exp=7/bias=63 for every format) | `FMT f=0  A(var idx) exp=7 man=7 bias=63 / B exp=7 / C exp=8 / expected exp 8` |
+| `fpfmt_repro.txt` | 11-26 23:39 | 672 | FMT lines of the minimal xsim reproduction fpga/xsim/tb_fpfmt.sv (variable index gives exp=7/bias=63 for every format) | `FMT f=0  A(var idx) exp=7 man=7 bias=63 / B exp=7 / C exp=8 / expected exp 8` |
 | `fpu_after.out` | 11-22 21:01 | 339 | xsim FPU test (1,402 vectors) before the workaround: RTL 671/1402 (MUL 301, I2F 201, ADD 229 wrong), synthesized netlist 1402/1402 (11-22) | `1402 vectors -> /mnt/e/fpga_work/fpu_test` |
 | `fpu_net.out` | 11-22 20:58 | 313 | same experiment, netlist run repeated: RTL 671/1402, netlist 1402/1402 (11-22) | `1402 vectors -> /mnt/e/fpga_work/fpu_test` |
 | `fpu_workaround.out` | 11-22 21:17 | 221 | xsim FPU test with xsim_workaround.py: RTL 1402/1402, netlist 1402/1402 (11-22) | `1402 vectors -> /mnt/e/fpga_work/fpu_test` |
@@ -58,6 +60,7 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `r8attn.txt` | 11-13 23:58 | 787 | accelerator profile of a single step (JSON, 11-13/14) | `{` |
 | `r8attn2.txt` | 11-14 08:52 | 787 | accelerator profile of a single step (JSON, 11-13/14) | `{` |
 | `repro_dbgprobe.out` | 11-26 17:01 | 5513 | reproduce.sh output (build, regression, profiles, VFU test) | `=== build simulators (CPU, CPU profiler, CPU + accelerator SoC)` |
+| `repro_dm.out` | 11-26 23:36 | 5513 | reproduce.sh output (build, regression, profiles, VFU test) | `=== build simulators (CPU, CPU profiler, CPU + accelerator SoC)` |
 | `repro_quick.txt` | 11-14 08:02 | 2111 | reproduce.sh output (build, regression, profiles, VFU test) | `=== build simulators (CPU, CPU profiler, CPU+accelerator SoC)` |
 | `repro_quick2.txt` | 11-14 08:27 | 2111 | reproduce.sh output (build, regression, profiles, VFU test) | `=== build simulators (CPU, CPU profiler, CPU+accelerator SoC)` |
 | `repro_quick3.txt` | 11-14 19:30 | 3098 | reproduce.sh output (build, regression, profiles, VFU test) | `=== build simulators (CPU, CPU profiler, CPU + accelerator SoC)` |
@@ -70,6 +73,12 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `reproduce_quick5_merged.out` | 11-25 12:50 | 5558 | reproduce.sh quick output | `=== build simulators (CPU, CPU profiler, CPU + accelerator SoC)` |
 | `soc_v2.txt` | 11-15 13:18 | 1482 | Vivado timing summary of the SoC v2 variant (11-15) | `60 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include'] -> /mnt/e/fpga_work/so` |
 | `sweep_ddr.txt` | 11-14 18:51 | 4168 | DDR sweep ddr_full_opt (speedup vs ideal-memory SW baseline, OVH=4) (11-14) | `# DDR sweep `ddr_full_opt` (speedup vs ideal-memory SW baseline; OVH=4)` |
+| `tb_dm.out` | 11-26 20:26 | 1138 | Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26) | `loaded` |
+| `tb_dm6.out` | 11-26 20:27 | 824 | Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26) | `loaded` |
+| `tb_dm6b.out` | 11-26 20:46 | 824 | Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26) | `loaded` |
+| `tb_dm6c.out` | 11-26 20:55 | 824 | Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26) | `loaded` |
+| `tb_dm6d.out` | 11-26 21:36 | 824 | Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26) | `loaded` |
+| `tb_dm_mut.out` | 11-26 20:29 | 1356 | Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26) | `loaded` |
 | `tiled_verify.txt` | 11-22 20:54 | 738 | pre-tiled weights (CTRL bit2) GEMV test (11-22) | `soc_top build exit=0` |
 | `trace_compare.txt` | 11-23 12:32 | 160 | Verilator CPU data-port trace of 200k cycles: 20,133 events (11-23) | `trace build exit=0` |
 | `trace_compare2.txt` | 11-23 12:45 | 198 | first xsim-vs-Verilator trace compare: first difference was a store response (Verilator 0 vs xsim x), later shown to be a don't care (11-23) | `4562 .scratch/trv/trace_xsim.txt` |
@@ -85,7 +94,7 @@ first line is shown instead, do not trust a guess. Files over 200 KB (traces, me
 | `xsim_fix.out` | 11-23 12:32 | 1767 | full-chip xsim with the FPU workaround only: run was stopped after about 15 h without reaching DONE (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_full.out` | 11-23 13:58 | 828 | full-chip xsim with both workarounds: DONE run_cycles=157433, dump equal to Verilator (sim.cpp 157437) (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_full_after_tbnet.out` | 11-24 23:18 | 828 | full-chip RTL xsim rerun after the tb_chip.sv changes for the netlist: DONE run_cycles=157433, dump equal to Verilator (11-24) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
-| `xsim_hang_window_trace.txt` | 11-26 18:20 | 20146 | xsim trace of cycles 9900..10300: instruction fetch (IF), VFU state (VFU) and the x_req term probe (XSPROBE); shows x_req=0 while every term is 1 | `9909 IF a=01000ec8` |
+| `xsim_hang_window_trace.txt` | 11-26 23:39 | 20146 | xsim trace of cycles 9900..10300: instruction fetch (IF), VFU state (VFU) and the x_req term probe (XSPROBE); shows x_req=0 while every term is 1 | `9909 IF a=01000ec8` |
 | `xsim_net_license_error.txt` | 11-24 23:13 | 300 | the xsim error that stops the post-synthesis full-chip simulation: BASIC license, 107,091 instances > 50,000 allowed (11-24) | `ERROR: The current Vivado Simulator license tier you have, BASIC, does not meet the requirement to run the num` |
 | `xsim_pc.out` | 11-23 12:48 | 185 | run that produced the instruction fetch trace (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |
 | `xsim_probe.out` | 11-23 13:48 | 185 | run that produced the XSPROBE lines (x_req terms) (11-23) | `FIXCLK: 15 always blocks reclocked to forever_cpuclk` |

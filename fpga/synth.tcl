@@ -6,6 +6,7 @@
 # implementation with place/route -directive Explore and phys_opt_design (AggressiveExplore)
 # after place and after route; the token NETLIST writes the post-synthesis functional netlist netlist_<tag>.v (Verilog,
 # write_verilog -mode funcsim, right after synth_design; used by fpga/xsim for the post-synthesis full-chip simulation).
+# the token DM_BUILD defines DM_BUILD (chip_axi_top then instantiates soc_chip_dm; use with DM=1 fpga/prepare.py).
 # Reports: reports_<tag>/.
 set top    [lindex $argv 0]
 set period [lindex $argv 1]
@@ -22,6 +23,7 @@ foreach g $gens {
   if {$g eq "RETIME"} { lappend gopt -global_retiming on
   } elseif {$g eq "EXPLORE"} { set explore 1
   } elseif {$g eq "NETLIST"} { set netlist 1
+  } elseif {$g eq "DM_BUILD"} { lappend gopt -verilog_define DM_BUILD
   } else { lappend gopt -generic [string map {: =} $g] }
 }
 synth_design -top $top -part $part -mode out_of_context -include_dirs $inc_dirs -flatten_hierarchy rebuilt {*}$gopt

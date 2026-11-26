@@ -150,6 +150,15 @@ EXPERIMENTS = [
   caveat='A와 C가 "멈춤"이라는 것은 600,000 cycle(정상의 약 3.8배)까지 DONE이 없었다는 뜻이며, 무한히 멈춘다는 증명은 아니다. 한 이미지(image_1)에서만 했다. B의 틀린 5,718바이트가 어떤 텐서인지는 분석하지 않았다.',
   impact='V-G7 "통과". D3(rd_ok RTL 변경)의 근거 강화: rd_ok 문제는 xsim에서 실제로 멈춤을 만든다(Verilator에는 영향 없음). 도구 문제 발견: 아래 정정 참조.',
   raw='vg7.out, vg7_a_unbounded.out'),
+ dict(id='E14', date='2026-11-26', topic='RISC-V Debug Module + JTAG: 시뮬레이션과 125 MHz 합성 (V-D1, V-D2)',
+  purpose='코어의 디버그 기능(halt, 레지스터 접근, resume)을 JTAG으로 쓸 수 있게 riscv-dbg를 붙이고, 기본 동작을 바꾸지 않으면서 125 MHz 타이밍을 유지하는지 확인한다.',
+  setup='dbg/(riscv-dbg 643607e, common_cells v1.24.0 일부, tc_clk), acc/soc_chip.sv(DM_EN, dm_* 버스), dbg/soc_chip_dm.sv, acc/chip_axi_top.sv(DM_BUILD). 시험: dbg/tb_dm(JTAG 핀을 비트 단위로 구동, image_1, 6번 halt와 resume). 합성: DM=1 PERIOD=8.0 fpga/run_chip.sh <dir> DM_BUILD (합성과 배치배선, Vivado 2026.1).',
+  result='시뮬레이션: IDCODE 0x00000DB3, DTMCS version 1 abits 7, dmstatus.version 2; 6번 halt(run cycle 약 25k~135k, 매번 다른 dpc), dcsr.cause 3, abstract 레지스터 읽기/쓰기, resume, DONE까지 실행, 덤프는 cycle 워드 2개(0x1aff00, 0x1ad000)만 다름; 변이 시험(데이터 응답 경로 고장)은 실패로 검출. 기본 빌드(DM_EN=0): image_1/128/512가 157,437/214,257/382,970 cycle, 덤프 동일. 합성 반복(모두 DM=1, 125 MHz): v1(영역 판별이 grant와 DM 앞 경로에 직결): 합성 단계 WNS -1.651 ns, 중단. v2a(DM 요청을 한 단계 레지스터에 담음, imem 읽기 enable에도 영역 판별): 합성 단계 -0.992 ns, 중단. v2b(imem 읽기 enable의 판별 제거): 합성 단계 -0.468 ns, 배치배선 WNS -2.579 ns(TNS -2105, 실패 끝점 3,785, 최악 경로 8.19 ns: 코어 트리거 일치 레지스터에서 dm_busy_i_q의 D까지). v3(명령어 grant가 레지스터 값만으로 결정, 명령어와 데이터 stage 분리): 합성 단계 -0.468 ~ -0.589 ns, 배치배선 WNS +0.110 ns, TNS 0, 실패 끝점 0, WHS +0.012 ns, LUT 60,456, 레지스터 21,932, BRAM 7, URAM 64, DSP 93.',
+  observation='v1은 코어의 트리거 일치 레지스터에서 명령어 주소, DM 영역 판별을 거쳐 DM 내부로 가는 28단 조합 경로가 임계가 되었다. DM 앞에 레지스터를 넣어도(v2b) 영역 판별이 명령어 grant에 남아 있으면 배치배선이 -2.579 ns로 실패했고, grant를 레지스터 값만으로 정하자(v3) 통과했다. imem 읽기 enable에서 영역 판별을 빼는 것만으로도 합성 단계 WNS가 -1.651에서 -0.992 ns로 개선되었다(v2 중간 단계).',
+  opinion='125 MHz 유지가 가능하다. 기준(DM 없음, V-M1)의 WNS는 +0.249 ns였으므로 DM이 여유를 약 0.14 ns 줄였다. 단 두 실행은 같은 흐름이지만 별개의 배치배선이며, 배치배선 결과의 변동이 0.1 ns 정도일 수 있어(측정한 것은 아니고 추정) 이 차이를 DM의 비용이라고 단정하지는 않는다. 확신: 타이밍 통과는 높음(보고서), DM의 비용 크기는 낮음.',
+  caveat='BSCANE2 변형(실제 FPGA JTAG 사슬)은 합성만 했고 시뮬레이션하지 못했다(Verilator에 BSCANE2 없음). 보드에서 OpenOCD로 붙여 본 적 없음(보드 JTAG 사슬의 위치, IR 코드 미확인). 하드웨어 breakpoint(트리거), 단일 스텝, ebreak는 시험하지 않았다. SBA는 연결하지 않아 실행 중 메모리 읽기 불가. 이 변경 후 reproduce.sh quick은 42/42 OK(약 28분, raw/repro_dm.out). Vivado가 같은 RTL(v3)에서 배치배선 포함 실행을 두 번 합성 도중 비정상 종료(EXCEPTION_ACCESS_VIOLATION, Start Timing Optimization 단계)했고 세 번째 실행과 합성만 한 실행은 정상이었다. 원인 미확인(간헐적 도구 오류로 추정).',
+  impact='V-D1(디버그 모듈 시뮬레이션) 통과, V-D2(125 MHz 합성) 통과. 기본 흐름에는 영향 없음(DM_EN=0, DM_BUILD 없음). 정식 비트스트림에 넣을지는 별도 결정(면적 +약 1,200 LUT는 합성 단계 값, 하드웨어 breakpoint는 임계 경로와 관련).',
+  raw='dm_chip_route_summary.txt'),
 ]
 
 # (date, what was said, what was found, where recorded)
@@ -162,6 +171,7 @@ CORRECTIONS = [
  ('11-23', 'axi_ext_rd 시험 실행 알림 "completed"', '시험이 돌지 못함: 빌드 폴더가 없어 빌드 실패였다. 출력을 확인하지 않았다면 통과로 오해할 뻔함', 'E07'),
  ('11-23', 'TD=1 실패는 TD 범위(2의 거듭제곱) 문제라는 가설', '지지됨: TD=1, 3, 6 모두 응답이 밀려 실패. 단, 내부 원인(포인터 폭)은 미확인', 'E07'),
  ('11-25', 'V-G7 첫 실행(약 3시간 헛돎)에서 XSIM_PLUS="MAXCYC=600000"이 적용되었다고 가정', '틀림: ~/bin/vivado가 cmd.exe로 Windows vivado를 실행하고 WSLENV가 비어 있어 환경변수가 전달되지 않는다. 상한이 없는 채 약 3시간(8,500만 cycle) 돌았다. 고침: run_xsim.sh가 plusargs.txt로 전달. 또한 장시간 실행에 시계 시간 상한과 실시간 출력이 없었고, 예상 시간(20분)에 진행 확인을 하지 않았다', 'E13, 규칙 R2'),
+ ('11-26', 'DM 합성 대기 작업이 크래시를 감지하지 못함', 'Vivado가 합성 도중 비정상 종료했는데 대기 조건이 정상 종료와 프로세스 소멸만 보아 약 50분을 허비했다. 크래시 파일(hs_err), 로그 갱신 정지, 종료를 모두 감지하도록 고침(R13)', 'E14, 규칙 R13'),
 ]
 
 # experiments before 11-22: details are in these documents / raw files, not re-summarized here

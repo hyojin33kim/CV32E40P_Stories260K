@@ -48,6 +48,14 @@ shutil.copy(W / 'fpga' / 'cv32e40p_clock_gate_fpga.sv', D / 'fpga')
 shutil.copy(W / 'fpga' / 'synth.tcl', D)
 files += ['fpga/cv32e40p_clock_gate_fpga.sv', 'acc/gemv_acc.sv', 'acc/vfu_exp2.sv', 'acc/vfu_lane.sv', 'acc/vfu.sv', 'acc/soc_top.sv', 'acc/sram_dp.sv', 'acc/soc_chip.sv', 'acc/chip_axi_top.sv']
 files += ['acc/' + f for f in ACC_FILES if f in ('axi_ext_rd.sv', 'chip_axi_ddr_top.sv')]
+if os.environ.get('DM', '0') == '1':   # RISC-V Debug Module + BSCANE2 JTAG (dbg/, docs/DEBUG_MODULE.md); synth.tcl needs the token DM_BUILD
+    if (D / 'dbg').exists(): shutil.rmtree(D / 'dbg')
+    shutil.copytree(W / 'dbg', D / 'dbg')
+    for line in (W / 'dbg' / 'dbg_files.f').read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith('//'): continue
+        if line.startswith('+incdir+'): incs.append(line[len('+incdir+'):]); continue
+        files.append(line.replace('dmi_jtag_tap.sv', 'dmi_bscane_tap.sv'))   # the FPGA's own JTAG chain instead of a TAP on pins
 for f in files:
     assert (D / f).exists(), f
 with open(D / 'files.tcl', 'w') as o:

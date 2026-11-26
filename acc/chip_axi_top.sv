@@ -55,7 +55,8 @@ module chip_axi_top #(
   logic        run_q, done_q;
   logic [31:0] done_v_q, cyc_q;
   logic        core_rst_n;
-  assign core_rst_n = rst_ni && run_q;
+  logic        ndmreset;                 // reset request of the Debug Module (DM_BUILD), 0 otherwise
+  assign core_rst_n = rst_ni && run_q && !ndmreset;
   assign done_o = done_q;
 
   // ---------------------------------------------------------------- chip
@@ -70,6 +71,27 @@ module chip_axi_top #(
   logic [31:0] dbg_iaddr, dbg_daddr;
   logic [31:0] ld_addr, ld_wdata, ld_rdata;
 
+`ifdef DM_BUILD
+  // RISC-V debug (docs/DEBUG_MODULE.md): soc_chip_dm = soc_chip + Debug Module + JTAG. The Debug Module stays on the system reset (rst_ni) while
+  // the core is held in reset until RUN. With dmi_bscane_tap.sv the JTAG pins are unused (the BSCANE2 primitives of the FPGA JTAG chain serve it).
+  logic dbg_halted;
+  soc_chip_dm #(.ACC_LANES(ACC_LANES), .VFU_LANES(VFU_LANES), .ACC_RUN(ACC_RUN), .ACC_FDEPTH(ACC_FDEPTH),
+             .CPU_FPU_LAT(CPU_FPU_LAT), .ACC_FPU_LAT(ACC_FPU_LAT), .VFU_FPU_LAT(VFU_FPU_LAT),
+             .SRAM_RLAT(SRAM_RLAT), .SRAM_RLAT_B(SRAM_RLAT_B), .SRAM_CASCADE(SRAM_CASCADE), .SRAM_BREG(SRAM_BREG), .SRAM_AREG(SRAM_AREG), .WEIGHTS_ONCHIP(1'b1)) chip_i (
+      .clk_i, .rst_ni(core_rst_n), .dm_rst_ni(rst_ni), .fetch_enable_i(1'b1),
+      .ld_req_i(ld_req), .ld_we_i(ld_we), .ld_addr_i(ld_addr), .ld_wdata_i(ld_wdata),
+      .ld_rdata_o(ld_rdata), .ld_rvalid_o(ld_rvalid),
+      .data_req_o(d_req), .data_gnt_i(d_gnt), .data_rvalid_i(d_rvalid), .data_we_o(d_we),
+      .data_be_o(d_be), .data_addr_o(d_addr), .data_wdata_o(d_wdata), .data_rdata_i(32'h0),
+      .acc_req_o(a_req), .acc_we_o(a_we), .acc_addr_o(a_addr), .acc_wdata_o(a_wdata),
+      .acc_gnt_i(1'b1), .acc_rvalid_i(1'b0), .acc_rdata_i('0),
+      .dbg_instr_req_o(dbg_ireq), .dbg_instr_addr_o(dbg_iaddr), .dbg_data_req_o(dbg_dreq), .dbg_data_we_o(dbg_dwe), .dbg_data_addr_o(dbg_daddr),
+      .perf_gemv_busy_o(pf_gemv), .perf_vfu_busy_o(pf_vfu), .perf_acc_stall_o(pf_stall), .perf_acc_rd_o(pf_rd),
+      .perf_tq_full_o(pf_tq), .perf_eq_max_o(pf_eq),
+      .jtag_tck_i(1'b0), .jtag_tms_i(1'b0), .jtag_trst_ni(1'b1), .jtag_tdi_i(1'b0), .jtag_tdo_o(),
+      .ndmreset_o(ndmreset), .debug_halted_o(dbg_halted));
+`else
+  assign ndmreset = 1'b0;
   soc_chip #(.ACC_LANES(ACC_LANES), .VFU_LANES(VFU_LANES), .ACC_RUN(ACC_RUN), .ACC_FDEPTH(ACC_FDEPTH),
              .CPU_FPU_LAT(CPU_FPU_LAT), .ACC_FPU_LAT(ACC_FPU_LAT), .VFU_FPU_LAT(VFU_FPU_LAT),
              .SRAM_RLAT(SRAM_RLAT), .SRAM_RLAT_B(SRAM_RLAT_B), .SRAM_CASCADE(SRAM_CASCADE), .SRAM_BREG(SRAM_BREG), .SRAM_AREG(SRAM_AREG), .WEIGHTS_ONCHIP(1'b1)) chip_i (
@@ -82,21 +104,10 @@ module chip_axi_top #(
       .acc_gnt_i(1'b1), .acc_rvalid_i(1'b0), .acc_rdata_i('0),
       .dbg_instr_req_o(dbg_ireq), .dbg_instr_addr_o(dbg_iaddr), .dbg_data_req_o(dbg_dreq), .dbg_data_we_o(dbg_dwe), .dbg_data_addr_o(dbg_daddr),
       .perf_gemv_busy_o(pf_gemv), .perf_vfu_busy_o(pf_vfu), .perf_acc_stall_o(pf_stall), .perf_acc_rd_o(pf_rd),
-      .perf_tq_full_o(pf_tq), .perf_eq_max_o(pf_eq));
-
-  // ILA probes (DBG_PROBE = 1 only). Without the parameter these nets only feed unconnected logic and synthesis removes them, as before.
-  if (DBG_PROBE) begin : g_dbg
-    (* mark_debug = "true" *) logic        pr_ireq;     assign pr_ireq  = dbg_ireq;
-    (* mark_debug = "true" *) logic [31:0] pr_iaddr;    assign pr_iaddr = dbg_iaddr;      // PC being fetched
-    (* mark_debug = "true" *) logic        pr_dreq;     assign pr_dreq  = dbg_dreq;
-    (* mark_debug = "true" *) logic        pr_dwe;      assign pr_dwe   = dbg_dwe;
-    (* mark_debug = "true" *) logic [31:0] pr_daddr;    assign pr_daddr = dbg_daddr;      // CPU data port address (0x2000_0000 write = DONE)
-    (* mark_debug = "true" *) logic        pr_areq;     assign pr_areq  = a_req;          // accelerator memory port
-    (* mark_debug = "true" *) logic        pr_awe;      assign pr_awe   = a_we;
-    (* mark_debug = "true" *) logic [31:0] pr_aaddr;    assign pr_aaddr = a_addr;
-    (* mark_debug = "true" *) logic        pr_run;      assign pr_run   = run_q;
-    (* mark_debug = "true" *) logic        pr_done;     assign pr_done  = done_q;
-  end
+      .perf_tq_full_o(pf_tq), .perf_eq_max_o(pf_eq),
+      .dm_debug_req_i(1'b0), .dm_slave_req_o(), .dm_slave_we_o(), .dm_slave_addr_o(), .dm_slave_be_o(), .dm_slave_wdata_o(),
+      .dm_slave_rdata_i('0), .debug_halted_o());
+`endif
 
   // external CPU accesses: answered next cycle; a write to 0x2000_0000 is DONE
   assign d_gnt = 1'b1;

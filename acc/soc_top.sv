@@ -29,6 +29,13 @@ module soc_top #(
     input logic [31:0] boot_addr_i,
     input logic [31:0] mtvec_addr_i,
     input logic fetch_enable_i,
+    // RISC-V debug interface of the core (soc_chip connects the Debug Module when DM_EN; the cycle simulators leave the inputs at 0)
+    input  logic        debug_req_i,
+    input  logic [31:0] dm_halt_addr_i,
+    input  logic [31:0] dm_exception_addr_i,
+    output logic        debug_havereset_o,
+    output logic        debug_running_o,
+    output logic        debug_halted_o,
 
     output logic        instr_req_o,
     input  logic        instr_gnt_i,
@@ -75,12 +82,12 @@ module soc_top #(
   cv32e40p_top #(.FPU(1), .FPU_ADDMUL_LAT(CPU_FPU_LAT), .FPU_OTHERS_LAT(CPU_FPU_LAT)) cpu_i (
       .clk_i, .rst_ni, .pulp_clock_en_i, .scan_cg_en_i,
       .boot_addr_i, .mtvec_addr_i,
-      .dm_halt_addr_i(32'h0), .hart_id_i(32'h0), .dm_exception_addr_i(32'h0),
+      .dm_halt_addr_i, .hart_id_i(32'h0), .dm_exception_addr_i,
       .instr_req_o, .instr_gnt_i, .instr_rvalid_i, .instr_addr_o, .instr_rdata_i,
       .data_req_o(c_req), .data_gnt_i(c_gnt), .data_rvalid_i(c_rvalid), .data_we_o(c_we),
       .data_be_o(c_be), .data_addr_o(c_addr), .data_wdata_o(c_wdata), .data_rdata_i(c_rdata),
       .irq_i(32'h0), .irq_ack_o(), .irq_id_o(),
-      .debug_req_i(1'b0), .debug_havereset_o(), .debug_running_o(), .debug_halted_o(),
+      .debug_req_i, .debug_havereset_o, .debug_running_o, .debug_halted_o,
       .fetch_enable_i, .core_sleep_o()
   );
 
