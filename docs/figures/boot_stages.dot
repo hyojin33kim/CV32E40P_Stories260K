@@ -1,0 +1,23 @@
+// Key stages from reset release to DONE (image_1). Numbers from docs/BOOT_WALKTHROUGH.md. Render: dot -Tpng -Gdpi=120 docs/figures/boot_stages.dot -o docs/figures/boot_stages.png (also -Tsvg)
+digraph stages {
+  rankdir=TB; nodesep=0.25; ranksep=0.42; newrank=true;
+  graph [fontname="Helvetica", fontsize=14, labelloc=t, label="From reset release to DONE: the key stages (image_1, cycle 0 = reset release, waveform time = 2 x cycle + 10)\nblue = only the CPU works     green = an accelerator works too     grey/orange = start and end"];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", color="#555555", margin="0.14,0.07"];
+  edge  [color="#555555", arrowsize=0.8];
+
+  S0 [fillcolor="#e6e6e6", label=<<B>0  Reset</B>   time 0..10<BR/>the core is held in reset<BR/><FONT COLOR="#1a4f9c">watch: rst_ni = 0, clk_i runs</FONT>>];
+  S1 [fillcolor="#e6e6e6", label=<<B>1  Reset released</B>   cycle 0<BR/>rst_ni goes 0 to 1; first instruction request at cycle 2, address 0x01000080<BR/><FONT COLOR="#1a4f9c">watch: rst_ni, i_req, i_addr</FONT>>];
+  S2 [fillcolor="#d6e4f7", label=<<B>2  Start-up code (_start)</B>   cycles 2..12<BR/>set the stack, allow floating point, choose the memory range to clear<BR/><FONT COLOR="#1a4f9c">watch: i_addr = 0x01000080, 84, 88 ... (+4 each cycle)</FONT>>];
+  S3 [fillcolor="#d6e4f7", label=<<B>3  Clear variable memory</B>   cycles 13..253<BR/>a 6-cycle loop writes 0 to 39 words (first write cycle 17, last 245)<BR/><FONT COLOR="#1a4f9c">watch: i_addr repeats 0x0100009c..a8;  d_req, d_we = 1, d_addr from 0x1b4174, +4 each time</FONT>>];
+  S4 [fillcolor="#d6e4f7", label=<<B>4  Call boot()</B>   cycles 254..258<BR/>the return address 0x010000b6 is saved on the stack (cycle 265, address 0x1ffffc)<BR/><FONT COLOR="#1a4f9c">watch: i_addr jumps to 0x01001510;  d_addr = 0x1ffffc</FONT>>];
+  S5 [fillcolor="#d6e4f7", label=<<B>5  boot(): set-up and copy</B>   cycles 259..1897<BR/>sets model and memory addresses, copies 704 RMSNorm weights 0xfd400 to 0x1a6000<BR/><FONT COLOR="#1a4f9c">watch: d_addr alternates read (0xfd400s) and write (0x1a6000s), 704 writes in cycles 322..1830</FONT>>];
+  S6 [fillcolor="#d6e4f7", label=<<B>6  forward() starts</B>   cycles 1898..2309<BR/>reads the embedding of the input token<BR/><FONT COLOR="#1a4f9c">watch: i_addr in 0x01000a1c ..</FONT>>];
+  S7 [fillcolor="#d6e4f7", label=<<B>7  rmsnorm() on the CPU</B>   cycles 2310..3910 (1,601 cycles)<BR/>the CPU normalizes the vector; accelerators idle<BR/><FONT COLOR="#1a4f9c">watch: i_addr in 0x01000154 ..;  g_busy = 0</FONT>>];
+  S8 [fillcolor="#d9efd9", label=<<B>8  First GEMV (matrix times vector)</B>   starts at cycle 3965 (time 7940)<BR/>the CPU writes addresses and sizes, then the start command; then it polls the status register in a short loop<BR/><FONT COLOR="#1a4f9c">watch: g_busy goes to 1;  acc_i.state_q changes (0, 1, 3, 4, 5);  i_addr loops in 0x010000b8 ..</FONT>>];
+  S9 [fillcolor="#d9efd9", label=<<B>9  Layers 1..5 repeat</B>   GEMV busy again at cycles 5292, 6073, ...<BR/>rmsnorm, GEMV (q, k, v), attention (GEMV + VFU softmax), GEMV (wo), rmsnorm, FFN (GEMV + VFU silu), GEMV<BR/><FONT COLOR="#1a4f9c">watch: g_busy and vfu_busy pulses (vfu_busy does not rise in the first 8,000 cycles)</FONT>>];
+  S10 [fillcolor="#ffe7c7", label=<<B>10  Finish</B>   DONE write at cycle 157,432<BR/>final rmsnorm and classifier, pick the largest of 512 outputs, store the result and the forward cycles, write 1 to 0x2000_0000<BR/><FONT COLOR="#1a4f9c">watch: d_addr = 0x20000000, d_we = 1, d_wdata = 1</FONT>>];
+  S0 -> S1 -> S2 -> S3 -> S4 -> S5 -> S6 -> S7 -> S8 -> S9 -> S10;
+
+  NOTE [shape=note, fillcolor="#fff8dc", style="filled", label="The simulator prints DONE cycles=157437 because it counts from simulation start (5 reset cycles included: 157,432 + 5).\nThe waveform file /mnt/e/fpga_work/wave/boot.vcd covers cycles 0..8,000 (stages 0 to 9, the first three GEMV starts).\nStage text for the code (boot, forward, rmsnorm) comes from gen/firmware_gen.c and fw.dis; the prefetch and polling-loop readings are interpretations of the address pattern."];
+  S10 -> NOTE [style=invis];
+}
