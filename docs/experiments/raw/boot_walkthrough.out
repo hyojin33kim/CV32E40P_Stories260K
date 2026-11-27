@@ -114,5 +114,5 @@ reset released at time 10 (cycle 0); the clock period is 2 time units
   cycle    47  write 0x001b4188  data 0x00000000
   cycle    53  write 0x001b418c  data 0x00000000
   cycle    59  write 0x001b4190  data 0x00000000
-g_busy: first rises at cycle 3965, cycle 5292, cycle 6073
-vfu_busy: first rises at never in this window
+g_busy: first rises (first cycle seen high) at cycle 3966, cycle 5293, cycle 6074
+vfu_busy: first rises (first cycle seen high) at never in this window

@@ -128,9 +128,9 @@
 <!-- S8 -->
 <g id="node9" class="node">
 <title>S8</title>
-<path fill="#d9efd9" stroke="#555555" d="M696,-253C696,-253 174,-253 174,-253 168,-253 162,-247 162,-241 162,-241 162,-225 162,-225 162,-219 168,-213 174,-213 174,-213 696,-213 696,-213 702,-213 708,-219 708,-225 708,-225 708,-241 708,-241 708,-247 702,-253 696,-253"/>
-<text text-anchor="start" x="251" y="-241" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">8 &#160;First GEMV (matrix times vector)</text>
-<text text-anchor="start" x="453" y="-241" font-family="Helvetica,sans-Serif" font-size="10.00"> &#160;&#160;starts at cycle 3965 (time 7940)</text>
+<path fill="#d9efd9" stroke="#555555" d="M705.5,-253C705.5,-253 164.5,-253 164.5,-253 158.5,-253 152.5,-247 152.5,-241 152.5,-241 152.5,-225 152.5,-225 152.5,-219 158.5,-213 164.5,-213 164.5,-213 705.5,-213 705.5,-213 711.5,-213 717.5,-219 717.5,-225 717.5,-225 717.5,-241 717.5,-241 717.5,-247 711.5,-253 705.5,-253"/>
+<text text-anchor="start" x="162.5" y="-241" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">8 &#160;First GEMV (matrix times vector)</text>
+<text text-anchor="start" x="364.5" y="-241" font-family="Helvetica,sans-Serif" font-size="10.00"> &#160;&#160;g_busy is high from cycle 3966 (the edge is at waveform time 7941)</text>
 <text text-anchor="start" x="172" y="-231" font-family="Helvetica,sans-Serif" font-size="10.00">the CPU writes addresses and sizes, then the start command; then it polls the status register in a short loop</text>
 <text text-anchor="start" x="209.5" y="-221" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#1a4f9c">watch: g_busy goes to 1; &#160;acc_i.state_q changes (0, 1, 3, 4, 5); &#160;i_addr loops in 0x010000b8 ..</text>
 </g>
@@ -144,8 +144,8 @@
 <g id="node10" class="node">
 <title>S9</title>
 <path fill="#d9efd9" stroke="#555555" d="M709.5,-183C709.5,-183 160.5,-183 160.5,-183 154.5,-183 148.5,-177 148.5,-171 148.5,-171 148.5,-155 148.5,-155 148.5,-149 154.5,-143 160.5,-143 160.5,-143 709.5,-143 709.5,-143 715.5,-143 721.5,-149 721.5,-155 721.5,-155 721.5,-171 721.5,-171 721.5,-177 715.5,-183 709.5,-183"/>
-<text text-anchor="start" x="269" y="-171" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">9 &#160;Layers 1..5 repeat</text>
-<text text-anchor="start" x="387" y="-171" font-family="Helvetica,sans-Serif" font-size="10.00"> &#160;&#160;GEMV busy again at cycles 5292, 6073, ...</text>
+<text text-anchor="start" x="262.5" y="-171" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="10.00">9 &#160;Layers 1..5 repeat</text>
+<text text-anchor="start" x="380.5" y="-171" font-family="Helvetica,sans-Serif" font-size="10.00"> &#160;&#160;GEMV busy again from cycles 5293, 6074, ...</text>
 <text text-anchor="start" x="158.5" y="-161" font-family="Helvetica,sans-Serif" font-size="10.00">rmsnorm, GEMV (q, k, v), attention (GEMV + VFU softmax), GEMV (wo), rmsnorm, FFN (GEMV + VFU silu), GEMV</text>
 <text text-anchor="start" x="230" y="-151" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#1a4f9c">watch: g_busy and vfu_busy pulses (vfu_busy does not rise in the first 8,000 cycles)</text>
 </g>

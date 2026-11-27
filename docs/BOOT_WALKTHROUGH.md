@@ -4,7 +4,7 @@ RTL을 처음 보는 사람이 파형에서 "reset 해제부터 어떤 순서로
 표기: **측정** = 시뮬레이션 파형이나 추적에서 직접 읽음, **소스** = `gen/firmware_gen.c`나 `fw.dis`에서 읽음, **추정** = 위 둘에서 미루어 본 해석.
 
 ## 1. 먼저 알아둘 말
-- **cycle**: 클럭 한 주기. 시뮬레이터에서 시간 2단위가 1 cycle이다. reset이 풀리는 순간을 cycle 0으로 센다(파형 시간 = 2 × cycle + 10).
+- **cycle**: 클럭 한 주기. 시뮬레이터에서 시간 2단위가 1 cycle이다. reset이 풀리는 순간을 cycle 0으로 센다(파형 시간 = 2 × cycle + 10). 값은 각 cycle의 중간(클럭이 낮은 시점)에서 읽는다. 클럭 상승 직후에 바뀌는 신호는 표시 cycle보다 시간이 1 크다(예: `g_busy`는 시간 7941에 바뀌고 cycle 3966부터 1로 보인다).
 - **reset(`rst_ni`)**: 0이면 코어가 멈춰 있고 1이 되면 시작한다. 이 시뮬레이션에서는 처음 5 cycle(시간 0~10) 동안 0이다.
 - **fetch(명령어 가져오기)**: 코어가 `i_req=1`과 `i_addr`(주소)로 명령어 메모리(imem, 주소 0x0100_0000부터)에 요청하면 다음 cycle에 `i_rvalid`와 `i_rdata`로 명령어가 온다.
 - **데이터 포트(`d_*`)**: 코어가 데이터를 읽고 쓸 때 쓰는 포트. `d_we=1`이 쓰기, `d_addr`가 주소.
@@ -22,9 +22,9 @@ RTL을 처음 보는 사람이 파형에서 "reset 해제부터 어떤 순서로
 | 5 | 259~1897 | **`boot()`**: 모델 설정과 가중치, 작업 메모리 주소를 정하고, RMSNorm 가중치 704개를 0xfd400에서 SRAM 0x1a6000으로 복사 | `d_addr`이 읽기(0xfd400대)와 쓰기(0x1a6000대)를 번갈아 함. 쓰기 704번이 cycle 322~1830 | 측정(복사 704회), 소스(`RMS_SRAM`) |
 | 6 | 1898~2309 | `forward()` 시작: 입력 토큰의 임베딩을 읽음 | `i_addr`이 `forward` 영역(0x01000a1c~) | 측정, 소스 |
 | 7 | 2310~3910 | **`rmsnorm()`**: CPU가 직접 계산(1,601 cycle) | `i_addr`이 `rmsnorm` 영역(0x01000154~), 가속기는 쉼(`g_busy`=0) | 측정 |
-| 8 | 3911~3964 | `forward()`가 첫 GEMV 준비, `acc_gemv()` 호출: 가속기 레지스터에 주소와 크기를 쓰고 시작 명령을 씀 | `i_addr`이 `acc_gemv` 영역(0x010000b8~) | 측정, 소스 |
-| 9 | 3965~ | **첫 GEMV 동작**. 코어는 상태 레지스터를 반복해서 읽으며 끝나기를 기다림(대기 루프) | `g_busy`가 3965에서 1(시간 7940). `acc_i.state_q`가 값을 바꿈. `i_addr`은 짧은 루프를 돔 | 측정 |
-| 10 | 이후 | 층(layer) 5개에서 `rmsnorm` → GEMV(q, k, v) → attention(GEMV, softmax는 VFU) → GEMV(wo) → `rmsnorm` → FFN(GEMV, silu는 VFU) → GEMV 순으로 반복 | `g_busy`가 3965, 5292, 6073 … 에서 반복 상승. `vfu_busy`는 처음 8,000 cycle 안에서는 한 번도 올라가지 않음 | 측정(g_busy), 소스(순서: `forward()`의 호출 순서) |
+| 8 | 3911~3965 | `forward()`가 첫 GEMV 준비, `acc_gemv()` 호출: 가속기 레지스터에 주소와 크기를 쓰고 시작 명령을 씀 | `i_addr`이 `acc_gemv` 영역(0x010000b8~) | 측정, 소스 |
+| 9 | 3966~ | **첫 GEMV 동작**. 코어는 상태 레지스터를 반복해서 읽으며 끝나기를 기다림(대기 루프) | `g_busy`가 cycle 3966부터 1(값이 바뀌는 순간은 시간 7941). `acc_i.state_q`가 값을 바꿈. `i_addr`은 짧은 루프를 돔 | 측정 |
+| 10 | 이후 | 층(layer) 5개에서 `rmsnorm` → GEMV(q, k, v) → attention(GEMV, softmax는 VFU) → GEMV(wo) → `rmsnorm` → FFN(GEMV, silu는 VFU) → GEMV 순으로 반복 | `g_busy`가 cycle 3966, 5293, 6074 … 부터 반복해서 1. `vfu_busy`는 처음 8,000 cycle 안에서는 한 번도 올라가지 않음 | 측정(g_busy), 소스(순서: `forward()`의 호출 순서) |
 | 11 | 끝 | 마지막 `rmsnorm`과 분류 → 512개 출력에서 최댓값(argmax)을 고름 → 결과와 걸린 cycle을 메모리에 씀 → DONE | `d_addr`=0x20000000, `d_we`=1, 데이터 1이 cycle 157,432에 나타남 | 측정 |
 
 참고: 시뮬레이터가 출력하는 `DONE cycles=157437`은 시뮬레이션 시작부터 센 값이라 reset 5 cycle이 더해져 있고(157,432 + 5), xsim 시험환경은 157,433, 보드 최상위 시뮬레이션은 CYCLES 레지스터로 157,433이다. 세는 방식의 차이이고 하드웨어 차이가 아니다(이 점은 `docs/BOARD_BRINGUP.md`에도 적었다).
@@ -38,7 +38,7 @@ gtkwave /mnt/e/fpga_work/wave/boot.vcd /mnt/e/fpga_work/wave/boot.gtkw &
   1. `rst_ni`와 `clk_i`: 시간 0~10에 reset, 그 뒤 클럭.
   2. `i_req`, `i_addr`, `i_rvalid`, `i_rdata`: 코어가 어느 주소의 명령어를 가져오는지. 시간 44 부근(cycle 17)에서 단계 3의 되풀이 모양이 보인다.
   3. `d_req`, `d_we`, `d_addr`, `d_wdata`: 코어가 메모리에 쓰는 것. 단계 3에서 주소가 4씩 늘어난다.
-  4. `g_busy`와 `acc_i.state_q`: 시간 7940(cycle 3965)에서 GEMV가 시작되는 순간.
+  4. `g_busy`와 `acc_i.state_q`: 시간 7941에 값이 바뀌고 cycle 3966부터 1로 보임(GEMV가 시작되는 순간).
   5. `ctrl_fsm_cs`: 코어 제어기의 상태 번호(각 번호의 뜻은 cv32e40p 제어기 소스의 열거형에 있고 이 문서는 해석하지 않았다).
 - **확대 요령:** 단계 3은 cycle 13~253이라 시간 36~516이다. 시간 40~120 구간으로 확대하면 루프 몇 번이 보인다.
 

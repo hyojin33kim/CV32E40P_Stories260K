@@ -85,5 +85,10 @@ for tm in clk_falls:
 print(f'\n== data-port accesses in this window: {len(d)}; the first 8:')
 for c, w, a, v in d[:8]: print(f'  cycle {c:5d}  {w} 0x{a:08x}  data 0x{v:08x}')
 for name in ('g_busy', 'vfu_busy'):
-    r = rises(name)
-    print(f'{name}: first rises at ' + (', '.join(f'cycle {cyc(x)}' for x in r[:4]) if r else 'never in this window'))
+    # same convention as the fetch and data lines: the cycle in which the signal is first seen high when sampled in the middle of the cycle
+    prev, r = 0, []
+    for tm in clk_falls:
+        v = at(name, tm)
+        if v == 1 and prev == 0: r.append(cyc(tm))
+        prev = v
+    print(f'{name}: first rises (first cycle seen high) at ' + (', '.join(f'cycle {x}' for x in r[:4]) if r else 'never in this window'))
