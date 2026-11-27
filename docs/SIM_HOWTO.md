@@ -13,6 +13,12 @@ cmp /tmp/dump.bin /mnt/e/fpga_work/board_kit/dump_sim_1.bin      # 같아야 한
 - **보드와 같은 방식(AXI4-Lite로 적재):** `TOP=chip_axi_top ./build_sim.sh` 후 `obj_axi/Vchip_axi_top <image> <dump>`. `DONE cycles=157433`, `PERF`, `DBGREGS` 줄이 나온다.
 - **전체 회귀(42개 항목):** `./reproduce.sh quick` (약 28분, 끝에 `42/42 OK`).
 - **파형:** `TRACE=1 TOP=soc_chip ./build_sim.sh` 후 `SIM_VCD=<out.vcd> SIM_VCD_FROM=<시작 cycle> SIM_VCD_TO=<끝 cycle> <시뮬레이터> <image> <dump>`, 만들어진 `.vcd`는 GTKWave로 본다(`build_sim.sh` 머리말).
+- **신호가 너무 많을 때(수천 개):** 큰 VCD에서 필요한 신호만 뽑아 작은 VCD와 GTKWave 저장 파일을 만든다.
+  `python3 docs/wave/vcd_pick.py /tmp/w.vcd /mnt/e/fpga_work/wave/w_small.vcd /mnt/e/fpga_work/wave/w_small.gtkw` 후
+  `gtkwave /mnt/e/fpga_work/wave/w_small.vcd /mnt/e/fpga_work/wave/w_small.gtkw &` (또는 `surfer <w_small.vcd>`). 기본 21개 신호:
+  `clk_i`, 명령어 fetch(`i_req`, `i_addr`), CPU 데이터 포트(`d_*`), 가속기 포트(`a_*`), `g_busy`, `vfu_busy`, GEMV 상태(`acc_i.state_q`, `mode_q`),
+  VFU 상태(`vfu_i.st_q`, `cmd_q`), 코어 제어 상태(`ctrl_fsm_cs`), `debug_halted_o`. 신호 경로를 인자로 주면 다른 신호도 뽑을 수 있다.
+  저장 파일(`.gtkw`)은 GTKWave GUI에서 열어 확인하지 못했다(작은 VCD 자체는 그대로 열린다).
 - **단위 시험:**
   - `acc/tb_conc/run_test.py`: 가속기 겹침과 보호(시나리오 1~6). `obj_soc/Vsoc_top` 필요(`TOP=soc_top ./build_sim.sh`).
   - `acc/tb_dbgregs/run_test.py`: 출력과 trap 관찰 레지스터. `obj_axi` 필요.
