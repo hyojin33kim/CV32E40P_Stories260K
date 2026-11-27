@@ -6,9 +6,9 @@
 set -u
 cd "$(dirname "$0")"
 M=mut; rm -rf $M; mkdir -p $M
-echo "== constraint probes (expected: the unsupported sets fail)"
+echo "== constraint probes (expected: the unsupported sets fail; since 11-27 the simulation stops with an assertion message that names the constraint)"
 for cfg in "16 3 48 1" "16 3 48 3" "16 3 48 6" "64 3 48 8" "16 3 8 8"; do
-  OUT=$M/probe CONFIGS="$cfg" bash run.sh 6 2>&1 | grep -E "^AXI_EXT_RD|build failed" | cut -c1-170 | sed "s/^/  /"
+  OUT=$M/probe CONFIGS="$cfg" bash run.sh 6 2>&1 | grep -E "^AXI_EXT_RD|build failed|Assertion failed" | cut -c1-200 | sed "s/^/  /"
 done
 echo "== mutation checks (expected: FAIL)"
 mutate() {   # name, sed expression
