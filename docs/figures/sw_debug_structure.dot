@@ -1,0 +1,68 @@
+// Software and debugger structure (2026-11-27). Render: dot -Tpng -Gdpi=130 docs/figures/sw_debug_structure.dot -o docs/figures/sw_debug_structure.png  (also -Tsvg)
+// Colors: green = built and checked in simulation here; yellow = prepared, not run on a board; grey dashed = not available / not checked.
+digraph swdbg {
+  rankdir=TB; compound=true; newrank=true; nodesep=0.3; ranksep=0.55;
+  graph [fontname="Helvetica", fontsize=13, labelloc=t, label="Software, test infrastructure and debugger structure\ngreen = checked in simulation, yellow = prepared (not run on the board), grey dashed = not available or not checked"];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#f4f4f4", color="#555555"];
+  edge  [fontname="Helvetica", fontsize=8, color="#444444"];
+
+  subgraph cluster_build {
+    label="1. Build: model -> firmware -> image (host PC)"; style="rounded,filled"; fillcolor="#f3f8f3"; color="#88aa88";
+    MODEL [label="stories260K weights\n(llama2.c, fp32 / int8 row scale)\nquant/, w8/", fillcolor="#d9efd9"];
+    GEN [label="gen/run_gen.py\ngen/firmware_gen.c, opta/ (exp2q.h)\nOption A, W8=1 OPTA=1 GEN_ACC=full", fillcolor="#d9efd9"];
+    BUILD [label="build.sh  (riscv64-unknown-elf-gcc)\nstart.S + link.ld + picolibc\n-> fw.elf (debug info), fw.dis, fw.map", fillcolor="#d9efd9"];
+    IMAGE [label="image.bin  (16.9 MB)\nSRAM 0x0..2 MiB: weights, KV, data\nimem 0x0100_0000: firmware 16 KB", fillcolor="#d9efd9"];
+    MODEL -> GEN -> BUILD -> IMAGE;
+  }
+
+  subgraph cluster_fw {
+    label="2. Firmware on the core (what it uses)"; style="rounded,filled"; fillcolor="#eaf1fb"; color="#6688bb";
+    FW [label="forward(): RISC-V code (fp32 FPU)\n+ accelerator calls\nwhile (r[1] & 1) poll busy", fillcolor="#d6e4f7"];
+    MMIO [label="MMIO  0x3000_0000 GEMV regs\n0x3000_0040 VFU regs\nSTATUS bit0 busy, bit1 err (refused start)", fillcolor="#d6e4f7"];
+    SIG [label="0x2000_0000  DONE (value)\n0x2000_0010  OUT (output channel)", fillcolor="#d6e4f7"];
+    FW -> MMIO; FW -> SIG;
+  }
+
+  subgraph cluster_run {
+    label="3. Run and compare"; style="rounded,filled"; fillcolor="#fbfbf2"; color="#999966";
+    VER [label="Verilator sims (reference)\nsim.cpp, sim_axi.cpp (board flow)\nobj_chip, obj_axi, obj_soc\nDONE cycles + 2 MiB dump", fillcolor="#d9efd9"];
+    XSIM [label="Vivado xsim (RTL, netlist)\nfpga/xsim/run_xsim.sh\nXW=fmt|rd work-copy patches", fillcolor="#d9efd9"];
+    REPRO [label="reproduce.sh quick  (42 checks)\nplan + log: docs/VERIFICATION_PLAN.md,\nEXPERIMENT_LOG.md", fillcolor="#d9efd9"];
+    BOARD [label="pynq/run_chip.py (PYNQ, on the PS)\nload image -> CTRL.RUN=1 -> poll DONE\nread CYCLES, dump 2 MiB, compare\nboard_kit: bit, hwh, images, ref dumps", fillcolor="#fff3cd"];
+    REG [label="read via AXI: perf counters,\nOUT, LAST_PC, FETCH_CNT,\nTRAP_CNT, TRAP_PC", fillcolor="#fff3cd"];
+    IMAGE -> VER; IMAGE -> XSIM; IMAGE -> BOARD;
+    VER -> REPRO [style=dashed];
+    BOARD -> REG [style=dotted];
+  }
+
+  subgraph cluster_hwdbg {
+    label="4. Debugger path (RISC-V Debug Spec 0.13.2, execution based)"; style="rounded,filled"; fillcolor="#fbeef5"; color="#aa6688";
+    GDB [label="RISC-V GDB\nsource lines, registers\n(NOT installed)", fillcolor="#eeeeee", style="dashed,filled"];
+    OCD [label="OpenOCD (riscv target)\nconfig not written: JTAG chain,\nIR codes unknown\n(NOT installed)", fillcolor="#eeeeee", style="dashed,filled"];
+    ADAPT [label="JTAG adapter\nboard USB-JTAG (BSCANE2 path)\nor external adapter + FPGA pins\n(not decided, D5)", fillcolor="#eeeeee", style="dashed,filled"];
+    TAP [label="dmi_bscane_tap (BSCANE2, USER3/4)\nFPGA: synthesized only\nsim: dmi_jtag_tap (pins): checked", fillcolor="#fff3cd"];
+    DTM [label="dmi_jtag: DTM + dmi_cdc\nIDCODE 0x00000DB3, DMI 7-bit addr", fillcolor="#d9efd9"];
+    DM [label="dm_obi_top (riscv-dbg)\ndmcontrol / abstract commands /\nprogram buffer / debug ROM\nSBA: bus error", fillcolor="#d9efd9"];
+    CORE [label="cv32e40p core debug\ndebug_req_i -> debug mode, dpc, dcsr\nhalt, resume, step, ebreak,\n1 hardware trigger (breakpoint)", fillcolor="#d9efd9"];
+    GDB -> OCD [style=dashed, label="remote protocol"];
+    OCD -> ADAPT [style=dashed, label="JTAG"];
+    ADAPT -> TAP [style=dashed];
+    TAP -> DTM -> DM;
+    DM -> CORE [label="debug_req\nhalt addr = DM_BASE+0x800"];
+    CORE -> DM [label="debug code fetch,\ndata regs (bus region 0x1A11_0000)", style=dashed, constraint=false];
+  }
+
+  TB [label="dbg/tb_dm  (Verilator)\nJTAG bit-banging test master:\nhalt/resume x6, regs, step x4,\nbreakpoints, ebreak, run to DONE", fillcolor="#d9efd9"];
+  TB -> TAP [label="TCK/TMS/TDI/TDO\n(sim pins)"];
+
+  LIMITS [shape=note, fillcolor="#fff8dc", label="Limits of this debugger (facts from the design)\n- one hardware breakpoint (core has one trigger)\n- no software breakpoints: imem is read-only for the core\n- the image cannot be loaded through the debugger (AXI loader does it)\n- no memory read while the core runs (SBA not connected)\n- accelerators keep running while the core is halted\n- Vivado and OpenOCD cannot share the USB-JTAG at the same time"];
+  ILA [label="Vivado ILA (DBG_PROBE=1)\nPC, data port, accel port, run/done\nVivado hardware manager", fillcolor="#fff3cd"];
+
+  IMAGE -> TB [style=dotted, label="image + reference dump"];
+  DM -> LIMITS [style=invis];
+  CORE -> ILA [style=dotted, arrowhead=none, label="probes"];
+  IMAGE -> FW [label="loaded into imem + SRAM\n(AXI loader or loader port)", style=dashed];
+  FW -> CORE [label="runs on the core", style=dotted, constraint=false];
+  SIG -> REG [label="DONE, OUT seen by the PS", style=dotted, constraint=false];
+  BOARD -> CORE [style=invis];
+}
