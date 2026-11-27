@@ -1,0 +1,72 @@
+// RTL structure of the chip (2026-11-27). Render: dot -Tpng -Gdpi=130 docs/figures/rtl_structure.dot -o docs/figures/rtl_structure.png  (also -Tsvg)
+// Solid = always built. Dashed = option (DM_BUILD, DBG_PROBE) or a separate top (DDR). File names are in the node labels.
+digraph rtl {
+  rankdir=TB; compound=true; newrank=true; nodesep=0.35; ranksep=0.55;
+  graph [fontname="Helvetica", fontsize=13, labelloc=t, label="CV32E40P + GEMV/VFU accelerators on ZCU104 (xczu7ev): RTL structure\nsolid = always built, dashed = option or separate top"];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#f4f4f4", color="#555555"];
+  edge  [fontname="Helvetica", fontsize=8, color="#444444"];
+
+  PS [label="Zynq PS (ARM)\nM_AXI_HPM0_FPD, PL clock\nrun_chip.py (PYNQ)", shape=box3d, fillcolor="#e8eefc"];
+  JTAGHOST [label="JTAG host\nOpenOCD + GDB\n(not built here)", shape=box3d, fillcolor="#e8eefc", style="dashed,filled"];
+
+  subgraph cluster_top {
+    label="chip_axi_top   (acc/chip_axi_top.sv)   board top, weights on chip"; style="rounded,filled"; fillcolor="#fbfbf2"; color="#999966";
+    AXI [label="AXI4-Lite slave FSM\n26-bit window, 1 transaction at a time", fillcolor="#fff3cd"];
+    REG [label="control + status regs  0x200_0000..\nCTRL(RUN) STATUS DONE_V CYCLES\nperf counters x6 (0x20..0x34)", fillcolor="#fff3cd"];
+    OBS [label="observation regs  0x200_0040..\nOUT / OUT_CNT / LAST_PC /\nFETCH_CNT / TRAP_CNT / TRAP_PC", fillcolor="#fff3cd"];
+    RST [label="reset: core_rst_n = rst_ni && RUN && !ndmreset", fillcolor="#fff3cd", shape=note];
+    PROBE [label="DBG_PROBE=1: mark_debug nets\n(PC, data port, accel port, run/done)\n-> Vivado ILA", fillcolor="#fff3cd", style="dashed,filled"];
+
+    subgraph cluster_chip {
+      label="soc_chip   (acc/soc_chip.sv)   memories and bus glue"; style="rounded,filled"; fillcolor="#eef7ee"; color="#669966";
+      LOADER [label="loader port decode\n(core in reset only)", fillcolor="#d9efd9"];
+      IMEM [label="imem  BRAM 16 KB\n0x0100_0000  (firmware .text)", fillcolor="#d9efd9"];
+      SRAM [label="sram_dp  URAM 2 MiB  (acc/sram_dp.sv)\nport A: CPU data / loader\nport B: accelerator (128-bit lines)", fillcolor="#d9efd9"];
+      DPORT [label="CPU data port\nSRAM | external (DONE 0x2000_0000,\nOUT 0x2000_0010) | DM region", fillcolor="#d9efd9"];
+      APORT [label="accelerator port\ntag FIFO + SRAM line FIFO\n+ external line FIFO", fillcolor="#d9efd9"];
+
+      subgraph cluster_soc {
+        label="soc_top   (acc/soc_top.sv)   CPU + accelerators"; style="rounded,filled"; fillcolor="#eaf1fb"; color="#6688bb";
+        CPU [label="cv32e40p_top  (RV32IMFC, FPU)\nfpnew + OpenE906 divider/sqrt\ndebug_req_i / dm_halt_addr_i", fillcolor="#d6e4f7"];
+        MMIO [label="MMIO decode  0x3000_0000..\nGEMV regs +0x00, VFU regs +0x40\nshared memory port (owner = vfu_busy)", fillcolor="#d6e4f7"];
+        GEMV [label="gemv_acc  (acc/gemv_acc.sv)\n4 MAC lanes, modes A-D (int8 mode D)\nrefuses N>XBUF / D>YBUF (STATUS bit1)", fillcolor="#d6e4f7"];
+        VFU [label="vfu  (acc/vfu.sv)\nsoftmax, silu, divide, exp\nrefuses n>BUF or gemv busy (STATUS bit1)", fillcolor="#d6e4f7"];
+        LANE [label="vfu_lane x4  (acc/vfu_lane.sv)\nvfu_exp2  (acc/vfu_exp2.sv)\nfpnew units", fillcolor="#d6e4f7"];
+      }
+    }
+
+    subgraph cluster_dm {
+      label="DM_BUILD only: dbg/soc_chip_dm.sv wraps soc_chip and adds this"; style="rounded,dashed,filled"; fillcolor="#fbeef5"; color="#aa6688";
+      DM [label="dm_obi_top  (riscv-dbg)\ndm_csrs + dm_mem (debug ROM, program buffer)\ndm_sba (every access: bus error)", fillcolor="#f6d9e8", style="dashed,filled"];
+      DTM [label="dmi_jtag  (TAP + DTM + dmi_cdc)\nFPGA: dmi_bscane_tap (BSCANE2, USER3/4)\nsim: dmi_jtag_tap (JTAG pins)", fillcolor="#f6d9e8", style="dashed,filled"];
+    }
+  }
+
+  DDR [label="chip_axi_ddr_top + axi_ext_rd\n(weights in DDR, separate top,\nnot in the board build)", style="dashed,filled", fillcolor="#eeeeee"];
+
+  PS -> AXI [label="AXI4-Lite"];
+  AXI -> REG; AXI -> OBS [style=dotted]; AXI -> LOADER [label="memory window\n(RUN=0)"];
+  LOADER -> IMEM; LOADER -> SRAM;
+  RST -> CPU [style=dotted, arrowhead=none];
+  CPU -> IMEM [label="instr fetch"];
+  CPU -> DPORT [label="data"];
+  DPORT -> SRAM [label="port A"];
+  DPORT -> REG [label="DONE write", style=dashed];
+  DPORT -> OBS [label="OUT write", style=dashed];
+  CPU -> OBS [label="fetch address\n(registered first)", style=dotted, constraint=false];
+  DPORT -> MMIO [label="0x3000_00xx"];
+  MMIO -> GEMV; MMIO -> VFU;
+  VFU -> LANE;
+  GEMV -> APORT [label="accel master"]; VFU -> APORT [label="accel master"];
+  APORT -> SRAM [label="port B"];
+  APORT -> DDR [style=dashed, label="external read\n(DDR build)"];
+  REG -> PS [style=invis];
+  PROBE -> CPU [style=dashed, arrowhead=none, constraint=false];
+
+  JTAGHOST -> DTM [style=dashed, label="JTAG"];
+  DTM -> DM [style=dashed, label="DMI"];
+  DM -> CPU [style=dashed, label="debug_req"];
+  DPORT -> DM [style=dashed, dir=both, label="debug ROM /\ndata regs"];
+  CPU -> DM [style=dashed, label="debug code fetch\n(instruction port)", constraint=false];
+  DM -> RST [style=dashed, label="ndmreset"];
+}
