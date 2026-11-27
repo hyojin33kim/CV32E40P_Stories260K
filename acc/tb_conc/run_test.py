@@ -25,7 +25,7 @@ for s in scen:
     img.write_bytes(m)
     r = subprocess.run([SIM, str(img), str(dump), os.environ.get('TEST_MAXCYC', '300000000')], capture_output=True)
     d = dump.read_bytes()
-    sc, gbad, vbad, cbad, to, evid, cycles, gc, vc, wc, marker, errs, e1, e2, vuntouched = struct.unpack_from('<15I', d, 0x1aff00)
+    sc, gbad, vbad, cbad, to, evid, cycles, gc, vc, wc, marker, errs, e1, e2, vuntouched, e3, e4 = struct.unpack_from('<17I', d, 0x1aff00)
     fin = marker == 0x600d600d
     what = 'CPU passes that ended while the accelerator was busy (of 6)' if s in (1, 2) else 'first accelerator busy when the second started'
     line = (f'scenario {s}: finished={fin} gemv mismatches {gbad}/128, vfu mismatches {vbad}/512, cpu mismatches {cbad}/256, timeouts '
@@ -39,8 +39,8 @@ for s in scen:
         line += f', err bits {errs:#x}, vfu data words changed {vuntouched} -> ' + ('PASS' if ok else 'FAIL')
         rc |= 0 if ok else 1
     elif s in (5, 6):   # a start beyond the buffer is refused (err), the next valid start is accepted (err cleared) and right
-        ok = fin and to == 0 and e1 == 1 and e2 == 0 and (gbad == 0 if s == 5 else vbad == 0) and cbad == 0
-        line += f', err after the refused start {e1}, after the valid start {e2} -> ' + ('PASS' if ok else 'FAIL')
+        ok = fin and to == 0 and e1 == 1 and e2 == 0 and (s == 6 or (e3 == 1 and e4 == 0)) and (gbad == 0 if s == 5 else vbad == 0) and cbad == 0
+        line += f', err after the refused start {e1}, after the valid start {e2}' + (f', D too large: refused {e3}, then valid {e4}' if s == 5 else '') + ' -> ' + ('PASS' if ok else 'FAIL')
         rc |= 0 if ok else 1
     else:
         line += ' -> characterized' + ('' if evid else ' (INVALID: the first accelerator was not busy, no overlap happened)')

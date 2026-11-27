@@ -1,0 +1,21 @@
+== constraint probes (expected: the unsupported sets fail)
+== mutation checks (expected: FAIL)
+  no_4k_check:   FAIL: seed 0 cyc 73: burst 401aafc0 len 7 crosses 4 KB
+  no_4k_check:   FAIL: seed 0 cyc 80: burst 4008efb0 len 6 crosses 4 KB
+  no_4k_check:   FAIL: seed 0 cyc 113: burst 401e5ff0 len 3 crosses 4 KB
+  no_err_flag: AXI_EXT_RD MAXB=16 CRED=48 TD=8 seeds 0..20: PASS | acc lines 107914, cpu words 6562, bursts 24788, beats 114476, cycles 598997 | longest burst 16 lines, max bursts outstanding 8, max lines outstandin
+  no_err_flag:   FAIL: seed 100: err_o not set after an error response (injected at cycle 1864)
+  no_err_flag:   FAIL: seed 100: err_o cleared without reset
+  no_credit:   FAIL: seed 3 cyc 152: 50 lines outstanding > CRED+1 49
+  no_credit:   FAIL: seed 3 cyc 169: 60 lines outstanding > CRED+1 49
+  no_credit:   FAIL: seed 3 cyc 186: 65 lines outstanding > CRED+1 49
+  wrong_word:   FAIL: seed 0 cyc 49: cpu word of line 185261 word 0 wrong (got fd6288ed, expected 344b3818)
+  wrong_word:   FAIL: seed 0 cyc 79: cpu word of line 146313 word 2 wrong (got 55dc8dac, expected 9844cd9d)
+  wrong_word:   FAIL: seed 0 cyc 125: cpu word of line 183611 word 3 wrong (got 8468bc4a, expected ede530ce)
+  no_td_limit:   FAIL: seed 0 cyc 1573: 9 bursts outstanding > TD 8
+  no_td_limit:   FAIL: seed 0 cyc 1575: 10 bursts outstanding > TD 8
+  no_td_limit:   FAIL: seed 0 cyc 1577: 9 bursts outstanding > TD 8
+
+real	0m16.034s
+user	0m4.808s
+sys	0m3.024s

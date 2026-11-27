@@ -4,7 +4,7 @@
 //   3 VFU is started while GEMV is busy (GEMV and VFU share one memory port; ownership = vfu_busy)   -> the VFU start is refused (VFU STATUS bit1 err),
 //     the GEMV finishes with the right result, the VFU data is untouched (before 11-27 the GEMV hung and both results were wrong, E10)
 //   4 GEMV is started while the VFU is busy                                  -> serialized by the shared port, characterized
-//   5 GEMV start with N = XBUF + 1 (513): refused (GEMV STATUS bit1 err), then a valid start is accepted (err cleared) and the result is right
+//   5 GEMV start with N = XBUF + 1 (513), then with D = YBUF + 1 (513): each is refused (GEMV STATUS bit1 err), each following valid start is accepted (err cleared) and the result is right
 //   6 VFU start with n = BUF + 1 (513): refused (VFU STATUS bit1 err), then a valid start is accepted (err cleared) and the result is right
 // The firmware normally polls busy before starting the next accelerator command; scenarios 3 and 4 break that rule on purpose.
 // Before every scenario the firmware measures the durations of a blocking GEMV, VFU softmax and CPU work run (calibration), so that the
@@ -98,14 +98,16 @@ void boot(void) {
     c0 = cyc(); work(CPUC, PASSES, 0); wc = cyc() - c0;
     for (int i = 0; i < GD; i++) YHW[i] = 0.0f;
     memcpy(VHW, VIN0, VN * 4);
-    unsigned ran_g = sc != 2 && sc != 6, ran_v = sc != 1 && sc != 3 && sc != 5, e1 = 0, e2 = 0;
+    unsigned ran_g = sc != 2 && sc != 6, ran_v = sc != 1 && sc != 3 && sc != 5, e1 = 0, e2 = 0, e3 = 0, e4 = 0;
     c0 = cyc();
     if (sc == 1) { gemv_start(); evid = work(CPUA, PASSES, G); to |= wait_busy(G); }
     else if (sc == 2) { vfu_start(); evid = work(CPUA, PASSES, V); to |= wait_busy(V) << 1; }
     else if (sc == 3) { gemv_start(); delay_to(gc / 3); evid = G[1] & 1; vfu_start(); to |= wait_busy(G); to |= wait_busy(V) << 1; work(CPUA, PASSES, 0); }
     else if (sc == 4) { vfu_start(); delay_to(vc / 3); evid = V[1] & 1; gemv_start(); to |= wait_busy(V) << 1; to |= wait_busy(G); work(CPUA, PASSES, 0); }
     else if (sc == 5) { G[2] = (unsigned)XV; G[3] = (unsigned)MAT; G[4] = (unsigned)YHW; G[5] = 513; G[6] = GD; G[7] = GN; G[11] = (unsigned)SC; G[0] = 3;
-                        e1 = (G[1] >> 1) & 1; to |= wait_busy(G); gemv_start(); to |= wait_busy(G); e2 = (G[1] >> 1) & 1; evid = 1; work(CPUA, PASSES, 0); }
+                        e1 = (G[1] >> 1) & 1; to |= wait_busy(G); gemv_start(); to |= wait_busy(G); e2 = (G[1] >> 1) & 1; evid = 1;
+                        G[2] = (unsigned)XV; G[3] = (unsigned)MAT; G[4] = (unsigned)YHW; G[5] = GN; G[6] = 513; G[7] = GN; G[11] = (unsigned)SC; G[0] = 3;   // D = YBUF + 1
+                        e3 = (G[1] >> 1) & 1; to |= wait_busy(G); gemv_start(); to |= wait_busy(G); e4 = (G[1] >> 1) & 1; work(CPUA, PASSES, 0); }
     else if (sc == 6) { V[2] = (unsigned)VHW; V[3] = 0; V[4] = 513; V[5] = 0; V[0] = 1;
                         e1 = (V[1] >> 1) & 1; to |= wait_busy(V) << 1; vfu_start(); to |= wait_busy(V) << 1; e2 = (V[1] >> 1) & 1; evid = 1; work(CPUA, PASSES, 0); }
     c1 = cyc();
@@ -116,6 +118,6 @@ void boot(void) {
     out[3] = diff(CPUA, CPUB, 256);
     out[4] = to; out[5] = evid; out[6] = c1 - c0; out[7] = gc; out[8] = vc; out[9] = wc;
     out[10] = 0x600d600d;
-    out[11] = errs; out[12] = e1; out[13] = e2; out[14] = (sc == 3) ? diff((const unsigned*)VHW, (const unsigned*)VIN0, VN) : 0;
+    out[11] = errs; out[12] = e1; out[13] = e2; out[15] = e3; out[16] = e4; out[14] = (sc == 3) ? diff((const unsigned*)VHW, (const unsigned*)VIN0, VN) : 0;
     *(volatile unsigned*)0x20000000 = 1; for (;;);
 }

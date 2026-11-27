@@ -168,6 +168,15 @@ EXPERIMENTS = [
   caveat='이미지의 가중치 형식(fp32 또는 int8)을 확인하지 않았다. 가속기와 CPU가 겹치지 않는다는 가정으로 나머지를 계산했다. line 수는 읽기만 센 근사다. 레인 증가가 비트 일치를 유지한다는 판단은 코드를 읽은 추정이며 시험하지 않았다.',
   impact='확장 방향 결정에 사용. 다음 단계는 CPU 고정 구간의 함수별 프로파일. 상세: docs/NPU_SCALING.md.',
   raw='npu_perf.out'),
+ dict(id='E16', date='2026-11-27', topic='RTL 보호 장치와 관찰 레지스터, rd_ok 수정 (D3, D7, V-A1, V-A3, V-D3)',
+  purpose='지금까지 "조용히 틀리거나 멈춤"이던 경우(버퍼 한계 초과, GEMV 실행 중 VFU 시작, AXI 파라미터 제약 위반)를 하드웨어나 어서션이 잡게 하고, xsim 멈춤의 원인이던 rd_ok를 저장소 RTL에서 고친다. 보드에서 멈춘 위치를 JTAG 없이 알 수 있는 관찰 레지스터를 추가한다.',
+  setup='acc/vfu.sv: rd_ok 함수를 직접 인라인(논리 동일). acc/gemv_acc.sv: 시작 시 N > XBUF 또는 D > YBUF이면 시작하지 않고 STATUS bit1(sticky err), 다음 정상 시작에서 지워짐. acc/vfu.sv: n > BUF 또는 gemv_acc busy이면 시작 거부, STATUS bit1. acc/soc_top.sv: other_busy_i 연결. acc/axi_ext_rd.sv: CRED >= MAXB와 TD(2의 거듭제곱, 2 이상) 시뮬레이션 전용 어서션. acc/chip_axi_top.sv: 0x200_0040 OUT, OUT_CNT, LAST_PC, FETCH_CNT, TRAP_CNT, TRAP_PC(주소는 먼저 레지스터에 담고 다음 cycle에 판별). 시험: acc/tb_conc 시나리오 3, 5, 6, acc/tb_dbgregs, acc/tb_axi_ext_rd/checks.sh, xsim FPU 표 패치만(XW=fmt), reproduce.sh quick.',
+  result='D3: 인라인 후 xsim(XW=fmt, rd_ok 패치 없음)이 끝까지 가서 TB DONE run_cycles=157433, 덤프가 Verilator와 동일(수정 전 E13의 변형 C는 600,000 cycle까지 멈춤). 보호: 시나리오 3은 VFU 시작이 거부되고(err 0x2) GEMV 128/128 일치, 시간 초과 없음, VFU 데이터 변경 0워드(이전 E10: GEMV 멈춤, 둘 다 틀림). 보호 입력을 0으로 막은 변이 시험은 GEMV 128/128 틀림, 시간 초과, VFU 데이터 512워드 변경, 오류 비트 0으로 FAIL(검출). 시나리오 5는 N=513 시작 거부(err 1), 다음 정상 시작 수락(err 0), D=513 시작 거부(err 1), 다음 정상 시작 수락(err 0), 결과 일치. 시나리오 6은 VFU n=513 거부와 복구, 결과 일치. axi_ext_rd: 지원 설정 5종 PASS, TD=1, 3, 6과 MAXB>CRED(CRED=48, MAXB=64, 그리고 CRED=8, MAXB=16)에서 원인을 밝히는 어서션 메시지와 함께 정지, 변이 5종은 모두 FAIL(검출). 관찰 레지스터: 정상 종료 시 out=0xabcd0003, out_cnt=3, trap_cnt=0; 불법 명령어를 실행하면 trap_cnt=1, trap_pc는 불법 명령어(0x010000f0)보다 8바이트 앞인 0x010000f8, last_pc=0x01000000(trap 벡터에 머무름), fetch_cnt 계속 증가. 정상 펌웨어(image_1): out_cnt=0, trap_cnt=0, fetch_cnt=110,199. 기본 칩과 보드 최상위의 cycle과 덤프는 불변(157,437/214,257/382,970 cycle, 보드 최상위 157,433/214,253/382,966). reproduce.sh quick 42/42 OK(약 29분, 실패 0건).',
+  observation='가드는 정상 사용에서 한 번도 작동하지 않는다(회귀 불변). 펌웨어는 STATUS의 bit0만 확인(r[1] & 1)하므로 bit1 오류 비트는 기존 동작에 영향이 없다. 그러나 펌웨어가 거부(bit1)를 확인하는 코드는 아직 없다.',
+  opinion='남은 "조용한 오류"를 모두 거부와 오류 신호로 바꿨다. 합성 타이밍 영향은 아직 모른다(아래). 확신: 기능은 높음(시험과 변이 시험), 타이밍은 미확인.',
+  caveat='버퍼 한계 초과 값은 513 한 점만 시험했고(조건은 단조 비교), 15M 빌드(XBUF 1024)와 w8/overlimit.sh, vfu/overlimit.sh는 보호 추가 후 다시 돌리지 않았다(이제 초과 시작은 출력을 쓰지 않으므로 불일치가 정상). 합성: 120 MHz(8.333 ns) 일반 빌드의 합성 단계는 WNS +0.062 ns, LUT 60,173, 레지스터 21,097(최악 경로는 코어 트리거 일치에서 imem 주소, 기존과 같음). 배치배선은 두 번 실패: 시도 1은 Vivado가 100분 멈춤, 시도 2는 route_design의 메모리 부족(최대 9.1 GB 요구, 호스트 Windows 가용 5 GB대, 커밋 여유 5 GB대). 재시도 중이며 결과가 나오면 갱신. 앞서 Vivado가 같은 RTL에서 합성 도중 비정상 종료한 일(E14)도 호스트 메모리 부족과 관련될 가능성이 있으나 확정하지 못했다. 재시도 스크립트가 로그 문구로 성공을 잘못 판정한 오류를 고쳤다(R14).',
+  impact='D3, D7 결정 사항을 구현함(V-G2 부분, V-A1, V-A3 통과, V-D3 통과). 정식 비트스트림에 반영하려면 재합성과 비트스트림 재생성이 필요(사용자 GUI 작업). 합성 타이밍 확인 전에는 비트스트림에 넣지 않는다.',
+  raw='repro_d7.out, axi_checks_d7.out'),
 ]
 
 # (date, what was said, what was found, where recorded)
@@ -181,6 +190,8 @@ CORRECTIONS = [
  ('11-23', 'TD=1 실패는 TD 범위(2의 거듭제곱) 문제라는 가설', '지지됨: TD=1, 3, 6 모두 응답이 밀려 실패. 단, 내부 원인(포인터 폭)은 미확인', 'E07'),
  ('11-25', 'V-G7 첫 실행(약 3시간 헛돎)에서 XSIM_PLUS="MAXCYC=600000"이 적용되었다고 가정', '틀림: ~/bin/vivado가 cmd.exe로 Windows vivado를 실행하고 WSLENV가 비어 있어 환경변수가 전달되지 않는다. 상한이 없는 채 약 3시간(8,500만 cycle) 돌았다. 고침: run_xsim.sh가 plusargs.txt로 전달. 또한 장시간 실행에 시계 시간 상한과 실시간 출력이 없었고, 예상 시간(20분)에 진행 확인을 하지 않았다', 'E13, 규칙 R2'),
  ('11-26', 'DM 합성 대기 작업이 크래시를 감지하지 못함', 'Vivado가 합성 도중 비정상 종료했는데 대기 조건이 정상 종료와 프로세스 소멸만 보아 약 50분을 허비했다. 크래시 파일(hs_err), 로그 갱신 정지, 종료를 모두 감지하도록 고침(R13)', 'E14, 규칙 R13'),
+ ('11-27', '재시도 스크립트의 "ATTEMPT 2 OK" 기록', '틀림: 로그에 "== route" 문구가 있는지로 성공을 판정했으나 이 문구는 route_design이 실패해도 run_chip.sh가 출력한다. 실제로는 라우터 메모리 부족이었다. 이제 이번 시도보다 새로운 timing_route.rpt가 있어야 성공으로 기록', 'E16, 규칙 R14'),
+ ('11-27', '120 MHz 합성 대기 후 약 2시간 소비', '시도 1이 Vivado 100분 멈춤. 대기 스크립트는 21:40에 정체로 끝났지만 알림이 늦게 와서 직접 확인하지 않고 기다렸다. 멈춤 감지(25분 무출력)를 재시도 스크립트에 넣음', 'E16, 규칙 R14'),
 ]
 
 # experiments before 11-22: details are in these documents / raw files, not re-summarized here
