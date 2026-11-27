@@ -19,6 +19,9 @@ cmp /tmp/dump.bin /mnt/e/fpga_work/board_kit/dump_sim_1.bin      # 같아야 한
   `clk_i`, 명령어 fetch(`i_req`, `i_addr`), CPU 데이터 포트(`d_*`), 가속기 포트(`a_*`), `g_busy`, `vfu_busy`, GEMV 상태(`acc_i.state_q`, `mode_q`),
   VFU 상태(`vfu_i.st_q`, `cmd_q`), 코어 제어 상태(`ctrl_fsm_cs`), `debug_halted_o`. 신호 경로를 인자로 주면 다른 신호도 뽑을 수 있다.
   저장 파일(`.gtkw`)은 GTKWave GUI에서 열어 확인하지 못했다(작은 VCD 자체는 그대로 열린다).
+- **파형을 그림 파일로:** 뷰어 없이 이미지로 볼 때는 `python3 docs/wave/wave_svg.py <작은.vcd> docs/figures/waveform [reset loop gemv]`(진짜 파형 모양, SVG와 PNG)나
+  `python3 docs/wave/wave_table.py <작은.vcd> prof/chip_full_opta_d2/fw.dis docs/figures/wave`(칸 표 모양, 8,000 cycle 개요 포함)를 쓴다. SVG를 PNG로 바꾸는 `rsvg-convert`가 필요하다
+  (`sudo apt install librsvg2-bin`, 이 PC에는 2026-11-28에 설치함). 구간과 신호는 각 스크립트의 preset에 있다.
 - **단위 시험:**
   - `acc/tb_conc/run_test.py`: 가속기 겹침과 보호(시나리오 1~6). `obj_soc/Vsoc_top` 필요(`TOP=soc_top ./build_sim.sh`).
   - `acc/tb_dbgregs/run_test.py`: 출력과 trap 관찰 레지스터. `obj_axi` 필요.

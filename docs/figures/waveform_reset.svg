@@ -1,0 +1,204 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2458" height="346" font-family="DejaVu Sans, Helvetica, Arial" font-size="11">
+<rect width="2458" height="346" fill="white"/>
+<text x="14" y="20" font-size="15" font-weight="bold">Reset release and start-up code (cycles -5 to 30)</text><text x="14" y="38" font-size="11" fill="#444">The first fetch is at cycle 2, address 0x01000080; the first data write at cycle 17 (address 0x1b4174, value 0).</text>
+<line x1="284" y1="52" x2="284" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="314.0" y="48" text-anchor="middle" font-size="9" fill="#666">-5</text>
+<line x1="344" y1="52" x2="344" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="374.0" y="48" text-anchor="middle" font-size="9" fill="#666">-4</text>
+<line x1="404" y1="52" x2="404" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="434.0" y="48" text-anchor="middle" font-size="9" fill="#666">-3</text>
+<line x1="464" y1="52" x2="464" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="494.0" y="48" text-anchor="middle" font-size="9" fill="#666">-2</text>
+<line x1="524" y1="52" x2="524" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="554.0" y="48" text-anchor="middle" font-size="9" fill="#666">-1</text>
+<line x1="584" y1="52" x2="584" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="614.0" y="48" text-anchor="middle" font-size="9" fill="#666">0</text>
+<line x1="644" y1="52" x2="644" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="674.0" y="48" text-anchor="middle" font-size="9" fill="#666">1</text>
+<line x1="704" y1="52" x2="704" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="734.0" y="48" text-anchor="middle" font-size="9" fill="#666">2</text>
+<line x1="764" y1="52" x2="764" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="794.0" y="48" text-anchor="middle" font-size="9" fill="#666">3</text>
+<line x1="824" y1="52" x2="824" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="854.0" y="48" text-anchor="middle" font-size="9" fill="#666">4</text>
+<line x1="884" y1="52" x2="884" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="914.0" y="48" text-anchor="middle" font-size="9" fill="#666">5</text>
+<line x1="944" y1="52" x2="944" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="974.0" y="48" text-anchor="middle" font-size="9" fill="#666">6</text>
+<line x1="1004" y1="52" x2="1004" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1034.0" y="48" text-anchor="middle" font-size="9" fill="#666">7</text>
+<line x1="1064" y1="52" x2="1064" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1094.0" y="48" text-anchor="middle" font-size="9" fill="#666">8</text>
+<line x1="1124" y1="52" x2="1124" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1154.0" y="48" text-anchor="middle" font-size="9" fill="#666">9</text>
+<line x1="1184" y1="52" x2="1184" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1214.0" y="48" text-anchor="middle" font-size="9" fill="#666">10</text>
+<line x1="1244" y1="52" x2="1244" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1274.0" y="48" text-anchor="middle" font-size="9" fill="#666">11</text>
+<line x1="1304" y1="52" x2="1304" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1334.0" y="48" text-anchor="middle" font-size="9" fill="#666">12</text>
+<line x1="1364" y1="52" x2="1364" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1394.0" y="48" text-anchor="middle" font-size="9" fill="#666">13</text>
+<line x1="1424" y1="52" x2="1424" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1454.0" y="48" text-anchor="middle" font-size="9" fill="#666">14</text>
+<line x1="1484" y1="52" x2="1484" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1514.0" y="48" text-anchor="middle" font-size="9" fill="#666">15</text>
+<line x1="1544" y1="52" x2="1544" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1574.0" y="48" text-anchor="middle" font-size="9" fill="#666">16</text>
+<line x1="1604" y1="52" x2="1604" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1634.0" y="48" text-anchor="middle" font-size="9" fill="#666">17</text>
+<line x1="1664" y1="52" x2="1664" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1694.0" y="48" text-anchor="middle" font-size="9" fill="#666">18</text>
+<line x1="1724" y1="52" x2="1724" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1754.0" y="48" text-anchor="middle" font-size="9" fill="#666">19</text>
+<line x1="1784" y1="52" x2="1784" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1814.0" y="48" text-anchor="middle" font-size="9" fill="#666">20</text>
+<line x1="1844" y1="52" x2="1844" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1874.0" y="48" text-anchor="middle" font-size="9" fill="#666">21</text>
+<line x1="1904" y1="52" x2="1904" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1934.0" y="48" text-anchor="middle" font-size="9" fill="#666">22</text>
+<line x1="1964" y1="52" x2="1964" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="1994.0" y="48" text-anchor="middle" font-size="9" fill="#666">23</text>
+<line x1="2024" y1="52" x2="2024" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="2054.0" y="48" text-anchor="middle" font-size="9" fill="#666">24</text>
+<line x1="2084" y1="52" x2="2084" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="2114.0" y="48" text-anchor="middle" font-size="9" fill="#666">25</text>
+<line x1="2144" y1="52" x2="2144" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="2174.0" y="48" text-anchor="middle" font-size="9" fill="#666">26</text>
+<line x1="2204" y1="52" x2="2204" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="2234.0" y="48" text-anchor="middle" font-size="9" fill="#666">27</text>
+<line x1="2264" y1="52" x2="2264" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="2294.0" y="48" text-anchor="middle" font-size="9" fill="#666">28</text>
+<line x1="2324" y1="52" x2="2324" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="2354.0" y="48" text-anchor="middle" font-size="9" fill="#666">29</text>
+<line x1="2384" y1="52" x2="2384" y2="298" stroke="#dddddd" stroke-width="1"/>
+<text x="2414.0" y="48" text-anchor="middle" font-size="9" fill="#666">30</text>
+<line x1="2444" y1="52" x2="2444" y2="298" stroke="#dddddd"/>
+<line x1="14" y1="88" x2="2444" y2="88" stroke="#eeeeee"/>
+<text x="18" y="77.0" font-weight="bold">clk_i</text>
+<polyline points="284.0,82.0 284.0,64.0 314.0,64.0 314.0,82.0 344.0,82.0 344.0,64.0 374.0,64.0 374.0,82.0 404.0,82.0 404.0,64.0 434.0,64.0 434.0,82.0 464.0,82.0 464.0,64.0 494.0,64.0 494.0,82.0 524.0,82.0 524.0,64.0 554.0,64.0 554.0,82.0 584.0,82.0 584.0,64.0 614.0,64.0 614.0,82.0 644.0,82.0 644.0,64.0 674.0,64.0 674.0,82.0 704.0,82.0 704.0,64.0 734.0,64.0 734.0,82.0 764.0,82.0 764.0,64.0 794.0,64.0 794.0,82.0 824.0,82.0 824.0,64.0 854.0,64.0 854.0,82.0 884.0,82.0 884.0,64.0 914.0,64.0 914.0,82.0 944.0,82.0 944.0,64.0 974.0,64.0 974.0,82.0 1004.0,82.0 1004.0,64.0 1034.0,64.0 1034.0,82.0 1064.0,82.0 1064.0,64.0 1094.0,64.0 1094.0,82.0 1124.0,82.0 1124.0,64.0 1154.0,64.0 1154.0,82.0 1184.0,82.0 1184.0,64.0 1214.0,64.0 1214.0,82.0 1244.0,82.0 1244.0,64.0 1274.0,64.0 1274.0,82.0 1304.0,82.0 1304.0,64.0 1334.0,64.0 1334.0,82.0 1364.0,82.0 1364.0,64.0 1394.0,64.0 1394.0,82.0 1424.0,82.0 1424.0,64.0 1454.0,64.0 1454.0,82.0 1484.0,82.0 1484.0,64.0 1514.0,64.0 1514.0,82.0 1544.0,82.0 1544.0,64.0 1574.0,64.0 1574.0,82.0 1604.0,82.0 1604.0,64.0 1634.0,64.0 1634.0,82.0 1664.0,82.0 1664.0,64.0 1694.0,64.0 1694.0,82.0 1724.0,82.0 1724.0,64.0 1754.0,64.0 1754.0,82.0 1784.0,82.0 1784.0,64.0 1814.0,64.0 1814.0,82.0 1844.0,82.0 1844.0,64.0 1874.0,64.0 1874.0,82.0 1904.0,82.0 1904.0,64.0 1934.0,64.0 1934.0,82.0 1964.0,82.0 1964.0,64.0 1994.0,64.0 1994.0,82.0 2024.0,82.0 2024.0,64.0 2054.0,64.0 2054.0,82.0 2084.0,82.0 2084.0,64.0 2114.0,64.0 2114.0,82.0 2144.0,82.0 2144.0,64.0 2174.0,64.0 2174.0,82.0 2204.0,82.0 2204.0,64.0 2234.0,64.0 2234.0,82.0 2264.0,82.0 2264.0,64.0 2294.0,64.0 2294.0,82.0 2324.0,82.0 2324.0,64.0 2354.0,64.0 2354.0,82.0 2384.0,82.0 2384.0,64.0 2414.0,64.0 2414.0,82.0 2444.0,82.0" fill="none" stroke="#1a7f37" stroke-width="1.6"/>
+<line x1="14" y1="118" x2="2444" y2="118" stroke="#eeeeee"/>
+<text x="18" y="107.0" font-weight="bold">rst_ni (reset released at cycle 0)</text>
+<polyline points="284.0,112.0 344.0,112.0 344.0,112.0 404.0,112.0 404.0,112.0 464.0,112.0 464.0,112.0 524.0,112.0 524.0,112.0 584.0,112.0 584.0,94.0 644.0,94.0 644.0,94.0 704.0,94.0 704.0,94.0 764.0,94.0 764.0,94.0 824.0,94.0 824.0,94.0 884.0,94.0 884.0,94.0 944.0,94.0 944.0,94.0 1004.0,94.0 1004.0,94.0 1064.0,94.0 1064.0,94.0 1124.0,94.0 1124.0,94.0 1184.0,94.0 1184.0,94.0 1244.0,94.0 1244.0,94.0 1304.0,94.0 1304.0,94.0 1364.0,94.0 1364.0,94.0 1424.0,94.0 1424.0,94.0 1484.0,94.0 1484.0,94.0 1544.0,94.0 1544.0,94.0 1604.0,94.0 1604.0,94.0 1664.0,94.0 1664.0,94.0 1724.0,94.0 1724.0,94.0 1784.0,94.0 1784.0,94.0 1844.0,94.0 1844.0,94.0 1904.0,94.0 1904.0,94.0 1964.0,94.0 1964.0,94.0 2024.0,94.0 2024.0,94.0 2084.0,94.0 2084.0,94.0 2144.0,94.0 2144.0,94.0 2204.0,94.0 2204.0,94.0 2264.0,94.0 2264.0,94.0 2324.0,94.0 2324.0,94.0 2384.0,94.0 2384.0,94.0 2444.0,94.0" fill="none" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="584" y1="94" x2="584" y2="112" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="14" y1="148" x2="2444" y2="148" stroke="#eeeeee"/>
+<text x="18" y="137.0" font-weight="bold">i_req (fetch request)</text>
+<polyline points="284.0,142.0 344.0,142.0 344.0,142.0 404.0,142.0 404.0,142.0 464.0,142.0 464.0,142.0 524.0,142.0 524.0,142.0 584.0,142.0 584.0,142.0 644.0,142.0 644.0,142.0 704.0,142.0 704.0,124.0 764.0,124.0 764.0,124.0 824.0,124.0 824.0,124.0 884.0,124.0 884.0,124.0 944.0,124.0 944.0,124.0 1004.0,124.0 1004.0,124.0 1064.0,124.0 1064.0,142.0 1124.0,142.0 1124.0,142.0 1184.0,142.0 1184.0,142.0 1244.0,142.0 1244.0,124.0 1304.0,124.0 1304.0,124.0 1364.0,124.0 1364.0,124.0 1424.0,124.0 1424.0,124.0 1484.0,124.0 1484.0,124.0 1544.0,124.0 1544.0,124.0 1604.0,124.0 1604.0,142.0 1664.0,142.0 1664.0,124.0 1724.0,124.0 1724.0,124.0 1784.0,124.0 1784.0,124.0 1844.0,124.0 1844.0,124.0 1904.0,124.0 1904.0,124.0 1964.0,124.0 1964.0,142.0 2024.0,142.0 2024.0,124.0 2084.0,124.0 2084.0,124.0 2144.0,124.0 2144.0,124.0 2204.0,124.0 2204.0,124.0 2264.0,124.0 2264.0,124.0 2324.0,124.0 2324.0,142.0 2384.0,142.0 2384.0,124.0 2444.0,124.0" fill="none" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="704" y1="124" x2="704" y2="142" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1064" y1="124" x2="1064" y2="142" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1244" y1="124" x2="1244" y2="142" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1604" y1="124" x2="1604" y2="142" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1664" y1="124" x2="1664" y2="142" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1964" y1="124" x2="1964" y2="142" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="2024" y1="124" x2="2024" y2="142" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="2324" y1="124" x2="2324" y2="142" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="2384" y1="124" x2="2384" y2="142" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="14" y1="178" x2="2444" y2="178" stroke="#eeeeee"/>
+<text x="18" y="167.0" font-weight="bold">i_addr (while i_req = 1)</text>
+<line x1="284" y1="163.0" x2="704" y2="163.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<polygon points="707,163.0 711,154 757,154 761,163.0 757,172 711,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="734.0" y="167.0" text-anchor="middle" font-size="9">1000080</text>
+<polygon points="767,163.0 771,154 817,154 821,163.0 817,172 771,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="794.0" y="167.0" text-anchor="middle" font-size="9">1000084</text>
+<polygon points="827,163.0 831,154 877,154 881,163.0 877,172 831,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="854.0" y="167.0" text-anchor="middle" font-size="9">1000088</text>
+<polygon points="887,163.0 891,154 937,154 941,163.0 937,172 891,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="914.0" y="167.0" text-anchor="middle" font-size="9">100008c</text>
+<polygon points="947,163.0 951,154 997,154 1001,163.0 997,172 951,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="974.0" y="167.0" text-anchor="middle" font-size="9">1000090</text>
+<polygon points="1007,163.0 1011,154 1057,154 1061,163.0 1057,172 1011,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1034.0" y="167.0" text-anchor="middle" font-size="9">1000094</text>
+<line x1="1064" y1="163.0" x2="1244" y2="163.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<polygon points="1247,163.0 1251,154 1297,154 1301,163.0 1297,172 1251,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1274.0" y="167.0" text-anchor="middle" font-size="9">1000098</text>
+<polygon points="1307,163.0 1311,154 1357,154 1361,163.0 1357,172 1311,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1334.0" y="167.0" text-anchor="middle" font-size="9">100009c</text>
+<polygon points="1367,163.0 1371,154 1417,154 1421,163.0 1417,172 1371,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1394.0" y="167.0" text-anchor="middle" font-size="9">10000a0</text>
+<polygon points="1427,163.0 1431,154 1477,154 1481,163.0 1477,172 1431,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1454.0" y="167.0" text-anchor="middle" font-size="9">10000a4</text>
+<polygon points="1487,163.0 1491,154 1537,154 1541,163.0 1537,172 1491,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1514.0" y="167.0" text-anchor="middle" font-size="9">10000a8</text>
+<polygon points="1547,163.0 1551,154 1597,154 1601,163.0 1597,172 1551,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1574.0" y="167.0" text-anchor="middle" font-size="9">10000ac</text>
+<line x1="1604" y1="163.0" x2="1664" y2="163.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<polygon points="1667,163.0 1671,154 1717,154 1721,163.0 1717,172 1671,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1694.0" y="167.0" text-anchor="middle" font-size="9">100009c</text>
+<polygon points="1727,163.0 1731,154 1777,154 1781,163.0 1777,172 1731,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1754.0" y="167.0" text-anchor="middle" font-size="9">10000a0</text>
+<polygon points="1787,163.0 1791,154 1837,154 1841,163.0 1837,172 1791,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1814.0" y="167.0" text-anchor="middle" font-size="9">10000a4</text>
+<polygon points="1847,163.0 1851,154 1897,154 1901,163.0 1897,172 1851,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1874.0" y="167.0" text-anchor="middle" font-size="9">10000a8</text>
+<polygon points="1907,163.0 1911,154 1957,154 1961,163.0 1957,172 1911,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1934.0" y="167.0" text-anchor="middle" font-size="9">10000ac</text>
+<line x1="1964" y1="163.0" x2="2024" y2="163.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<polygon points="2027,163.0 2031,154 2077,154 2081,163.0 2077,172 2031,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="2054.0" y="167.0" text-anchor="middle" font-size="9">100009c</text>
+<polygon points="2087,163.0 2091,154 2137,154 2141,163.0 2137,172 2091,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="2114.0" y="167.0" text-anchor="middle" font-size="9">10000a0</text>
+<polygon points="2147,163.0 2151,154 2197,154 2201,163.0 2197,172 2151,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="2174.0" y="167.0" text-anchor="middle" font-size="9">10000a4</text>
+<polygon points="2207,163.0 2211,154 2257,154 2261,163.0 2257,172 2211,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="2234.0" y="167.0" text-anchor="middle" font-size="9">10000a8</text>
+<polygon points="2267,163.0 2271,154 2317,154 2321,163.0 2317,172 2271,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="2294.0" y="167.0" text-anchor="middle" font-size="9">10000ac</text>
+<line x1="2324" y1="163.0" x2="2384" y2="163.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<polygon points="2387,163.0 2391,154 2437,154 2441,163.0 2437,172 2391,172" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="2414.0" y="167.0" text-anchor="middle" font-size="9">100009c</text>
+<line x1="14" y1="208" x2="2444" y2="208" stroke="#eeeeee"/>
+<text x="18" y="197.0" font-weight="bold">i_rvalid (instruction arrives)</text>
+<polyline points="284.0,202.0 344.0,202.0 344.0,202.0 404.0,202.0 404.0,202.0 464.0,202.0 464.0,202.0 524.0,202.0 524.0,202.0 584.0,202.0 584.0,202.0 644.0,202.0 644.0,202.0 704.0,202.0 704.0,202.0 764.0,202.0 764.0,184.0 824.0,184.0 824.0,184.0 884.0,184.0 884.0,184.0 944.0,184.0 944.0,184.0 1004.0,184.0 1004.0,184.0 1064.0,184.0 1064.0,184.0 1124.0,184.0 1124.0,202.0 1184.0,202.0 1184.0,202.0 1244.0,202.0 1244.0,202.0 1304.0,202.0 1304.0,184.0 1364.0,184.0 1364.0,184.0 1424.0,184.0 1424.0,184.0 1484.0,184.0 1484.0,184.0 1544.0,184.0 1544.0,184.0 1604.0,184.0 1604.0,184.0 1664.0,184.0 1664.0,202.0 1724.0,202.0 1724.0,184.0 1784.0,184.0 1784.0,184.0 1844.0,184.0 1844.0,184.0 1904.0,184.0 1904.0,184.0 1964.0,184.0 1964.0,184.0 2024.0,184.0 2024.0,202.0 2084.0,202.0 2084.0,184.0 2144.0,184.0 2144.0,184.0 2204.0,184.0 2204.0,184.0 2264.0,184.0 2264.0,184.0 2324.0,184.0 2324.0,184.0 2384.0,184.0 2384.0,202.0 2444.0,202.0" fill="none" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="764" y1="184" x2="764" y2="202" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1124" y1="184" x2="1124" y2="202" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1304" y1="184" x2="1304" y2="202" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1664" y1="184" x2="1664" y2="202" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1724" y1="184" x2="1724" y2="202" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="2024" y1="184" x2="2024" y2="202" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="2084" y1="184" x2="2084" y2="202" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="2384" y1="184" x2="2384" y2="202" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="14" y1="238" x2="2444" y2="238" stroke="#eeeeee"/>
+<text x="18" y="227.0" font-weight="bold">d_req (data access)</text>
+<polyline points="284.0,232.0 344.0,232.0 344.0,232.0 404.0,232.0 404.0,232.0 464.0,232.0 464.0,232.0 524.0,232.0 524.0,232.0 584.0,232.0 584.0,232.0 644.0,232.0 644.0,232.0 704.0,232.0 704.0,232.0 764.0,232.0 764.0,232.0 824.0,232.0 824.0,232.0 884.0,232.0 884.0,232.0 944.0,232.0 944.0,232.0 1004.0,232.0 1004.0,232.0 1064.0,232.0 1064.0,232.0 1124.0,232.0 1124.0,232.0 1184.0,232.0 1184.0,232.0 1244.0,232.0 1244.0,232.0 1304.0,232.0 1304.0,232.0 1364.0,232.0 1364.0,232.0 1424.0,232.0 1424.0,232.0 1484.0,232.0 1484.0,232.0 1544.0,232.0 1544.0,232.0 1604.0,232.0 1604.0,214.0 1664.0,214.0 1664.0,232.0 1724.0,232.0 1724.0,232.0 1784.0,232.0 1784.0,232.0 1844.0,232.0 1844.0,232.0 1904.0,232.0 1904.0,232.0 1964.0,232.0 1964.0,214.0 2024.0,214.0 2024.0,232.0 2084.0,232.0 2084.0,232.0 2144.0,232.0 2144.0,232.0 2204.0,232.0 2204.0,232.0 2264.0,232.0 2264.0,232.0 2324.0,232.0 2324.0,214.0 2384.0,214.0 2384.0,232.0 2444.0,232.0" fill="none" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1604" y1="214" x2="1604" y2="232" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1664" y1="214" x2="1664" y2="232" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1964" y1="214" x2="1964" y2="232" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="2024" y1="214" x2="2024" y2="232" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="2324" y1="214" x2="2324" y2="232" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="2384" y1="214" x2="2384" y2="232" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="14" y1="268" x2="2444" y2="268" stroke="#eeeeee"/>
+<text x="18" y="257.0" font-weight="bold">d_we (write, while d_req = 1)</text>
+<polyline points="284.0,262.0 344.0,262.0 344.0,262.0 404.0,262.0 404.0,262.0 464.0,262.0 464.0,262.0 524.0,262.0 524.0,262.0 584.0,262.0 584.0,262.0 644.0,262.0 644.0,262.0 704.0,262.0 704.0,262.0 764.0,262.0 764.0,262.0 824.0,262.0 824.0,262.0 884.0,262.0 884.0,262.0 944.0,262.0 944.0,262.0 1004.0,262.0 1004.0,262.0 1064.0,262.0 1064.0,262.0 1124.0,262.0 1124.0,262.0 1184.0,262.0 1184.0,262.0 1244.0,262.0 1244.0,262.0 1304.0,262.0 1304.0,262.0 1364.0,262.0 1364.0,262.0 1424.0,262.0 1424.0,262.0 1484.0,262.0 1484.0,262.0 1544.0,262.0 1544.0,262.0 1604.0,262.0 1604.0,244.0 1664.0,244.0 1664.0,262.0 1724.0,262.0 1724.0,262.0 1784.0,262.0 1784.0,262.0 1844.0,262.0 1844.0,262.0 1904.0,262.0 1904.0,262.0 1964.0,262.0 1964.0,244.0 2024.0,244.0 2024.0,262.0 2084.0,262.0 2084.0,262.0 2144.0,262.0 2144.0,262.0 2204.0,262.0 2204.0,262.0 2264.0,262.0 2264.0,262.0 2324.0,262.0 2324.0,244.0 2384.0,244.0 2384.0,262.0 2444.0,262.0" fill="none" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1604" y1="244" x2="1604" y2="262" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1664" y1="244" x2="1664" y2="262" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="1964" y1="244" x2="1964" y2="262" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="2024" y1="244" x2="2024" y2="262" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="2324" y1="244" x2="2324" y2="262" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="2384" y1="244" x2="2384" y2="262" stroke="#1f5fbf" stroke-width="1.6"/>
+<line x1="14" y1="298" x2="2444" y2="298" stroke="#eeeeee"/>
+<text x="18" y="287.0" font-weight="bold">d_addr (while d_req = 1)</text>
+<line x1="284" y1="283.0" x2="884" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="884" y1="283.0" x2="944" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="944" y1="283.0" x2="1004" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="1004" y1="283.0" x2="1064" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="1064" y1="283.0" x2="1304" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="1304" y1="283.0" x2="1364" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="1364" y1="283.0" x2="1424" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="1424" y1="283.0" x2="1484" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="1484" y1="283.0" x2="1544" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="1544" y1="283.0" x2="1604" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<polygon points="1607,283.0 1611,274 1657,274 1661,283.0 1657,292 1611,292" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1634.0" y="287.0" text-anchor="middle" font-size="9">1b4174</text>
+<line x1="1664" y1="283.0" x2="1724" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="1724" y1="283.0" x2="1904" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="1904" y1="283.0" x2="1964" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<polygon points="1967,283.0 1971,274 2017,274 2021,283.0 2017,292 1971,292" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="1994.0" y="287.0" text-anchor="middle" font-size="9">1b4178</text>
+<line x1="2024" y1="283.0" x2="2084" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="2084" y1="283.0" x2="2264" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<line x1="2264" y1="283.0" x2="2324" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<polygon points="2327,283.0 2331,274 2377,274 2381,283.0 2377,292 2331,292" fill="#eef4ff" stroke="#1f5fbf" stroke-width="1.3"/>
+<text x="2354.0" y="287.0" text-anchor="middle" font-size="9">1b417c</text>
+<line x1="2384" y1="283.0" x2="2444" y2="283.0" stroke="#999999" stroke-width="1" stroke-dasharray="3,3"/>
+<text x="14" y="338" font-size="9" fill="#777">blue line = signal (high or low), box = bus value in hex, dashed = not shown (request is 0), green = clock; cycle 0 = reset release</text>
+</svg>
