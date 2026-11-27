@@ -52,7 +52,7 @@ System bus access (SBA, reading memory without the core) is **not connected**: e
   `dcsr.ebreakm` is set, the run halts at the ebreak with `dcsr.cause` = 1 and `dpc` = 0x01000088; the test writes t0 = 0x6000 and dpc + 2 through the debugger (emulating the replaced instruction)
   and the firmware then finishes with the same 2-word dump difference as the other runs.
 - The firmware then runs to DONE. The 2 MiB dump differs from the reference dump in exactly 2 words: 0x1aff00 (the firmware cycle word, which `reproduce.sh`
-  excludes from its HOLD comparison) and 0x1ad000 (same value in every run; it follows the cycle word, but this file does not prove what it is). Everything else is equal.
+  excludes from its HOLD comparison) and 0x1ad000 (the forward() cycles of position 0: `cycles[pos]` written by `boot()` in `gen/firmware_gen.c`). Everything else is equal.
 - Mutation check: a broken response path for debug data accesses (`dm_rsp_d_q` forced to 0) makes the test fail (register reads and abstract commands fail).
 - Default builds (`DM_EN = 0`, no `DM_BUILD`): image_1/128/512 give 157,437 / 214,257 / 382,970 cycles and dumps equal to the reference (`board_kit/dump_sim_*`);
   board top `image_1`: 157,433 cycles, dump equal; with `DM_BUILD` and an idle Debug Module: same 157,433 cycles, dump equal.

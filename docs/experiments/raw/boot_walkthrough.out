@@ -1,0 +1,118 @@
+reset released at time 10 (cycle 0); the clock period is 2 time units
+
+== the first 40 instruction fetches after reset release (cycle, address, instruction, function)
+  cycle     2  0x01000080  auipc sp,0xff200                                     _start
+  cycle     3  0x01000084  addi sp,sp,-128 # 200000 <__stack_top>               _start
+  cycle     4  0x01000088  lui t0,0x6 | csrs mstatus,t0                         _start
+  cycle     5  0x0100008c  auipc t0,0xff1b4                                     _start
+  cycle     6  0x01000090  addi t0,t0,230 # 1b4174 <tr>                         _start
+  cycle     7  0x01000094  auipc t1,0xff1b4                                     _start
+  cycle    11  0x01000098  addi t1,t1,378 # 1b4210 <__bss_end>                  _start
+  cycle    12  0x0100009c  bgeu t0,t1,10000aa <_start+0x2a>                     _start
+  cycle    13  0x010000a0  sw zero,0(t0)                                        _start
+  cycle    14  0x010000a4  addi t0,t0,4                                         _start
+  cycle    15  0x010000a8  j 100009e <_start+0x1e> | csrwi mcountinhibit,0      _start
+  cycle    16  0x010000ac  auipc ra,0x1                                         _start
+  cycle    18  0x0100009c  bgeu t0,t1,10000aa <_start+0x2a>                     _start
+  cycle    19  0x010000a0  sw zero,0(t0)                                        _start
+  cycle    20  0x010000a4  addi t0,t0,4                                         _start
+  cycle    21  0x010000a8  j 100009e <_start+0x1e> | csrwi mcountinhibit,0      _start
+  cycle    22  0x010000ac  auipc ra,0x1                                         _start
+  cycle    24  0x0100009c  bgeu t0,t1,10000aa <_start+0x2a>                     _start
+  cycle    25  0x010000a0  sw zero,0(t0)                                        _start
+  cycle    26  0x010000a4  addi t0,t0,4                                         _start
+  cycle    27  0x010000a8  j 100009e <_start+0x1e> | csrwi mcountinhibit,0      _start
+  cycle    28  0x010000ac  auipc ra,0x1                                         _start
+  cycle    30  0x0100009c  bgeu t0,t1,10000aa <_start+0x2a>                     _start
+  cycle    31  0x010000a0  sw zero,0(t0)                                        _start
+  cycle    32  0x010000a4  addi t0,t0,4                                         _start
+  cycle    33  0x010000a8  j 100009e <_start+0x1e> | csrwi mcountinhibit,0      _start
+  cycle    34  0x010000ac  auipc ra,0x1                                         _start
+  cycle    36  0x0100009c  bgeu t0,t1,10000aa <_start+0x2a>                     _start
+  cycle    37  0x010000a0  sw zero,0(t0)                                        _start
+  cycle    38  0x010000a4  addi t0,t0,4                                         _start
+  cycle    39  0x010000a8  j 100009e <_start+0x1e> | csrwi mcountinhibit,0      _start
+  cycle    40  0x010000ac  auipc ra,0x1                                         _start
+  cycle    42  0x0100009c  bgeu t0,t1,10000aa <_start+0x2a>                     _start
+  cycle    43  0x010000a0  sw zero,0(t0)                                        _start
+  cycle    44  0x010000a4  addi t0,t0,4                                         _start
+  cycle    45  0x010000a8  j 100009e <_start+0x1e> | csrwi mcountinhibit,0      _start
+  cycle    46  0x010000ac  auipc ra,0x1                                         _start
+  cycle    48  0x0100009c  bgeu t0,t1,10000aa <_start+0x2a>                     _start
+  cycle    49  0x010000a0  sw zero,0(t0)                                        _start
+  cycle    50  0x010000a4  addi t0,t0,4                                         _start
+
+== which function the core is fetching from, in order (consecutive fetches of one function are one line)
+  cycles     2..  253    210 fetches  _start
+  cycles   257..  258      2 fetches  acc_gemv
+  cycles   259.. 1897   1515 fetches  boot
+  cycles  1898.. 2309    237 fetches  forward
+  cycles  2310.. 3910    610 fetches  rmsnorm
+  cycles  3911.. 3943     26 fetches  forward
+  cycles  3944.. 3966     21 fetches  acc_gemv
+  cycles  3967.. 3969      2 fetches  acc_vfu_sum
+  cycles  3970.. 3973      4 fetches  acc_gemv
+  cycles  3974.. 3976      2 fetches  acc_vfu_sum
+  cycles  3977.. 3980      4 fetches  acc_gemv
+  cycles  3981.. 3983      2 fetches  acc_vfu_sum
+  cycles  3984.. 3987      4 fetches  acc_gemv
+  cycles  3988.. 3990      2 fetches  acc_vfu_sum
+  cycles  3991.. 3994      4 fetches  acc_gemv
+  cycles  3995.. 3997      2 fetches  acc_vfu_sum
+  cycles  3998.. 4001      4 fetches  acc_gemv
+  cycles  4002.. 4004      2 fetches  acc_vfu_sum
+  cycles  4005.. 4008      4 fetches  acc_gemv
+  cycles  4009.. 4011      2 fetches  acc_vfu_sum
+  cycles  4012.. 4015      4 fetches  acc_gemv
+  cycles  4016.. 4018      2 fetches  acc_vfu_sum
+  cycles  4019.. 4022      4 fetches  acc_gemv
+  cycles  4023.. 4025      2 fetches  acc_vfu_sum
+  cycles  4026.. 4029      4 fetches  acc_gemv
+  cycles  4030.. 4032      2 fetches  acc_vfu_sum
+  cycles  4033.. 4036      4 fetches  acc_gemv
+  cycles  4037.. 4039      2 fetches  acc_vfu_sum
+  cycles  4040.. 4043      4 fetches  acc_gemv
+  cycles  4044.. 4046      2 fetches  acc_vfu_sum
+  cycles  4047.. 4050      4 fetches  acc_gemv
+  cycles  4051.. 4053      2 fetches  acc_vfu_sum
+  cycles  4054.. 4057      4 fetches  acc_gemv
+  cycles  4058.. 4060      2 fetches  acc_vfu_sum
+  cycles  4061.. 4064      4 fetches  acc_gemv
+  cycles  4065.. 4067      2 fetches  acc_vfu_sum
+  cycles  4068.. 4071      4 fetches  acc_gemv
+  cycles  4072.. 4074      2 fetches  acc_vfu_sum
+  cycles  4075.. 4078      4 fetches  acc_gemv
+  cycles  4079.. 4081      2 fetches  acc_vfu_sum
+  cycles  4082.. 4085      4 fetches  acc_gemv
+  cycles  4086.. 4088      2 fetches  acc_vfu_sum
+  cycles  4089.. 4092      4 fetches  acc_gemv
+  cycles  4093.. 4095      2 fetches  acc_vfu_sum
+  cycles  4096.. 4099      4 fetches  acc_gemv
+  cycles  4100.. 4102      2 fetches  acc_vfu_sum
+  cycles  4103.. 4106      4 fetches  acc_gemv
+  cycles  4107.. 4109      2 fetches  acc_vfu_sum
+  cycles  4110.. 4113      4 fetches  acc_gemv
+  cycles  4114.. 4116      2 fetches  acc_vfu_sum
+  cycles  4117.. 4120      4 fetches  acc_gemv
+  cycles  4121.. 4123      2 fetches  acc_vfu_sum
+  cycles  4124.. 4127      4 fetches  acc_gemv
+  cycles  4128.. 4130      2 fetches  acc_vfu_sum
+  cycles  4131.. 4134      4 fetches  acc_gemv
+  cycles  4135.. 4137      2 fetches  acc_vfu_sum
+  cycles  4138.. 4141      4 fetches  acc_gemv
+  cycles  4142.. 4144      2 fetches  acc_vfu_sum
+  cycles  4145.. 4148      4 fetches  acc_gemv
+  cycles  4149.. 4151      2 fetches  acc_vfu_sum
+  ... (807 segments in this window)
+
+== data-port accesses in this window: 2068; the first 8:
+  cycle    17  write 0x001b4174  data 0x00000000
+  cycle    23  write 0x001b4178  data 0x00000000
+  cycle    29  write 0x001b417c  data 0x00000000
+  cycle    35  write 0x001b4180  data 0x00000000
+  cycle    41  write 0x001b4184  data 0x00000000
+  cycle    47  write 0x001b4188  data 0x00000000
+  cycle    53  write 0x001b418c  data 0x00000000
+  cycle    59  write 0x001b4190  data 0x00000000
+g_busy: first rises at cycle 3965, cycle 5292, cycle 6073
+vfu_busy: first rises at never in this window

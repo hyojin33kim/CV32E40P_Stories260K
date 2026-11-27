@@ -1,0 +1,10 @@
+data-port events in the trace: 10067; .bss clear loop: 39 stores
+first store of the .bss clear loop           : cycle      17  write addr 0x001b4174 data 0x00000000
+last store of the .bss clear loop            : cycle     245  write addr 0x001b420c data 0x00000000
+first access to the stack                    : cycle     265  write addr 0x001ffffc data 0x010000b6
+first access to the GEMV registers           : not found
+first GEMV command (write 0x3000_0000)       : not found
+first access to the VFU registers            : not found
+first VFU command (write 0x3000_0040)        : not found
+DONE write (0x2000_0000)                     : cycle  157432  write addr 0x20000000 data 0x00000001
+GEMV commands: 0, VFU commands: 0
