@@ -38,6 +38,7 @@ DESC = {
  'vg7_a_unbounded.out': 'first V-G7 run of step A, MAXCYC did not take effect (env var not passed to Windows vivado): ran about 3 h to 85M cycles before it was stopped, no result (11-25)',
  'tb_dm*': 'Debug Module JTAG test (dbg/tb_dm) outputs of successive RTL versions (tb_dm6d = final; tb_dm_mut = mutation check, expected FAIL) (11-26)',
  'chip_dm.out': 'DM build 125 MHz synthesis and implementation summary printed by fpga/run_chip.sh, final RTL (11-26)',
+ 'npu_perf.out': 'DONE cycles and PERF counters of image_1/128/512 on the board-top simulation, the data of the NPU scaling analysis (11-27)',
  'dm_chip_route_summary.txt': 'RISC-V Debug Module build at 125 MHz: routed timing summary (WNS +0.110 ns), utilization, synthesis LUT/register lines (11-26)',
  'xsim_full_after_tbnet.out': 'full-chip RTL xsim rerun after the tb_chip.sv changes for the netlist: DONE run_cycles=157433, dump equal to Verilator (11-24)',
  'a3_conc.out': 'V-A3: four concurrency scenarios (CPU with GEMV, CPU with VFU, VFU started during GEMV, GEMV started during VFU) (11-24)',

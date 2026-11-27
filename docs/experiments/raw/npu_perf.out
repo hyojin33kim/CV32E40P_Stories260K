@@ -1,0 +1,9 @@
+== image_1 (ctx 1), board-top simulation obj_axi, 11-27
+DONE cycles=157433 done_value=0x1 loaded_words=265241 load_cycles=808020 axi_cycles=3063460
+PERF gemv_busy=79846 vfu_busy=14365 acc_stall=0 acc_rd_lines=69956 tq_full=0 eq_max=0
+== image_128 (ctx 128), board-top simulation obj_axi, 11-27
+DONE cycles=214253 done_value=0x1 loaded_words=305882 load_cycles=929943 axi_cycles=3241467
+PERF gemv_busy=120486 vfu_busy=29605 acc_stall=0 acc_rd_lines=100436 tq_full=0 eq_max=0
+== image_512 (ctx 512), board-top simulation obj_axi, 11-27
+DONE cycles=382966 done_value=0x1 loaded_words=428762 load_cycles=1298583 axi_cycles=3780362
+PERF gemv_busy=243366 vfu_busy=75685 acc_stall=0 acc_rd_lines=192596 tq_full=0 eq_max=0

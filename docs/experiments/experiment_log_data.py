@@ -159,6 +159,15 @@ EXPERIMENTS = [
   caveat='BSCANE2 변형(실제 FPGA JTAG 사슬)은 합성만 했고 시뮬레이션하지 못했다(Verilator에 BSCANE2 없음). 보드에서 OpenOCD로 붙여 본 적 없음(보드 JTAG 사슬의 위치, IR 코드 미확인). ebreak는 이미지를 바꿔(c.lui를 c.ebreak로) 시험했고, 일반 펌웨어의 ebreak(ebreakm 없이 breakpoint 예외)는 시험하지 않았다. 트리거는 1개(코어가 가진 수)와 한 가지 유형만 시험했다. SBA는 연결하지 않아 실행 중 메모리 읽기 불가. 이 변경 후 reproduce.sh quick은 42/42 OK(약 28분, raw/repro_dm.out). Vivado가 같은 RTL(v3)에서 배치배선 포함 실행을 두 번 합성 도중 비정상 종료(EXCEPTION_ACCESS_VIOLATION, Start Timing Optimization 단계)했고 세 번째 실행과 합성만 한 실행은 정상이었다. 원인 미확인(간헐적 도구 오류로 추정).',
   impact='V-D1(디버그 모듈 시뮬레이션) 통과, V-D2(125 MHz 합성) 통과. 기본 흐름에는 영향 없음(DM_EN=0, DM_BUILD 없음). 정식 비트스트림에 넣을지는 별도 결정(면적 +약 1,200 LUT는 합성 단계 값, 하드웨어 breakpoint는 임계 경로와 관련).',
   raw='dm_chip_route_summary.txt'),
+ dict(id='E15', date='2026-11-27', topic='NPU 확장 분석: 성능 카운터로 본 병목',
+  purpose='가속기(gemv_acc, vfu)가 부족해 늘릴 때 어디가 병목인지 이미 있는 성능 카운터로 확인한다.',
+  setup='보드 최상위 시뮬레이션(obj_axi/Vchip_axi_top)으로 prof/chip_full_opta_d2/image_1, image_128, image_512를 실행하고 DONE cycle과 PERF 줄(gemv_busy, vfu_busy, acc_stall, acc_rd_lines, tq_full, eq_max)을 읽음. 계산은 전체 - gemv - vfu = CPU만 도는 구간(겹침이 없다고 가정)과 읽은 line / (gemv+vfu busy).',
+  result='문맥 1: 전체 157,433, GEMV 79,846(50.7 %), VFU 14,365(9.1 %), 나머지 63,222(40.2 %), 0.743 line/cycle. 문맥 128: 214,253, 120,486(56.2 %), 29,605(13.8 %), 64,162(29.9 %), 0.669. 문맥 512: 382,966, 243,366(63.5 %), 75,685(19.8 %), 63,915(16.7 %), 0.604. acc_stall, tq_full, eq_max는 모두 0.',
+  observation='CPU만 도는 구간은 문맥 길이와 무관하게 약 63~64k cycle로 거의 일정하다. 가속기 구간에서 SRAM 포트 B는 읽기 line 기준 60~74 % 사용된다.',
+  opinion='연산기만 늘리면 한계가 낮다(문맥 512에서 GEMV 무한 가속도 2.74배, 문맥 1에서 2.03배). 권고 순서: CPU 고정 구간 줄이기, int8 모드로 line당 MAC 수 늘리기, 레인 증가, 메모리 대역 확장, 엔진 복수화. 확신: 병목 수치는 높음(측정과 산술), 순서는 중간(CPU 구간이 어떤 함수인지 모름).',
+  caveat='이미지의 가중치 형식(fp32 또는 int8)을 확인하지 않았다. 가속기와 CPU가 겹치지 않는다는 가정으로 나머지를 계산했다. line 수는 읽기만 센 근사다. 레인 증가가 비트 일치를 유지한다는 판단은 코드를 읽은 추정이며 시험하지 않았다.',
+  impact='확장 방향 결정에 사용. 다음 단계는 CPU 고정 구간의 함수별 프로파일. 상세: docs/NPU_SCALING.md.',
+  raw='npu_perf.out'),
 ]
 
 # (date, what was said, what was found, where recorded)
