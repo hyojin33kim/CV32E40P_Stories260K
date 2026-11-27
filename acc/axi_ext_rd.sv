@@ -147,5 +147,10 @@ module axi_ext_rd #(
   end
 `ifndef SYNTHESIS
   always_ff @(posedge clk_i) if (rst_ni && m_rvalid_i && tg_n_q == 0) $error("axi_ext_rd: unexpected R beat");
+  // parameter constraints found by acc/tb_axi_ext_rd/checks.sh (experiment E07): CRED < MAXB deadlocks, a TD that is not a power of two >= 2 reorders responses
+  initial begin
+    if (CRED < MAXB) $error("axi_ext_rd: CRED (%0d) must be >= MAXB (%0d), otherwise a full burst can never be requested (deadlock)", CRED, MAXB);
+    if (TD < 2 || (TD & (TD - 1)) != 0) $error("axi_ext_rd: TD (%0d) must be a power of two >= 2, otherwise responses are misordered", TD);
+  end
 `endif
 endmodule

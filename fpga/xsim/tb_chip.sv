@@ -78,9 +78,8 @@ module tb_chip;
       // instruction fetch addresses and the FPU (APU) interface in the window of interest (plusargs +PC_FROM= / +PC_TO=, default 9900..10300)
       if (trace_n > 0 && run_cycles >= pc_from && run_cycles < pc_to && dut.i_req) $fdisplay(tf, "%0d IF a=%08h", run_cycles, dut.i_addr);
       if (trace_n > 0 && run_cycles >= pc_from && run_cycles < pc_to && dut.soc_i.vfu_i.st_q == 6)
-        $fdisplay(tf, "%0d XSPROBE x_req=%b isXS=%b src_lt_n=%b rd_ok_fn=%b rd_ok_expl=%b (rd_v=%b rd_st_eq6=%b rd_el_eq_src=%b) cred=%b cred_val=%0d",
+        $fdisplay(tf, "%0d XSPROBE x_req=%b isXS=%b src_lt_n=%b rd_ok_expl=%b (rd_v=%b rd_st_eq6=%b rd_el_eq_src=%b) cred=%b cred_val=%0d",
           run_cycles, dut.soc_i.vfu_i.x_req, dut.soc_i.vfu_i.st_q == 3'd6, dut.soc_i.vfu_i.src_q < dut.soc_i.vfu_i.n_q,
-          dut.soc_i.vfu_i.rd_ok(dut.soc_i.vfu_i.XS, dut.soc_i.vfu_i.src_q),
           dut.soc_i.vfu_i.rd_v_q && dut.soc_i.vfu_i.rd_st_q == 3'd6 && dut.soc_i.vfu_i.rd_elem_q == dut.soc_i.vfu_i.src_q,
           dut.soc_i.vfu_i.rd_v_q, dut.soc_i.vfu_i.rd_st_q == 3'd6, dut.soc_i.vfu_i.rd_elem_q == dut.soc_i.vfu_i.src_q,
           ((dut.soc_i.vfu_i.src_q - dut.soc_i.vfu_i.wr_q) + 32'(dut.soc_i.vfu_i.af_cnt_q)) < 32,

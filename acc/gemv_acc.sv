@@ -38,7 +38,8 @@
 // Per-logical-lane FIFOs with credits (in-flight words reserved).
 //
 // MMIO (byte offsets from the slave base):
-//   0x00 CTRL    W: bit0=1 start            0x04 STATUS  R: bit0 busy
+//   0x00 CTRL    W: bit0=1 start            0x04 STATUS  R: bit0 busy, bit1 err (sticky: the last start was refused because N > XBUF or D > YBUF;
+//                                                            cleared by the next accepted start; a refused start changes nothing else)
 //   0x08 X_ADDR  0x0C W_ADDR  0x10 Y_ADDR   (byte addresses, word aligned)
 //   0x14 N (<= XBUF)  0x18 D (<= YBUF)  0x1C W_STRIDE (bytes between rows)
 //   0x20 LAST_CYCLES R  0x24 J_STRIDE (bytes between consecutive j; reset 4)
@@ -105,6 +106,7 @@ module gemv_acc
   assign w8 = mode_q == MD;
   logic [31:0] ld_iss_q, ld_rsp_q, wb_q, rows_done_q;
   logic        tiled_q;                              // CTRL bit2 of the running command
+  logic        err_q;                                // a start was refused (N > XBUF or D > YBUF): the buffers would be overrun and the result silently wrong
   logic [31:0] is_ln_q;                              // lines issued so far (tiled addressing)
 
   function automatic logic [31:0] nact(logic [31:0] d, logic [31:0] i0);   // rows in a group
@@ -410,7 +412,7 @@ module gemv_acc
   // ================================================================ slave
   always_ff @(posedge clk_i) begin
     unique case (s_addr_i[5:2])
-      4'h1: s_rdata_o <= {31'b0, state_q != IDLE};
+      4'h1: s_rdata_o <= {30'b0, err_q, state_q != IDLE};
       4'h2: s_rdata_o <= x_addr_q;
       4'h3: s_rdata_o <= w_addr_q;
       4'h4: s_rdata_o <= y_addr_q;
@@ -428,7 +430,7 @@ module gemv_acc
   // ================================================================ control
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      state_q <= IDLE; mode_q <= MA; ext_q <= 1'b0; tiled_q <= 1'b0; is_ln_q <= '0;
+      state_q <= IDLE; mode_q <= MA; ext_q <= 1'b0; tiled_q <= 1'b0; is_ln_q <= '0; err_q <= 1'b0;
       {x_addr_q, w_addr_q, y_addr_q, n_q, d_q, stride_q, cyc_q, sc_addr_q} <= '0;
       jstride_q <= 32'd4;
       {ld_iss_q, ld_rsp_q, wb_q, rows_done_q, is_i0_q, is_k_q, is_q_q, is_kb_q, cs_i0_q, cs_j_q} <= '0;
@@ -439,7 +441,9 @@ module gemv_acc
     end else begin
       if (s_req_i && s_we_i && state_q == IDLE) begin
         unique case (s_addr_i[5:2])
-          4'h0: if (s_wdata_i[0]) begin
+          4'h0: if (s_wdata_i[0] && (n_q > 32'(XBUF) || d_q > 32'(YBUF))) err_q <= 1'b1;
+          else if (s_wdata_i[0]) begin
+            err_q <= 1'b0;
             state_q <= LOADX; cyc_q <= '0; ext_q <= (EXT_BELOW != 0) && w_addr_q < EXT_BELOW;
             {ld_iss_q, ld_rsp_q, wb_q, rows_done_q, is_i0_q, is_k_q, is_q_q, is_kb_q, cs_i0_q, cs_j_q} <= '0;
             ph_q <= '0; x_ok_q <= 1'b0;

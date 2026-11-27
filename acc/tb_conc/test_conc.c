@@ -1,13 +1,17 @@
 // V-A3: CPU, GEMV (gemv_acc) and VFU (vfu) active at the same time on the SoC RTL sim. One scenario per run (ctrl word 0x1afff0):
 //   1 CPU computes in its own memory while GEMV (int8 mode D) runs         -> GEMV result and CPU result must equal the sequential ones
 //   2 CPU computes in its own memory while the VFU runs a softmax           -> same
-//   3 VFU is started while GEMV is busy (GEMV and VFU share one memory port; ownership = vfu_busy)   -> undefined by design, characterized
-//   4 GEMV is started while the VFU is busy                                  -> undefined by design, characterized
+//   3 VFU is started while GEMV is busy (GEMV and VFU share one memory port; ownership = vfu_busy)   -> the VFU start is refused (VFU STATUS bit1 err),
+//     the GEMV finishes with the right result, the VFU data is untouched (before 11-27 the GEMV hung and both results were wrong, E10)
+//   4 GEMV is started while the VFU is busy                                  -> serialized by the shared port, characterized
+//   5 GEMV start with N = XBUF + 1 (513): refused (GEMV STATUS bit1 err), then a valid start is accepted (err cleared) and the result is right
+//   6 VFU start with n = BUF + 1 (513): refused (VFU STATUS bit1 err), then a valid start is accepted (err cleared) and the result is right
 // The firmware normally polls busy before starting the next accelerator command; scenarios 3 and 4 break that rule on purpose.
 // Before every scenario the firmware measures the durations of a blocking GEMV, VFU softmax and CPU work run (calibration), so that the
 // second command of scenarios 3 and 4 starts a third of the way into the first one, and it records whether the first was really busy then.
 // Only the accelerators that ran in the scenario are compared with their software reference.
-// Results at 0x1aff00 (words): 0 scenario, 1 gemv mismatching words (of 128), 2 vfu (of 512), 3 cpu (of 256), 4 timeouts (bit0 gemv, bit1 vfu),
+// Results at 0x1aff00 (words), 11 err bits at the end (bit0 gemv, bit1 vfu), 12 err after the refused start (scenarios 5, 6), 13 err after the following valid start,
+//   14 words of the VFU data that differ from its input (scenario 3, must be 0): 0 scenario, 1 gemv mismatching words (of 128), 2 vfu (of 512), 3 cpu (of 256), 4 timeouts (bit0 gemv, bit1 vfu),
 //   5 overlap evidence (scenarios 1, 2: CPU passes that ended while the accelerator was busy; 3, 4: first accelerator busy when the second
 //   was started), 6 cycles of the scenario, 7 gemv, 8 vfu, 9 cpu work calibration cycles, 10 finished marker 0x600d600d.
 #include <string.h>
@@ -94,18 +98,24 @@ void boot(void) {
     c0 = cyc(); work(CPUC, PASSES, 0); wc = cyc() - c0;
     for (int i = 0; i < GD; i++) YHW[i] = 0.0f;
     memcpy(VHW, VIN0, VN * 4);
-    unsigned ran_g = sc != 2, ran_v = sc != 1;
+    unsigned ran_g = sc != 2 && sc != 6, ran_v = sc != 1 && sc != 3 && sc != 5, e1 = 0, e2 = 0;
     c0 = cyc();
     if (sc == 1) { gemv_start(); evid = work(CPUA, PASSES, G); to |= wait_busy(G); }
     else if (sc == 2) { vfu_start(); evid = work(CPUA, PASSES, V); to |= wait_busy(V) << 1; }
     else if (sc == 3) { gemv_start(); delay_to(gc / 3); evid = G[1] & 1; vfu_start(); to |= wait_busy(G); to |= wait_busy(V) << 1; work(CPUA, PASSES, 0); }
     else if (sc == 4) { vfu_start(); delay_to(vc / 3); evid = V[1] & 1; gemv_start(); to |= wait_busy(V) << 1; to |= wait_busy(G); work(CPUA, PASSES, 0); }
+    else if (sc == 5) { G[2] = (unsigned)XV; G[3] = (unsigned)MAT; G[4] = (unsigned)YHW; G[5] = 513; G[6] = GD; G[7] = GN; G[11] = (unsigned)SC; G[0] = 3;
+                        e1 = (G[1] >> 1) & 1; to |= wait_busy(G); gemv_start(); to |= wait_busy(G); e2 = (G[1] >> 1) & 1; evid = 1; work(CPUA, PASSES, 0); }
+    else if (sc == 6) { V[2] = (unsigned)VHW; V[3] = 0; V[4] = 513; V[5] = 0; V[0] = 1;
+                        e1 = (V[1] >> 1) & 1; to |= wait_busy(V) << 1; vfu_start(); to |= wait_busy(V) << 1; e2 = (V[1] >> 1) & 1; evid = 1; work(CPUA, PASSES, 0); }
     c1 = cyc();
+    unsigned errs = ((G[1] >> 1) & 1) | (((V[1] >> 1) & 1) << 1);
     out[0] = sc;
     out[1] = ran_g ? diff((const unsigned*)YHW, (const unsigned*)YSW, GD) : 0;
     out[2] = ran_v ? diff((const unsigned*)VHW, (const unsigned*)VSW, VN) : 0;
     out[3] = diff(CPUA, CPUB, 256);
     out[4] = to; out[5] = evid; out[6] = c1 - c0; out[7] = gc; out[8] = vc; out[9] = wc;
     out[10] = 0x600d600d;
+    out[11] = errs; out[12] = e1; out[13] = e2; out[14] = (sc == 3) ? diff((const unsigned*)VHW, (const unsigned*)VIN0, VN) : 0;
     *(volatile unsigned*)0x20000000 = 1; for (;;);
 }

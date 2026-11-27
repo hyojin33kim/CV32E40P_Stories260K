@@ -49,6 +49,7 @@ module vfu
     input  logic [ 5:0] s_addr_i,
     input  logic [31:0] s_wdata_i,
     output logic [31:0] s_rdata_o,
+    input  logic        other_busy_i,   // the other accelerator (gemv_acc) is busy: they share one memory port, a start now is refused
 
     output logic         m_req_o,
     output logic         m_we_o,
@@ -84,6 +85,7 @@ module vfu
   // ---------------------------------------------------------------- banked buffers
   logic [31:0] ra_elem;                          // element whose data is read this cycle
   logic [31:0] rd_elem_q;
+  logic        err_q;                          // a start was refused: the operand buffers would be overrun or the memory port is owned by gemv_acc
   st_e         rd_st_q;
   logic        rd_v_q;
   logic [PW-1:0] rd_bank_q;
@@ -103,9 +105,9 @@ module vfu
   logic [31:0] rda, rdb;                         // the addressed element's words
   assign rda = rd_a[rd_bank_q];
   assign rdb = rd_b[rd_bank_q];
-  function automatic logic rd_ok(st_e s, logic [31:0] e);
-    return rd_v_q && rd_st_q == s && rd_elem_q == e;
-  endfunction
+  // read-data valid for the element the state machine is waiting for: written out where it is used (not as a function that reads these registers
+  // itself): Vivado xsim does not re-evaluate a continuous assign whose function reads module variables, and the full-chip simulation hung
+  // (docs/XSIM_VS_VERILATOR.md, E13); the logic is the same
 
   // ---------------------------------------------------------------- lanes
   logic        l_start[LANES], l_busy[LANES], l_done[LANES];
@@ -127,7 +129,7 @@ module vfu
       C_DIVS:    l_b = scalar_q;
       default:   l_b = '0;
     endcase
-    disp_go = st_q == PAR && disp_q < n_q && rd_ok(PAR, disp_q) && !l_busy[disp_q % LANES];
+    disp_go = st_q == PAR && disp_q < n_q && (rd_v_q && rd_st_q == PAR && rd_elem_q == disp_q) && !l_busy[disp_q % LANES];
     for (int p = 0; p < LANES; p++) l_start[p] = disp_go && (disp_q % LANES == p);
   end
 
@@ -143,7 +145,7 @@ module vfu
   localparam logic [APU_WOP_CPU-1:0] OP_ADD = APU_WOP_CPU'({1'b0, 1'b0, 4'(fpnew_pkg::ADD)});
   logic        sum_in, sum_gnt, sum_valid, sum_done;
   logic [31:0] sum_res;
-  assign sum_in   = st_q == SUM && sum_i_q < n_q && !sum_pend_q && rd_ok(SUM, sum_i_q);
+  assign sum_in   = st_q == SUM && sum_i_q < n_q && !sum_pend_q && (rd_v_q && rd_st_q == SUM && rd_elem_q == sum_i_q);
   assign sum_done = st_q == SUM && sum_valid && (sum_pend_q || (sum_in && sum_gnt));
   cv32e40p_fp_wrapper #(.FPU_ADDMUL_LAT(FPU_LAT), .FPU_OTHERS_LAT(FPU_LAT)) sum_i (
       .clk_i, .rst_ni, .apu_req_i(sum_in), .apu_gnt_o(sum_gnt),
@@ -161,7 +163,7 @@ module vfu
   logic [$clog2(AF):0] af_cnt_q;
   logic        x_req, x_gnt, x_go, sub_valid, mul_gnt, mul_valid, e2_valid;
   logic [31:0] sub_res, mul_res, e2_res;
-  assign x_req = st_q == XS && src_q < n_q && rd_ok(XS, src_q) &&
+  assign x_req = st_q == XS && src_q < n_q && (rd_v_q && rd_st_q == XS && rd_elem_q == src_q) &&
                  (src_q - wr_q) + 32'(af_cnt_q) < AF;
   assign x_go  = x_req && x_gnt;
   cv32e40p_fp_wrapper #(.FPU_ADDMUL_LAT(FPU_LAT), .FPU_OTHERS_LAT(FPU_LAT)) xsub_i (
@@ -235,7 +237,7 @@ module vfu
     if (st_q == LOAD && iss_q < n_load) begin
       m_req_o  = 1'b1;
       m_addr_o = (iss_q < n_q) ? a_addr_q + (iss_q << 2) : b_addr_q + ((iss_q - n_q) << 2);
-    end else if (st_q == STORE && st_cnt_q < n_q && rd_ok(STORE, st_cnt_q)) begin
+    end else if (st_q == STORE && st_cnt_q < n_q && (rd_v_q && rd_st_q == STORE && rd_elem_q == st_cnt_q)) begin
       m_req_o = 1'b1; m_we_o = 1'b1;
       m_addr_o = a_addr_q + (st_cnt_q << 2); m_wdata_o = rda;
     end
@@ -251,7 +253,7 @@ module vfu
 
   // read address = the element the current state needs next cycle
   logic max_go;
-  assign max_go = st_q == MAX && rd_ok(MAX, max_i_q);
+  assign max_go = st_q == MAX && (rd_v_q && rd_st_q == MAX && rd_elem_q == max_i_q);
   always_comb begin
     unique case (st_q)
       PAR:     ra_elem = disp_q + (disp_go ? 1 : 0);
@@ -284,7 +286,7 @@ module vfu
 
   always_ff @(posedge clk_i) begin
     unique case (s_addr_i[5:2])
-      4'h1: s_rdata_o <= {31'b0, busy_o};
+      4'h1: s_rdata_o <= {30'b0, err_q, busy_o};   // bit1 err: sticky, the last start was refused (n > BUF or gemv_acc busy), cleared by the next accepted start
       4'h2: s_rdata_o <= a_addr_q;
       4'h3: s_rdata_o <= b_addr_q;
       4'h4: s_rdata_o <= n_q;
@@ -298,7 +300,7 @@ module vfu
   // ---------------------------------------------------------------- control
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      st_q <= IDLE; cmd_q <= '0; pass_q <= '0; sum_pend_q <= 1'b0;
+      st_q <= IDLE; cmd_q <= '0; pass_q <= '0; sum_pend_q <= 1'b0; err_q <= 1'b0;
       {a_addr_q, b_addr_q, n_q, scalar_q, cyc_q, iss_q, rsp_q, st_cnt_q, disp_q, done_q, sum_i_q, max_i_q} <= '0;
       {max_q, sum_q, sum2_q, rd_elem_q} <= '0;
       {src_q, wr_q, add_n_q, t0_q, t1_q} <= '0; af_cnt_q <= '0; af_wp_q <= '0; af_rp_q <= '0;
@@ -309,7 +311,9 @@ module vfu
       rd_elem_q <= ra_elem; rd_st_q <= st_q; rd_v_q <= st_q != IDLE; rd_bank_q <= PW'(ra_elem % LANES);
       if (s_req_i && s_we_i && st_q == IDLE) begin
         unique case (s_addr_i[5:2])
-          4'h0: if (s_wdata_i[2:0] != 0) begin
+          4'h0: if (s_wdata_i[2:0] != 0 && (n_q > 32'(BUF) || other_busy_i)) err_q <= 1'b1;
+          else if (s_wdata_i[2:0] != 0) begin
+            err_q <= 1'b0;
             cmd_q <= s_wdata_i[2:0]; st_q <= LOAD; cyc_q <= '0;
             pass_q <= (s_wdata_i[2:0] == C_DIVSM) ? 2'd0 : 2'd1;
             // (disp_q / done_q are cleared when PAR is entered; not here: keeps the CPU store

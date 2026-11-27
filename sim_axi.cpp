@@ -57,10 +57,16 @@ int main(int argc, char** argv) {
     axi_write(0x2000000, 1);                                          // run
     while ((axi_read(0x2000004) & 1) == 0) {
         for (int i = 0; i < 2000; i++) tick();
-        if (cyc > maxc) { std::cerr << "TIMEOUT\n"; return 1; }
+        if (cyc > maxc) {
+            unsigned dr[6]; for (int i = 0; i < 6; i++) dr[i] = axi_read(0x2000040 + 4 * i);
+            std::cout << "DBGREGS out=0x" << std::hex << dr[0] << " out_cnt=" << std::dec << dr[1] << " last_pc=0x" << std::hex << dr[2] << std::dec << " fetch_cnt=" << dr[3]
+                      << " trap_cnt=" << dr[4] << " trap_pc=0x" << std::hex << dr[5] << std::dec << "\n";
+            std::cerr << "TIMEOUT\n"; return 1;
+        }
     }
     unsigned run_cycles = axi_read(0x200000C), done_v = axi_read(0x2000008);
     unsigned pf[6]; for (int i = 0; i < 6; i++) pf[i] = axi_read(0x2000020 + 4 * i);
+    unsigned dr[6]; for (int i = 0; i < 6; i++) dr[i] = axi_read(0x2000040 + 4 * i);
     axi_write(0x2000000, 0);                                          // hold, then read back
     for (unsigned a = 0; a < 0x200000; a += 4) { unsigned v = axi_read(a); memcpy(&mem[a], &v, 4); }
     std::ofstream out(argv[2], std::ios::binary); out.write((char*)mem.data(), 0x200000);
@@ -68,5 +74,7 @@ int main(int argc, char** argv) {
               << " loaded_words=" << nz << " load_cycles=" << load_cycles << " axi_cycles=" << cyc << "\n";
     std::cout << "PERF gemv_busy=" << pf[0] << " vfu_busy=" << pf[1] << " acc_stall=" << pf[2] << " acc_rd_lines=" << pf[3]
               << " tq_full=" << pf[4] << " eq_max=" << pf[5] << "\n";
+    std::cout << "DBGREGS out=0x" << std::hex << dr[0] << " out_cnt=" << std::dec << dr[1] << " last_pc=0x" << std::hex << dr[2] << std::dec << " fetch_cnt=" << dr[3]
+              << " trap_cnt=" << dr[4] << " trap_pc=0x" << std::hex << dr[5] << std::dec << "\n";
     return 0;
 }

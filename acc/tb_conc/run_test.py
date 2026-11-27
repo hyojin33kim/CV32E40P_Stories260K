@@ -10,7 +10,7 @@ from pathlib import Path
 W = Path(__file__).resolve().parent.parent.parent
 O = Path(os.environ.get('TEST_OUT', W / '.scratch' / 'conc')); O.mkdir(parents=True, exist_ok=True)
 SIM = os.environ.get('TEST_SIM', str(W / 'obj_soc/Vsoc_top'))
-scen = [int(a) for a in sys.argv[1:]] or [1, 2, 3, 4]
+scen = [int(a) for a in sys.argv[1:]] or [1, 2, 3, 4, 5, 6]
 subprocess.run(['env', 'SRC=acc/tb_conc/test_conc.c', f'OUT={O}/test_conc', 'CFLAGS_EXTRA=-O2 -funroll-loops', str(W / 'build.sh')], cwd=W, check=True, capture_output=True)
 elf = (O / 'test_conc.elf').read_bytes()
 phoff = struct.unpack_from('<I', elf, 28)[0]; sz, num = struct.unpack_from('<HH', elf, 42)
@@ -25,8 +25,7 @@ for s in scen:
     img.write_bytes(m)
     r = subprocess.run([SIM, str(img), str(dump), os.environ.get('TEST_MAXCYC', '300000000')], capture_output=True)
     d = dump.read_bytes()
-    sc, gbad, vbad, cbad, to, evid, cycles, gc, vc, wc = struct.unpack_from('<10I', d, 0x1aff00)
-    marker = struct.unpack_from('<I', d, 0x1aff00 + 40)[0]
+    sc, gbad, vbad, cbad, to, evid, cycles, gc, vc, wc, marker, errs, e1, e2, vuntouched = struct.unpack_from('<15I', d, 0x1aff00)
     fin = marker == 0x600d600d
     what = 'CPU passes that ended while the accelerator was busy (of 6)' if s in (1, 2) else 'first accelerator busy when the second started'
     line = (f'scenario {s}: finished={fin} gemv mismatches {gbad}/128, vfu mismatches {vbad}/512, cpu mismatches {cbad}/256, timeouts '
@@ -34,6 +33,14 @@ for s in scen:
     if s in (1, 2):
         ok = fin and gbad == 0 and vbad == 0 and cbad == 0 and to == 0 and evid > 0
         line += ' -> ' + ('PASS' if ok else 'FAIL')
+        rc |= 0 if ok else 1
+    elif s == 3:   # the VFU start is refused, the GEMV finishes correctly, the VFU data is untouched
+        ok = fin and gbad == 0 and cbad == 0 and to == 0 and evid > 0 and (errs & 2) == 2 and (errs & 1) == 0 and vuntouched == 0
+        line += f', err bits {errs:#x}, vfu data words changed {vuntouched} -> ' + ('PASS' if ok else 'FAIL')
+        rc |= 0 if ok else 1
+    elif s in (5, 6):   # a start beyond the buffer is refused (err), the next valid start is accepted (err cleared) and right
+        ok = fin and to == 0 and e1 == 1 and e2 == 0 and (gbad == 0 if s == 5 else vbad == 0) and cbad == 0
+        line += f', err after the refused start {e1}, after the valid start {e2} -> ' + ('PASS' if ok else 'FAIL')
         rc |= 0 if ok else 1
     else:
         line += ' -> characterized' + ('' if evid else ' (INVALID: the first accelerator was not busy, no overlap happened)')

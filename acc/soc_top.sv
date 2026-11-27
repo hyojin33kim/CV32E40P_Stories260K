@@ -140,7 +140,7 @@ module soc_top #(
   vfu #(.BUF(VFU_BUF), .LANES(VFU_LANES), .FPU_LAT(VFU_FPU_LAT)) vfu_i (
       .clk_i, .rst_ni,
       .s_req_i(c_req && is_mmio && is_vfu), .s_we_i(c_we), .s_addr_i(c_addr[5:0]),
-      .s_wdata_i(c_wdata), .s_rdata_o(v_rdata),
+      .s_wdata_i(c_wdata), .s_rdata_o(v_rdata), .other_busy_i(g_busy),
       .m_req_o(v_req), .m_we_o(v_we), .m_addr_o(v_addr), .m_wdata_o(v_wdata),
       .m_gnt_i(acc_gnt_i && vfu_busy), .m_rvalid_i(acc_rvalid_i && vfu_busy), .m_rdata_i(acc_rdata_i),
       .busy_o(vfu_busy)

@@ -9,6 +9,13 @@
 //   0x200_0004  STATUS  R   bit0 DONE (the firmware wrote 0x2000_0000; cleared by RUN 0 -> 1)
 //   0x200_0008  DONE_V  R   value the firmware wrote to 0x2000_0000
 //   0x200_000C  CYCLES  R   clock cycles since RUN was set (stops at DONE)
+//   0x200_0040  OUT       R   last word the firmware wrote to 0x2000_0010 (an output channel: checkpoints, values; no UART needed)
+//   0x200_0044  OUT_CNT   R   number of writes to 0x2000_0010 since RUN
+//   0x200_0048  LAST_PC   R   address of the last instruction fetch request (where a stuck or looping core is)
+//   0x200_004C  FETCH_CNT R   instruction fetch requests since RUN (two reads that differ: the core is fetching)
+//   0x200_0050  TRAP_CNT  R   times the fetch address entered the trap vector region 0x0100_0000 .. 0x0100_007F (mtvec; the firmware starts at 0x0100_0080), i.e. exceptions taken
+//   0x200_0054  TRAP_PC   R   the fetch address just before the first trap vector entry (approximate: the prefetcher runs ahead of the instruction that trapped)
+//   (0x200_0040 .. 0x200_0054 are cleared when RUN is set, like the counters below)
 //   0x200_0020 .. 0x200_0034  performance counters (R, cleared when RUN is set): gemv busy cycles, vfu busy cycles,
 //       accelerator memory-grant stall cycles, accelerator read lines, tag-FIFO-full cycles, external line FIFO high-water mark
 // Memory windows are accessible only while RUN = 0 (writes ignored, reads return 0 otherwise).
@@ -109,6 +116,31 @@ module chip_axi_top #(
       .dm_slave_rdata_i('0), .debug_halted_o());
 `endif
 
+  // ---------------------------------------------------------------- firmware-visible output and core observation registers (0x200_0040 ..)
+  // The core's instruction fetch and data addresses are critical paths: they only go into plain registers here (no logic), the decisions are made one cycle later.
+  logic        if_v_q, dw_v_q;
+  logic [31:0] if_a_q, dw_a_q, dw_d_q;
+  logic [31:0] out_q, out_cnt_q, last_pc_q, fetch_cnt_q, trap_cnt_q, trap_pc_q;
+  logic        was_vec_q;
+  logic        in_vec;
+  assign in_vec = if_a_q[31:7] == 25'(32'h0100_0000 >> 7);                  // trap vector region (mtvec = 0x0100_0000, the firmware starts at 0x0100_0080)
+  always_ff @(posedge clk_i or negedge core_rst_n)
+    if (!core_rst_n) begin
+      if_v_q <= 1'b0; dw_v_q <= 1'b0; if_a_q <= '0; dw_a_q <= '0; dw_d_q <= '0;
+      out_q <= '0; out_cnt_q <= '0; last_pc_q <= '0; fetch_cnt_q <= '0; trap_cnt_q <= '0; trap_pc_q <= '0; was_vec_q <= 1'b0;
+    end else begin
+      if_v_q <= dbg_ireq; if_a_q <= dbg_iaddr;
+      dw_v_q <= d_req && d_we; dw_a_q <= d_addr; dw_d_q <= d_wdata;
+      if (dw_v_q && dw_a_q == 32'h2000_0010) begin out_q <= dw_d_q; out_cnt_q <= out_cnt_q + 32'd1; end
+      if (if_v_q) begin
+        last_pc_q <= if_a_q; fetch_cnt_q <= fetch_cnt_q + 32'd1; was_vec_q <= in_vec;
+        if (in_vec && !was_vec_q) begin
+          if (trap_cnt_q == 32'd0) trap_pc_q <= last_pc_q;
+          trap_cnt_q <= trap_cnt_q + 32'd1;
+        end
+      end
+    end
+
   // external CPU accesses: answered next cycle; a write to 0x2000_0000 is DONE
   assign d_gnt = 1'b1;
   always_ff @(posedge clk_i or negedge core_rst_n)
@@ -121,7 +153,7 @@ module chip_axi_top #(
   logic [31:0] wdata_q, rdata_q;
   logic        is_mem, is_ctrl;
   assign is_mem  = addr_q < 26'h020_0000 || (addr_q >= 26'h100_0000 && addr_q < 26'h100_4000);
-  assign is_ctrl = addr_q[25:6] == 20'(26'h200_0000 >> 6);
+  assign is_ctrl = addr_q[25:7] == 19'(26'h200_0000 >> 7);                  // 128-byte register window
 
   assign s_axi_awready = st_q == S_IDLE && s_axi_awvalid && s_axi_wvalid;
   assign s_axi_wready  = s_axi_awready;
@@ -151,7 +183,7 @@ module chip_axi_top #(
           if (s_axi_awready) begin addr_q <= s_axi_awaddr; wdata_q <= s_axi_wdata; st_q <= S_WR; end
           else if (s_axi_arready) begin addr_q <= s_axi_araddr; st_q <= S_RD; end
         S_WR: begin
-          if (is_ctrl && addr_q[5:2] == 4'h0) begin
+          if (is_ctrl && addr_q[6:2] == 5'h0) begin
             if (wdata_q[0] && !run_q) begin done_q <= 1'b0; cyc_q <= '0; end
             run_q <= wdata_q[0];
           end
@@ -162,17 +194,23 @@ module chip_axi_top #(
           if (is_mem && !run_q) st_q <= S_RWAIT;
           else begin
             rdata_q <= '0;
-            if (is_ctrl) unique case (addr_q[5:2])
-              4'd0: rdata_q <= {31'b0, run_q};
-              4'd1: rdata_q <= {31'b0, done_q};
-              4'd2: rdata_q <= done_v_q;
-              4'd3: rdata_q <= cyc_q;
-              4'd8: rdata_q <= pf_gemv;
-              4'd9: rdata_q <= pf_vfu;
-              4'd10: rdata_q <= pf_stall;
-              4'd11: rdata_q <= pf_rd;
-              4'd12: rdata_q <= pf_tq;
-              4'd13: rdata_q <= pf_eq;
+            if (is_ctrl) unique case (addr_q[6:2])
+              5'd0: rdata_q <= {31'b0, run_q};
+              5'd1: rdata_q <= {31'b0, done_q};
+              5'd2: rdata_q <= done_v_q;
+              5'd3: rdata_q <= cyc_q;
+              5'd8: rdata_q <= pf_gemv;
+              5'd9: rdata_q <= pf_vfu;
+              5'd10: rdata_q <= pf_stall;
+              5'd11: rdata_q <= pf_rd;
+              5'd12: rdata_q <= pf_tq;
+              5'd13: rdata_q <= pf_eq;
+              5'd16: rdata_q <= out_q;
+              5'd17: rdata_q <= out_cnt_q;
+              5'd18: rdata_q <= last_pc_q;
+              5'd19: rdata_q <= fetch_cnt_q;
+              5'd20: rdata_q <= trap_cnt_q;
+              5'd21: rdata_q <= trap_pc_q;
               default: rdata_q <= '0;
             endcase
             st_q <= S_R;
