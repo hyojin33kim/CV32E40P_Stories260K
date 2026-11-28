@@ -64,7 +64,7 @@ Final RTL, routed: WNS +0.110 ns, TNS 0, 0 failing endpoints, WHS +0.012 ns; CLB
 separate place-and-route runs; the run-to-run variation was not measured). At the synthesis stage the debug logic was about 1,200 LUTs (`dmi_jtag` 656, `dm_obi_top` 522 in the first run).
 Vivado crashed twice during synthesis of the same RTL (EXCEPTION_ACCESS_VIOLATION, "Start Timing Optimization"), once more in the earlier iteration, while a synthesis-only run and a third
 full run were fine; the cause is not known.
-The board bitstream `board_release_125_int8` does NOT contain the Debug Module: a new bitstream would be needed (build `chip_axi_top` with `DM_BUILD`; it has JTAG pin ports that need pin constraints and an external JTAG adapter, decision D5).
+The board bitstream `board_release_125_int8` does NOT contain the Debug Module: a new bitstream would be needed (build `chip_axi_top` with `DM_BUILD`; it has JTAG pin ports that are driven from the Zynq PS EMIO GPIO by OpenOCD on PYNQ, decision D8 (not built or run); pin constraints and an external adapter are the fallback).
 
 ## Not checked
 - The BSCANE2 variant (`dmi_bscane_tap.sv`) was dropped on 11-28 (E17): it is FPGA-only. The real TAP in the FPGA build is simulated (`dbg/tb_dm`) but its pins were never connected to a board or an adapter.
