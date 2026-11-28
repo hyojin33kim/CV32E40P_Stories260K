@@ -1,0 +1,32 @@
+Vivado 2026.1, out of context, chip_axi_top without the Debug Module, 120 MHz (8.333 ns), fpga/run_chip.sh, RTL with the guards and the observation registers, 11-28 10:27
+
+== timing_route.rpt: design timing summary
+| Design Timing Summary
+| ---------------------
+------------------------------------------------------------------------------------------------
+
+    WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
+    -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
+      0.191        0.000                      0               100088        0.011        0.000                      0               100088        3.466        0.000                       0                 25460  
+
+
+All user specified timing constraints are met.
+
+
+------------------------------------------------------------------------------------------------
+| Clock Summary
+
+== util_route.rpt (selected lines)
+| CLB LUTs                   | 58938 |     0 |          0 |    230400 | 25.58 |
+| CLB Registers              | 21079 |     0 |          0 |    460800 |  4.57 |
+| CLB Registers                              | 21079 |     0 |          0 |    460800 |  4.57 |
+| Block RAM Tile    |    7 |     0 |          0 |       312 |  2.24 |
+| URAM              |   64 |     0 |          0 |        96 | 66.67 |
+| DSPs           |   93 |     0 |          0 |      1728 |  5.38 |
+
+== util_synth.rpt (synthesis stage)
+| CLB LUTs*                  | 60173 |     0 |          0 |    230400 | 26.12 |
+| CLB Registers              | 21097 |     0 |          0 |    460800 |  4.58 |
+
+worst routed path: tmatch_value_q (core trigger match register) -> imem BRAM ENBWREN, slack +0.191 ns (the known critical path)
+Vivado peak memory in this run: 13,139.684 MB (earlier failed run: router out of memory at 9,127 MB with the host short of memory)
