@@ -42,6 +42,7 @@ DESC = {
  'boot_walkthrough.out': 'cycle-by-cycle view of the first 8,000 cycles after reset release: fetch addresses mapped to fw.dis, function segments, first data accesses, g_busy rises (11-28)',
  'boot_events.out': 'key events of the whole run from the CPU data-port trace (SIM_TRACE_CPU): .bss clear, stack, DONE (11-28); MMIO accesses are not in this trace',
  'g120_route_summary.txt': 'plain chip_axi_top (no Debug Module) at 120 MHz with the guards and observation registers: routed WNS +0.191 ns, utilization, peak memory 13.1 GB (11-28)',
+ 'dm120_route_summary.txt': 'chip_axi_top WITH the Debug Module at 120 MHz (guards and observation registers in): routed WNS -3.114 ns (timing fails), worst path trigger match register to imem BRAM address, 8.8 ns of which 7.2 ns is routing (11-28)',
  'npu_perf.out': 'DONE cycles and PERF counters of image_1/128/512 on the board-top simulation, the data of the NPU scaling analysis (11-27)',
  'dm_chip_route_summary.txt': 'RISC-V Debug Module build at 125 MHz: routed timing summary (WNS +0.110 ns), utilization, synthesis LUT/register lines (11-26)',
  'xsim_full_after_tbnet.out': 'full-chip RTL xsim rerun after the tb_chip.sv changes for the netlist: DONE run_cycles=157433, dump equal to Verilator (11-24)',
