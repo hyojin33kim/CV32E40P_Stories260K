@@ -8,5 +8,5 @@
 Unmodified copies. Not taken: testbenches, sva, docs, the C debug ROM sources. The `common_cells` modules these files use (`cdc_2phase`, `fifo_v3`, `sync`, ...)
 are already in `cv32e40p-master/rtl/vendor/pulp_platform_common_cells/src`.
 
-`dmi_jtag_tap.sv` (real TAP on JTAG pins, for simulation) and `dmi_bscane_tap.sv` (Xilinx `BSCANE2`, USER3 and USER4 chains of the FPGA's own JTAG chain)
+`dmi_jtag_tap.sv` (real TAP on JTAG pins, for simulation) and `dmi_bscane_tap.sv` (Xilinx `BSCANE2`, USER3 and USER4 chains of the FPGA's own JTAG chain; not used since 11-28, E17: FPGA-only)
 define the same module name and are pin compatible: put exactly one of them in a file list. Licenses: Solderpad Hardware License (see the LICENSE files).

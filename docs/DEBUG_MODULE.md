@@ -9,7 +9,7 @@ The CV32E40P core supports execution-based debug (RISC-V Debug Spec 0.13.2, one 
 and a Debug Transport Module (DTM, JTAG) are needed to use it. They come from `pulp-platform/riscv-dbg` (`dbg/`, versions in `dbg/VENDOR.md`).
 
 ```
- JTAG (4 pins, or the BSCANE2 primitives of the FPGA JTAG chain)
+ JTAG (4 pins plus trst_n; a real TAP in simulation, FPGA and ASIC)
    │
  dmi_jtag (TAP + DTM, TCK -> clk_i clock crossing)            dbg/riscv-dbg/src/dmi_jtag*.sv, dmi_cdc.sv
    │ DMI
@@ -24,9 +24,9 @@ and a Debug Transport Module (DTM, JTAG) are needed to use it. They come from `p
   (unused in the address map: SRAM 0..2 MiB, imem 0x0100_0000, MMIO 0x2000_0000 and 0x3000_0000).
 - `acc/soc_top.sv`: the core's `debug_req_i`, `dm_halt_addr_i`, `dm_exception_addr_i` and the three status outputs are now ports (the simulators leave them at 0).
 - `dbg/soc_chip_dm.sv`: `soc_chip` with `DM_EN = 1` plus `dm_obi_top` and `dmi_jtag`. Ports as `soc_chip` plus the JTAG pins, `dm_rst_ni`, `ndmreset_o`.
-- `acc/chip_axi_top.sv`: with `` `DM_BUILD`` defined it instantiates `soc_chip_dm` (JTAG pins tied off for the BSCANE2 variant); the Debug Module sits on the
+- `acc/chip_axi_top.sv`: with `` `DM_BUILD`` defined it instantiates `soc_chip_dm` (JTAG pins are ports of chip_axi_top in the DM_BUILD variant); the Debug Module sits on the
   system reset `rst_ni` while the core is held in reset until RUN; `ndmreset_o` also resets the core and the accelerators. Without the macro it is the old top.
-- `dbg/dbg_files.f`: file list (real TAP `dmi_jtag_tap.sv`); `DM=1 fpga/prepare.py` swaps in `dmi_bscane_tap.sv` for the FPGA, and the synthesis token `DM_BUILD`
+- `dbg/dbg_files.f`: file list (real TAP `dmi_jtag_tap.sv`); `DM=1 fpga/prepare.py` uses the same real TAP (since 11-28, E17; the BSCANE2 variant `dmi_bscane_tap.sv` is no longer used), and the synthesis token `DM_BUILD`
   (`fpga/synth.tcl`) defines the macro: `DM=1 PERIOD=8.0 fpga/run_chip.sh <dir> DM_BUILD`.
 
 Timing of the debug-region access (kept off the 125 MHz critical path; the core's instruction address path is already the critical one, through the trigger match):
@@ -64,10 +64,11 @@ Final RTL, routed: WNS +0.110 ns, TNS 0, 0 failing endpoints, WHS +0.012 ns; CLB
 separate place-and-route runs; the run-to-run variation was not measured). At the synthesis stage the debug logic was about 1,200 LUTs (`dmi_jtag` 656, `dm_obi_top` 522 in the first run).
 Vivado crashed twice during synthesis of the same RTL (EXCEPTION_ACCESS_VIOLATION, "Start Timing Optimization"), once more in the earlier iteration, while a synthesis-only run and a third
 full run were fine; the cause is not known.
-The board bitstream `board_release_125_int8` does NOT contain the Debug Module: a new bitstream would be needed (build `chip_axi_top` with `DM_BUILD` and `dmi_bscane_tap.sv`).
+The board bitstream `board_release_125_int8` does NOT contain the Debug Module: a new bitstream would be needed (build `chip_axi_top` with `DM_BUILD`; it has JTAG pin ports that need pin constraints and an external JTAG adapter, decision D5).
 
 ## Not checked
-- The BSCANE2 variant (`dmi_bscane_tap.sv`) in simulation: Verilator has no BSCANE2; it was only synthesized.
+- The BSCANE2 variant (`dmi_bscane_tap.sv`) was dropped on 11-28 (E17): it is FPGA-only. The real TAP in the FPGA build is simulated (`dbg/tb_dm`) but its pins were never connected to a board or an adapter.
+- Timing of the DM build at 120 MHz after E17: WNS +0.752 ns (OOC synthesis); before E17 -3.114 ns (E16).
 - OpenOCD/GDB on the board: JTAG chain position of the PL, IR codes of USER3/USER4 for ZCU104, and OpenOCD's `riscv` configuration are not known here. No OpenOCD configuration is
   provided because it could not be tested. The USB-JTAG cable cannot be used by Vivado and OpenOCD at the same time.
 - The trigger exists in this build (`DEBUG_TRIGGER_EN`; `NO_TRIGGERS=1` in `fpga/prepare.py` removes it); the routed timing above includes it. Only one trigger type and one trigger were tried (the core has one).

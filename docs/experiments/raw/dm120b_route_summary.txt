@@ -1,0 +1,39 @@
+Vivado 2026.1, out of context, chip_axi_top WITH the Debug Module (DM=1 DM_BUILD, real JTAG TAP on pins), 120 MHz (8.333 ns), after E17 (clock gate pass-through, imem port selected by rst_ni), 11-28 12:40
+
+== timing_route.rpt: design timing summary
+| Design Timing Summary
+| ---------------------
+------------------------------------------------------------------------------------------------
+
+    WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
+    -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
+      0.752        0.000                      0               101690        0.010        0.000                      0               101690        3.466        0.000                       0                 26345  
+
+
+All user specified timing constraints are met.
+
+
+------------------------------------------------------------------------------------------------
+| Clock Summary
+
+== util_route.rpt (selected lines)
+| CLB LUTs                   | 60355 |     0 |          0 |    230400 | 26.20 |
+| CLB Registers              | 22269 |     0 |          0 |    460800 |  4.83 |
+| CLB Registers                              | 22269 |     0 |          0 |    460800 |  4.83 |
+| Block RAM Tile    |    7 |     0 |          0 |       312 |  2.24 |
+| URAM              |   64 |     0 |          0 |        96 | 66.67 |
+| DSPs           |   93 |     0 |          0 |      1728 |  5.38 |
+
+== worst routed path (header of the first path)
+Slack (MET) :             0.752ns  (required time - arrival time)
+  Source:                 chip_i/chip_i/soc_i/vfu_i/g_lane[1].lane_i/fpu_i/i_fpnew_bulk/gen_operation_groups[0].i_opgroup_block/gen_merged_slice.i_multifmt_slice/gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi/gen_input_pipeline[0].inp_pipe_operands_q_reg[1][0][4]/C
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@4.167ns period=8.333ns})
+  Destination:            chip_i/chip_i/soc_i/vfu_i/g_lane[1].lane_i/fpu_i/i_fpnew_bulk/gen_operation_groups[0].i_opgroup_block/gen_merged_slice.i_multifmt_slice/gen_num_lanes[0].active_lane.lane_instance.i_fpnew_fma_multi/gen_inside_pipeline[0].mid_pipe_sum_q_reg[1][75]/D
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@4.167ns period=8.333ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            8.333ns  (clk rise@8.333ns - clk rise@0.000ns)
+  Data Path Delay:        7.561ns  (logic 2.725ns (36.039%)  route 4.836ns (63.961%))
+  Logic Levels:           35  (CARRY8=14 LUT1=1 LUT2=2 LUT3=3 LUT4=2 LUT5=2 LUT6=11)
+  Clock Path Skew:        -0.009ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.020ns = ( 8.353 - 8.333 ) 

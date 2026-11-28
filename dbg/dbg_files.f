@@ -1,4 +1,4 @@
-// File list of the Debug Module (paths relative to the repository root; add dbg/riscv-dbg/src/dmi_bscane_tap.sv instead of dmi_jtag_tap.sv for the FPGA)
+// File list of the Debug Module (paths relative to the repository root; dmi_jtag_tap.sv is a real TAP on pins, used in simulation and in the FPGA build as in the ASIC; dmi_bscane_tap.sv (Xilinx BSCANE2) is not used)
 +incdir+dbg/common_cells/include
 dbg/common_cells/src/cdc_reset_ctrlr_pkg.sv
 dbg/common_cells/src/cdc_reset_ctrlr.sv

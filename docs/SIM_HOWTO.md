@@ -48,7 +48,7 @@ dbg/tb_dm/run.sh prof/chip_full_opta_d2/image_1.bin /mnt/e/fpga_work/board_kit/d
 ```
 - JTAG 핀을 직접 구동하는 시험환경이 실행 중 halt, 레지스터 읽기와 쓰기, resume, 단일 스텝, 하드웨어 breakpoint까지 확인하고 끝까지 실행한다. 정상: `PASSED: 0 check failure(s)`, 덤프는 cycle 워드 2개(`0x1aff00`, `0x1ad000`)만 기준과 다르다. 약 1분.
 - 옵션: `+VERBOSE=1`(모든 확인 출력), `+EBREAK=1`(이미지의 명령어 하나를 `ebreak`로 바꿔 진입 시험), `+EXTRA=0`(단일 스텝과 breakpoint 시험 끄기).
-- 실제 TAP(`dmi_jtag_tap`)을 쓴다. FPGA용 BSCANE2 변형은 Verilator에 BSCANE2가 없어 시뮬레이션하지 못한다.
+- 실제 TAP(`dmi_jtag_tap`)을 쓴다. FPGA 빌드도 같은 TAP을 쓴다(11-28부터, BSCANE2 변형은 사용하지 않음).
 - **보드 최상위에 DM을 넣은 빌드(대기 상태 확인):** `TOP=chip_axi_top VXARGS="-DDM_BUILD -f dbg/dbg_files.f" ./build_sim.sh`.
 - **시뮬레이션 자체를 디버그할 때:** Verilator는 위 1번의 파형, xsim은 `gui`와 `TRACE_N=<cycle>`, 두 시뮬레이터 비교는 `fpga/xsim/compare_trace.py`.
 - 자세한 설계와 한계: `docs/DEBUG_MODULE.md`, `docs/DEBUG_CHIP_LEVEL.md`.

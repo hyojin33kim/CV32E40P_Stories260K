@@ -22,7 +22,7 @@
 - **가속기 내부는 디버거에 보이지 않는다.** 코어가 멈춰도 `gemv_acc`와 `vfu`는 계속 돈다. 그 내부는 성능 카운터와 ILA(`DBG_PROBE`, `docs/BOARD_ILA.md`)로 본다.
 
 ## 4. 필요한 RTL, 보드 쪽 작업
-1. **BSCANE2 변형의 확인.** Verilator에는 BSCANE2가 없어 시뮬레이션하지 못했다(합성만 함). 보드에서 OpenOCD가 사용자 체인(USER3, USER4)에 접근하는 것이 첫 시험이다. 보드의 JTAG 체인(PS와 PL의 TAP 위치, IR 길이)은 **미확인**이다.
+1. **(11-28 갱신: BSCANE2 변형은 쓰지 않는다. FPGA 전용이고 ASIC에 없기 때문이다. 아래 BSCANE2 관련 문장은 이전 계획의 기록이다.)** 실제 JTAG 핀과 TAP(`dmi_jtag_tap`)을 쓰는 빌드가 120 MHz 합성을 통과했다(E17). 핀 연결과 외부 어댑터가 필요하다(D5). 이전 문장: **BSCANE2 변형의 확인.** Verilator에는 BSCANE2가 없어 시뮬레이션하지 못했다(합성만 함). 보드에서 OpenOCD가 사용자 체인(USER3, USER4)에 접근하는 것이 첫 시험이다. 보드의 JTAG 체인(PS와 PL의 TAP 위치, IR 길이)은 **미확인**이다.
 2. **JTAG 경로 결정.** (a) BSCANE2로 보드의 기존 USB-JTAG 사용: 핀이 필요 없으나 OpenOCD 설정이 까다롭고 Vivado와 케이블을 번갈아 써야 한다(일반 지식). (b) 칩 핀에 JTAG을 내고 외부 어댑터 사용: `dmi_jtag_tap.sv`(실제 TAP)를 쓰고 핀 제약이 필요하며 OpenOCD 설정이 단순하다(일반 지식). 어느 쪽이 가능한지는 보드와 어댑터에 달렸다. 이것이 결정 D5와 연결된다.
 3. **DM 포함 비트스트림.** 현재 비트스트림(`board_release_125_int8`)에는 DM이 없다. `DM=1 ... DM_BUILD`로 다시 빌드해야 한다(GUI, 사용자 작업). 125 MHz 배치배선은 통과했다(WNS +0.110 ns, E14).
 4. **멈춘 채로 시작하는 순서.** 코어를 첫 명령어에서 멈추려면 `CTRL.RUN=1` 전에 `haltreq`를 걸어야 한다(시뮬레이션에서 확인함: `dbg/tb_dm`의 `+EBREAK=1`). 보드에서 `run_chip.py`가 이 순서를 지키는 옵션은 아직 없다.

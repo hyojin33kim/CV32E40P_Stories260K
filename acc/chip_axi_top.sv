@@ -56,7 +56,17 @@ module chip_axi_top #(
     output logic [ 1:0] s_axi_rresp,
     output logic        s_axi_rvalid,
     input  logic        s_axi_rready,
+`ifdef DM_BUILD
+    output logic        done_o,          // level, e.g. to a PS interrupt
+    // JTAG pins of the Debug Module (a real TAP on pins, as in the ASIC; docs/DEBUG_MODULE.md)
+    input  logic        jtag_tck_i,
+    input  logic        jtag_tms_i,
+    input  logic        jtag_trst_ni,
+    input  logic        jtag_tdi_i,
+    output logic        jtag_tdo_o
+`else
     output logic        done_o           // level, e.g. to a PS interrupt
+`endif
 );
   // ---------------------------------------------------------------- control registers
   logic        run_q, done_q;
@@ -80,7 +90,7 @@ module chip_axi_top #(
 
 `ifdef DM_BUILD
   // RISC-V debug (docs/DEBUG_MODULE.md): soc_chip_dm = soc_chip + Debug Module + JTAG. The Debug Module stays on the system reset (rst_ni) while
-  // the core is held in reset until RUN. With dmi_bscane_tap.sv the JTAG pins are unused (the BSCANE2 primitives of the FPGA JTAG chain serve it).
+  // the core is held in reset until RUN. The JTAG pins go to dmi_jtag_tap.sv (a real TAP, as in the ASIC; no FPGA-only BSCANE2).
   logic dbg_halted;
   soc_chip_dm #(.ACC_LANES(ACC_LANES), .VFU_LANES(VFU_LANES), .ACC_RUN(ACC_RUN), .ACC_FDEPTH(ACC_FDEPTH),
              .CPU_FPU_LAT(CPU_FPU_LAT), .ACC_FPU_LAT(ACC_FPU_LAT), .VFU_FPU_LAT(VFU_FPU_LAT),
@@ -95,7 +105,7 @@ module chip_axi_top #(
       .dbg_instr_req_o(dbg_ireq), .dbg_instr_addr_o(dbg_iaddr), .dbg_data_req_o(dbg_dreq), .dbg_data_we_o(dbg_dwe), .dbg_data_addr_o(dbg_daddr),
       .perf_gemv_busy_o(pf_gemv), .perf_vfu_busy_o(pf_vfu), .perf_acc_stall_o(pf_stall), .perf_acc_rd_o(pf_rd),
       .perf_tq_full_o(pf_tq), .perf_eq_max_o(pf_eq),
-      .jtag_tck_i(1'b0), .jtag_tms_i(1'b0), .jtag_trst_ni(1'b1), .jtag_tdi_i(1'b0), .jtag_tdo_o(),
+      .jtag_tck_i, .jtag_tms_i, .jtag_trst_ni, .jtag_tdi_i, .jtag_tdo_o,
       .ndmreset_o(ndmreset), .debug_halted_o(dbg_halted));
 `else
   assign ndmreset = 1'b0;

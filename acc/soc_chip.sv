@@ -102,8 +102,10 @@ module soc_chip #(
   // imem read port: CPU fetch, or the loader while the core is in reset
   logic        im_ren;
   logic [11:0] im_raddr;
-  assign im_ren   = i_req || (ld_imem && !ld_we_i);   // also for a debug-region fetch: the read is harmless and its data unused (keeps the decode off the BRAM enable path)
-  assign im_raddr = i_req ? i_addr[13:2] : ld_addr_i[13:2];
+  // Selected by the reset (early, a register output), not by i_req (late: it comes out of the core's decode logic): while the core runs the port reads every cycle,
+  // the data is used only in the cycle after a granted fetch (im_rv_q), also a debug-region fetch is harmless.
+  assign im_ren   = rst_ni || (ld_imem && !ld_we_i);
+  assign im_raddr = rst_ni ? i_addr[13:2] : ld_addr_i[13:2];
   // loader decode (core in reset only)
   logic        ld_imem, ld_sram;
   logic [31:0] ld_off;
