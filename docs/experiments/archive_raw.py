@@ -47,6 +47,7 @@ DESC = {
  'g120b_route_summary.txt': 'chip_axi_top without the Debug Module at 120 MHz after the E17 fixes: routed WNS +0.673 ns, timing met (11-28)',
  'repro_e17.out': 'reproduce.sh quick after the E17 RTL changes: 42/42 OK, cycles +0 (11-28)',
  'dm_sim_e17.out': 'dbg/tb_dm after the E17 RTL changes: PASSED, 0 check failures (11-28)',
+ 'kvddr_p0.out': 'acc/tb_kvddr/run_test.py: attention QK/AV reads of a KV cache in DDR, layout [t][kv_dim] vs head-major, ctx 128 and 512, plus on-chip reference: ctx 512 268,536 vs 183,496 vs 169,176 cycles (11-28)',
  'npu_perf.out': 'DONE cycles and PERF counters of image_1/128/512 on the board-top simulation, the data of the NPU scaling analysis (11-27)',
  'dm_chip_route_summary.txt': 'RISC-V Debug Module build at 125 MHz: routed timing summary (WNS +0.110 ns), utilization, synthesis LUT/register lines (11-26)',
  'xsim_full_after_tbnet.out': 'full-chip RTL xsim rerun after the tb_chip.sv changes for the netlist: DONE run_cycles=157433, dump equal to Verilator (11-24)',

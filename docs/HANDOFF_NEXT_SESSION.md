@@ -17,7 +17,7 @@
 - **15M 모델 파일은 사용자가 저장소 루트에 직접 받아 두었다**(`stories15M.bin`, 추적 안 됨, 커밋 금지, 60,816,028 바이트). 헤더로 구성값 확인: dim 288, hidden 768, 층 6, 헤드 6, KV 헤드 6, vocab 32,000, seq 256. 토크나이저는 확인 전.
 
 ## 진행 중: DDR 구조 (결정 D9, `docs/DDR_ARCH_PLAN.md`)
-P0 측정(KV를 DDR에 두었을 때 어텐션 읽기 비용, 배치 두 가지 비교)이 준비 단계에서 멈췄다.
+P0 측정은 **끝났다**(E18, 시뮬레이션: ctx 512에서 DDR 배치 [t][kv_dim] 268,536 대 head-major 183,496 대 칩 안 169,176사이클). 다음은 P1(쓰기 경로).
 - 새 파일(실행한 적 없음, 이 커밋에 포함): `acc/tb_kvddr/test_kv.c`, `acc/tb_kvddr/run_test.py`.
 - **막힌 곳:** `python3 acc/tb_kvddr/run_test.py`가 펌웨어 빌드(`build.sh`, `SRC=acc/tb_kvddr/test_kv.c CFLAGS_EXTRA=-O2`)에서 실패했다. 오류 메시지를 아직 보지 못했다. 다음에 `build.sh`를 직접 실행해 메시지를 읽는 것부터 한다.
 - DDR 시뮬레이터 `obj_axi_ddr/Vchip_axi_ddr_top`은 오늘 15:05에 현재 RTL로 다시 빌드했다.

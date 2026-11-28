@@ -1,0 +1,19 @@
+84 files, include dirs ['rtl/include', 'rtl/vendor/pulp_platform_common_cells/include', 'dbg/common_cells/include'] -> /mnt/e/fpga_work/sweep_dm_7.0
+== synthesis
+     -0.272       -1.961                     27               101735        0.011        0.000                      0               101735        2.800        0.000                       0                 26363  
+| CLB LUTs*                  | 61630 |     0 |          0 |    230400 | 26.75 |
+| CLB Registers              | 22287 |     0 |          0 |    460800 |  4.84 |
+| Block RAM Tile    |    7 |     0 |          0 |       312 |  2.24 |
+| URAM              |   64 |     0 |          0 |        96 | 66.67 |
+| DSPs           |   93 |     0 |          0 |      1728 |  5.38 |
+| URAM288  |    64 |            BLOCKRAM |
+== route
+     -0.049       -0.156                      5               101690        0.019        0.000                      0               101690        2.800        0.000                       0                 26345  
+| CLB LUTs                   | 61270 |     0 |          0 |    230400 | 26.59 |
+| CLB Registers              | 22269 |     0 |          0 |    460800 |  4.83 |
+| CLB Registers                              | 22269 |     0 |          0 |    460800 |  4.83 |
+| Block RAM Tile    |    7 |     0 |          0 |       312 |  2.24 |
+| URAM              |   64 |     0 |          0 |        96 | 66.67 |
+| DSPs           |   93 |     0 |          0 |      1728 |  5.38 |
+| URAM288  |    64 |            BLOCKRAM |
+  Data Path Delay:        6.976ns  (logic 3.402ns (48.768%)  route 3.574ns (51.232%))

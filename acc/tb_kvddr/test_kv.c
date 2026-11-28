@@ -15,7 +15,7 @@ static void gemv(unsigned x, unsigned w, unsigned y, int n, int d, int wstride, 
 #define Q   0x1a0000u
 #define ATT 0x1a1000u
 #define OUT 0x1a3000u
-int main(void) {
+void boot(void) {
     unsigned cfg = *(volatile unsigned*)0x1afff0;
     int head = cfg & 1, ctx = (cfg & 2) ? 512 : 128; unsigned kb = (cfg & 4) ? 0x100000u : 0x0u, vb = kb + 0x50000u;
     unsigned calls = 0, errs = 0, qk = 0, av = 0;

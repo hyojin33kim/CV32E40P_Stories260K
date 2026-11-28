@@ -10,7 +10,7 @@ SIM = os.environ.get('TEST_SIM', str(W / 'obj_axi_ddr/Vchip_axi_ddr_top'))
 subprocess.run(['env', 'SRC=acc/tb_kvddr/test_kv.c', f'OUT={O}/test_kv', 'CFLAGS_EXTRA=-O2', str(W / 'build.sh')], cwd=W, check=True, capture_output=True)
 elf = (O / 'test_kv.elf').read_bytes()
 phoff = struct.unpack_from('<I', elf, 28)[0]; sz, num = struct.unpack_from('<HH', elf, 42)
-base = bytearray(0x200000)
+base = bytearray(0x1020000)
 for i in range(num):
     typ, off, va, pa, fs, ms, fl, al = struct.unpack_from('<8I', elf, phoff + i * sz)
     if typ == 1: base[pa:pa + fs] = elf[off:off + fs]
@@ -22,7 +22,7 @@ for ctx_bit, ctx in ((0, 128), (2, 512)):
         c = cfg | ctx_bit
         m = bytearray(base); struct.pack_into('<I', m, 0x1afff0, c)
         img, dump = O / f'img{c}.bin', O / f'dump{c}.bin'; img.write_bytes(m)
-        r = subprocess.run([SIM, str(img), str(dump), '50000000'], capture_output=True, text=True)
+        r = subprocess.run([SIM, str(img), str(dump), os.environ.get('TEST_MAXCYC', '3000000')], capture_output=True, text=True)
         d = dump.read_bytes(); qk, av, mark, calls, err = struct.unpack_from('<5I', d, 0x1aff00)
         mm = re.search(r'bursts=(\d+)\s+lines=(\d+)', r.stdout); b, ln = (int(mm.group(1)), int(mm.group(2))) if mm else (0, 0)
         print(f"ctx {ctx:3d} {names[cfg]:<28} QK {qk:>9,}  AV {av:>9,}  total {qk + av:>9,}  bursts {b:>7,} lines {ln:>8,} avg {ln / b if b else 0:5.2f}  calls {calls} err {err} done {mark == 0x600d600d}")

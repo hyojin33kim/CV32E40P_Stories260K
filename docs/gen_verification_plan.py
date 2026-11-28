@@ -46,6 +46,7 @@ ROWS = [
  ('V-P1', 'L2 통합', '성능', '성능 카운터(gemv busy, vfu busy, acc stall, 읽은 line, tq_full, eq_max)', '카운터 레지스터 읽기', '값이 시뮬레이션 모델과 일치', 'acc/chip_axi_top.sv (0x200_0020..0x34)', '통과', '구현과 시뮬레이션 확인', '보드에서의 읽기는 미실행'),
  ('V-P2', 'L2 통합', '성능', 'DRAM 지연과 row/bank 영향', 'SIM_ROWBANK=1 (page, map, core MHz 환경변수)', '영향을 정량화', 'sim_axi_ddr.cpp', '통과', '단일 타일 영향 2% 이하', '두 master가 동시에 접근하는 경우는 미시험'),
  ('V-P3', 'L2 통합', '성능', 'pre-tiling의 DDR top 실측', 'AXI_MAXB 64/256으로 빌드해 버스트 길이 효과 측정', '버스트 6~8 line에서 늘어남 확인', 'build_sim.sh (AXI_MAXB)', '미실행', '버스트 통계만 계산됨(6~8 line에서 최대 256)', 'AXI_MAXB를 늘릴 때 CRED ≥ MAXB와 외부 FIFO(64 line) 한도를 함께 키워야 함(V-A2에서 확인)'),
+ ('V-P4', 'L2 통합', '성능', '어텐션의 KV 읽기: KV를 DDR에 둘 때 배치 두 가지 비교(P0)', 'python3 acc/tb_kvddr/run_test.py (obj_axi_ddr, DDR 모델 지연 40, 12.8 B/사이클)', 'head-major 배치가 [t][kv_dim] 배치보다 빠르고 버스트가 길어짐', 'acc/tb_kvddr/test_kv.c, run_test.py', '통과', 'ctx 512, 층 5 x 질의 헤드 8의 QK와 AV 80회: DDR [t][kv_dim] 268,536사이클(버스트 평균 2.00줄), DDR head-major 183,496(-31.7 %, 평균 16.00줄), 칩 안 169,176. ctx 128: 72,696 / 52,936 / 46,296. 읽은 줄 수는 배치와 무관하게 같음(81,920 / 20,480)', '값은 확인하지 않고 사이클만 봄(메모리 내용은 0). 한 번의 측정이고 DDR 모델 가정(지연 40, 12.8 B/사이클). 버스트 상한이 16줄이라 MAXB를 키우면 더 줄 수 있음(미측정). 어텐션만이고 토큰 전체가 아님'),
  # ---- timing
  ('V-M1', 'L3 타이밍', '타이밍', '온칩 top 125 MHz (OOC)', 'fpga/run_chip.sh 단독 배치 합성', 'WNS ≥ 0', 'fpga/run_chip.sh', '통과', 'WNS +0.249 ns', ''),
  ('V-M2', 'L3 타이밍', '타이밍', 'DDR top 125 MHz (OOC)', 'int8 모드 + 외부 FIFO 포함', 'WNS ≥ 0', 'fpga/run_chip.sh (WITH_DDR=1)', '통과', 'WNS +0.155 ns', ''),

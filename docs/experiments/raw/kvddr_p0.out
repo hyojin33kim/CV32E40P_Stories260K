@@ -1,0 +1,9 @@
+DDR model: latency 40, 12.8 B/cycle
+ctx 128 DDR  [t][kv_dim] (today)     QK    36,846  AV    35,850  total    72,696  bursts  10,240 lines   20,480 avg  2.00  calls 80 err 0 done True
+ctx 128 DDR  head-major              QK    23,246  AV    29,690  total    52,936  bursts   1,280 lines   20,480 avg 16.00  calls 80 err 0 done True
+ctx 128 chip [t][kv_dim] (on-chip)   QK    18,606  AV    27,690  total    46,296  bursts       0 lines        0 avg  0.00  calls 80 err 0 done True
+ctx 128 chip head-major (on-chip)    QK    18,446  AV    27,530  total    45,976  bursts       0 lines        0 avg  0.00  calls 80 err 0 done True
+ctx 512 DDR  [t][kv_dim] (today)     QK   134,766  AV   133,770  total   268,536  bursts  40,960 lines   81,920 avg  2.00  calls 80 err 0 done True
+ctx 512 DDR  head-major              QK    77,006  AV   106,490  total   183,496  bursts   5,120 lines   81,920 avg 16.00  calls 80 err 0 done True
+ctx 512 chip [t][kv_dim] (on-chip)   QK    64,686  AV   104,490  total   169,176  bursts       0 lines        0 avg  0.00  calls 80 err 0 done True
+ctx 512 chip head-major (on-chip)    QK    64,526  AV   104,330  total   168,856  bursts       0 lines        0 avg  0.00  calls 80 err 0 done True

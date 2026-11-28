@@ -97,7 +97,7 @@ CPU (cv32e40p-master) --- 데이터 포트 --- soc_chip 내부 버스 --- on-chi
 - 원칙(사용자): 실제 칩을 염두에 두고 **FPGA 전용 요소(BSCANE2, BUFGCE)는 넣지 않고, 디버그 모듈은 필수**로 둔다.
 
 ## 8. 열린 항목과 우선순위
-1. **DDR 구조 P0**: `python3 acc/tb_kvddr/run_test.py`가 펌웨어 빌드에서 실패한다(`build.sh`의 오류 메시지를 아직 읽지 않았다). 고친 뒤 8가지 구성(DDR 배치 2 × 컨텍스트 2 + 칩 안 기준)의 사이클과 버스트 통계를 얻어 KV 레이아웃(헤드별 연속) 가설을 확인한다. 이어서 P1 쓰기 경로.
+1. **DDR 구조 P1(쓰기 경로)**: P0는 끝났다(E18). `python3 acc/tb_kvddr/run_test.py`(약 2분)가 8가지 구성의 사이클과 버스트를 낸다. 결과: ctx 512에서 KV를 DDR에 둘 때 [t][kv_dim] 배치 268,536, head-major 183,496, 칩 안 169,176사이클. 다음은 `axi_ext_wr`와 하드웨어 인터락(`docs/DDR_ARCH_PLAN.md` 2.3절), 변조 시험 포함.
 2. **15M 준비(P4)**: `stories15M.bin`(60,816,028 바이트, SHA-256 `cd590644d963867a2b6e5a1107f51fad663c41d79c149fbecbbb1f95fa81f49a`, 헤더: dim 288, hidden 768, 층 6, 헤드 6, KV 헤드 6, vocab 32,000, seq 256)이 저장소 루트에 있다. 이 해시를 공개된 값과 대조하지는 않았다. 토크나이저 확보, int8 양자화, 호스트 기준 출력, D1 확정이 필요하다. 커밋하지 말 것(60 MB). `stories15M.bin:Zone.Identifier`는 Windows 다운로드 표식이라 지워도 된다.
 3. **DM 포함 비트스트림**(Vivado GUI, 사용자 작업)과 **D8 구현**(블록 디자인에 EMIO GPIO 추가). 보드가 있어야 확인 가능.
 4. **직결한 클럭 게이트**의 시뮬레이션 확인(Verilator는 래치 모델을 쓴다). xsim 또는 보드.
